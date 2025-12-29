@@ -1,30 +1,59 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Teachable Machine Pose Model</title>
-    <link rel="stylesheet" href="./css/style.css" />
-  </head>
-  <body>
-    <h1>Teachable Machine Pose Model</h1>
-    <div class="button-container">
-      <button type="button" id="startBtn" onclick="init()">Start</button>
-      <button type="button" id="stopBtn" onclick="stop()" disabled>Stop</button>
-    </div>
-    <div class="canvas-container">
-      <canvas id="canvas"></canvas>
-      <div id="max-prediction"></div>
-    </div>
-    <div id="label-container"></div>
 
-    <!-- Teachable Machine 라이브러리 -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/pose@0.8/dist/teachablemachine-pose.min.js"></script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catch the Falling Fruit!</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
 
-    <!-- 애플리케이션 모듈 -->
-    <script src="./js/stabilizer.js"></script>
-    <script src="./js/poseEngine.js"></script>
-    <script src="./js/gameEngine.js"></script>
-    <script src="./js/main.js"></script>
-  </body>
+<body>
+  <div id="main-layout">
+    <!-- Left Panel: Webcam & Info -->
+    <div id="side-panel">
+      <h2>Webcam</h2>
+      <div id="webcam-container"></div>
+      <div class="instructions">
+        <p>📷 고개를 좌우로<br>움직여보세요!</p>
+        <p>👈 왼쪽 | 오른쪽 👉</p>
+      </div>
+    </div>
+
+    <!-- Right Panel: Game Area -->
+    <div id="game-container">
+      <!-- Game Canvas -->
+      <canvas id="gameCanvas"></canvas>
+
+      <!-- UI Overlay -->
+      <div id="ui-layer">
+        <div id="score-board">
+          <span>점수: <span id="score">0</span></span>
+          <span> | 최고 점수: <span id="high-score">0</span></span>
+        </div>
+        <div id="timer">시간: <span id="time-left">60</span></div>
+        <div id="lives">❤️❤️❤️</div>
+      </div>
+
+      <!-- Screens -->
+      <div id="start-screen" class="screen active">
+        <h1>🍎 Catch Fruit 💣</h1>
+        <p>폭탄을 피하세요!</p>
+        <button id="start-btn">게임 시작</button>
+      </div>
+
+      <div id="game-over-screen" class="screen hidden">
+        <h1>Game Over</h1>
+        <p>최종 점수: <span id="final-score">0</span></p>
+        <button id="restart-btn">다시 하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Teachable Machine & Logic -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/pose@0.8/dist/teachablemachine-pose.min.js"></script>
+  <script src="js/game.js" type="module"></script>
+</body>
+
 </html>
