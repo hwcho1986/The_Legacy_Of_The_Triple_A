@@ -1,59 +1,549 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Catch the Falling Fruit!</title>
-  <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Legacy Of The Triple A - 대괴도 AAA의 유산</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Cinzel:wght@400;700&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-red: #b91c1c;
+            --overlay-dark: rgba(0, 0, 0, 0.85);
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #000;
+            font-family: 'Noto Serif KR', 'Nanum Myeongjo', serif;
+            color: #fff;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        
+        /* Animations */
+        .fade-in { animation: fadeIn 1.5s ease-out forwards; }
+        .fade-out { animation: fadeOut 1.2s ease-in forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+        /* UI Elements */
+        .menu-btn {
+            position: relative;
+            padding: 1rem 2.5rem;
+            font-size: 1.25rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: left;
+            border-left: 0px solid var(--primary-red);
+            overflow: hidden;
+        }
+        .menu-btn.active {
+            background: linear-gradient(90deg, rgba(185, 28, 28, 0.2) 0%, transparent 100%);
+            border-left-width: 6px;
+            padding-left: 3.5rem;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(185, 28, 28, 0.5);
+        }
+        .menu-btn::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0%;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: width 0.3s ease;
+        }
+        .menu-btn:hover::before { width: 100%; }
+
+        .textbox-gradient {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.8));
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+        }
+
+        .typewriter-cursor::after {
+            content: '▼';
+            margin-left: 8px;
+            color: var(--primary-red);
+            animation: blink 0.8s infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* Custom Range Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--primary-red);
+            margin-top: -6px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(185, 28, 28, 0.5);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
 </head>
-
 <body>
-  <div id="main-layout">
-    <!-- Left Panel: Webcam & Info -->
-    <div id="side-panel">
-      <h2>Webcam</h2>
-      <div id="webcam-container"></div>
-      <div class="instructions">
-        <p>📷 고개를 좌우로<br>움직여보세요!</p>
-        <p>👈 왼쪽 | 오른쪽 👉</p>
-      </div>
+    <div id="game-container" class="w-full h-screen relative overflow-hidden bg-black">
+        <!-- Screens will be injected here -->
     </div>
 
-    <!-- Right Panel: Game Area -->
-    <div id="game-container">
-      <!-- Game Canvas -->
-      <canvas id="gameCanvas"></canvas>
+    <script type="module">
+        /**
+         * THE LEGACY OF THE TRIPLE A (대괴도 AAA의 유산)
+         * Pure Vanilla JS Engine
+         */
 
-      <!-- UI Overlay -->
-      <div id="ui-layer">
-        <div id="score-board">
-          <span>점수: <span id="score">0</span></span>
-          <span> | 최고 점수: <span id="high-score">0</span></span>
-        </div>
-        <div id="timer">시간: <span id="time-left">60</span></div>
-        <div id="lives">❤️❤️❤️</div>
-      </div>
+        const State = {
+            screen: 'DISCLAIMER',
+            language: 'KO',
+            menuIndex: 0,
+            currentSceneId: 'START',
+            startTime: 0,
+            isTextAnimating: false,
+            history: [],
+            scores: JSON.parse(localStorage.getItem('aaa_scores') || '[]'),
+            settings: {
+                masterVol: 80, bgmVol: 60, sfxVol: 70, voiceVol: 80, mute: false,
+                lang: 'KO', textSpeed: 0.7, autoWait: 2000, skipMode: 'READ', skipTrans: false,
+                opacity: 0.85, fontSize: 24, font: 'Noto Serif KR', outline: true, ttsVoice: 'Kore'
+            }
+        };
 
-      <!-- Screens -->
-      <div id="start-screen" class="screen active">
-        <h1>🍎 Catch Fruit 💣</h1>
-        <p>폭탄을 피하세요!</p>
-        <button id="start-btn">게임 시작</button>
-      </div>
+        const LANGUAGES = {
+            KO: '한국어', EN: 'English', JP: '日本語', CN_S: '简体中文', CN_T: '繁體中文', ES: 'Español'
+        };
 
-      <div id="game-over-screen" class="screen hidden">
-        <h1>Game Over</h1>
-        <p>최종 점수: <span id="final-score">0</span></p>
-        <button id="restart-btn">다시 하기</button>
-      </div>
-    </div>
-  </div>
+        const TRANSLATIONS = {
+            DISCLAIMER: {
+                KO: "해당 게임은 단편의 짧은 게임이기에 세이브를 지원하지 않습니다. 게임 플레이 시, 창을 닫으면 처음부터 시작해야합니다. 또한 이 작품에서 등장한 모든 이름, 인물, 사건들은 허구입니다. 실존하는 인물, 장소, 건물, 제품과는 일절 관련이 없습니다.",
+                EN: "This game is a short story and does not support saving. Closing the window will reset progress. All entities in this work are fictional and not related to real persons or places.",
+                JP: "このゲームは短編のためセーブ機能はありません。ブラウザを閉じると最初からになります。また、本作に登場する名前、人物、事件はすべてフィクションです。",
+                CN_S: "本游戏为短篇故事，不支持存档。关闭窗口将重置进度。所有名称、人物和事件均为虚构。",
+                CN_T: "本遊戲為短篇故事，不支援存檔。關閉窗口將重置進度。所有名稱、人物和事件均為虛構。",
+                ES: "Este juego es una historia corta y no admite guardado. Todos los nombres son ficticios."
+            },
+            START: { KO: "게임 시작", EN: "START GAME", JP: "ゲーム開始", CN_S: "开始游戏", CN_T: "開始遊戲", ES: "INICIAR" },
+            OPTIONS: { KO: "옵션", EN: "OPTIONS", JP: "オプション", CN_S: "选项", CN_T: "選項", ES: "OPCIONES" },
+            SCORE: { KO: "스코어", EN: "SCORE", JP: "スコア", CN_S: "得分", CN_T: "得分", ES: "PUNTOS" },
+            CREDITS: { KO: "제작진", EN: "CREDITS", JP: "クレジット", CN_S: "制作人员", CN_T: "製作人員", ES: "CRÉDITOS" },
+            EXIT: { KO: "종료", EN: "EXIT", JP: "終了", CN_S: "退出", CN_T: "退出", ES: "SALIR" },
+            QUIT_CONFIRM: { KO: "현재 창을 닫고 게임을 종료하시겠습니까?", EN: "Quit and close window?", JP: "ゲームを終了しますか？", CN_S: "确定退出吗？", CN_T: "確定退出嗎？", ES: "¿Cerrar el juego?" },
+            YES: { KO: "예", EN: "YES", JP: "はい", CN_S: "是", CN_T: "是", ES: "SÍ" },
+            NO: { KO: "아니오", EN: "NO", JP: "いいえ", CN_S: "否", CN_T: "否", ES: "NO" },
+            LOG: { KO: "로그", EN: "LOG", JP: "ログ", CN_S: "日志", CN_T: "日誌", ES: "LOG" },
+            CONFIG: { KO: "설정", EN: "CONFIG", JP: "設定", CN_S: "设置", CN_T: "設置", ES: "CONFIG" }
+        };
 
-  <!-- Teachable Machine & Logic -->
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/pose@0.8/dist/teachablemachine-pose.min.js"></script>
-  <script src="js/game.js" type="module"></script>
+        const SCENARIO = [
+            {
+                id: "START",
+                background: "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=1920",
+                character: "https://api.dicebear.com/7.x/avataaars/svg?seed=DetectiveL",
+                name: "탐정 L",
+                dialogue: "대괴도 AAA가 남긴 유산이라... 루마니아의 고성 어딘가에 숨겨져 있다는 소문이 사실일까?",
+                nextId: "S2"
+            },
+            {
+                id: "S2",
+                background: "https://images.unsplash.com/photo-1590272456521-1bbe160a18ce?q=80&w=1920",
+                character: "https://api.dicebear.com/7.x/avataaars/svg?seed=DetectiveL",
+                name: "탐정 L",
+                dialogue: "첫 번째 단서는 이곳, 브란 성의 입구에 새겨진 문구에 있어.",
+                nextId: "QUIZ1"
+            },
+            {
+                id: "QUIZ1",
+                background: "https://images.unsplash.com/photo-1590272456521-1bbe160a18ce?q=80&w=1920",
+                dialogue: "성문의 문양을 보니... 아, 무언가 입력해야 할 것 같아. AAA가 가장 존경했던 프랑스의 '괴도'의 이름은? (힌트: 아르센 ...)",
+                quiz: { question: "괴도의 이름을 입력하세요", answer: "루팡", successId: "SUCCESS1", failureId: "FAIL1" }
+            },
+            {
+                id: "SUCCESS1",
+                background: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1920",
+                name: "탐정 L",
+                dialogue: "맞아, 루팡이었지! 성문이 열리고 있어. 이제 안으로 들어가보자.",
+                nextId: "END"
+            },
+            {
+                id: "FAIL1",
+                background: "https://images.unsplash.com/photo-1590272456521-1bbe160a18ce?q=80&w=1920",
+                name: "탐정 L",
+                dialogue: "음... 틀린 것 같아. 다시 한번 생각해보자.",
+                nextId: "QUIZ1"
+            },
+            {
+                id: "END",
+                background: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=1920",
+                dialogue: "금고 안에는 수많은 명작들이 잠들어 있었다. 당신은 대괴도 AAA의 유산을 성공적으로 찾아냈습니다.",
+                nextId: "GAME_OVER"
+            }
+        ];
+
+        const container = document.getElementById('game-container');
+
+        function navigate(screen) {
+            State.screen = screen;
+            if (screen === 'GAME') {
+                State.currentSceneId = 'START';
+                State.history = [];
+                State.startTime = Date.now();
+            }
+            render();
+        }
+
+        function render() {
+            container.innerHTML = '';
+            switch (State.screen) {
+                case 'DISCLAIMER': renderDisclaimer(); break;
+                case 'MENU': renderMenu(); break;
+                case 'GAME': renderGame(); break;
+                case 'OPTIONS': renderOptions(); break;
+                case 'SCORE': renderScore(); break;
+                case 'CREDITS': renderCredits(); break;
+                case 'EXIT_CONFIRM': renderExitConfirm(); break;
+                case 'LOG': renderLog(); break;
+            }
+        }
+
+        // --- Disclaimer ---
+        function renderDisclaimer() {
+            const el = document.createElement('div');
+            el.className = 'flex items-center justify-center h-full p-8 md:p-16 fade-in text-center';
+            el.innerHTML = `<p class="text-xl md:text-2xl text-neutral-400 italic max-w-4xl leading-relaxed">${TRANSLATIONS.DISCLAIMER[State.language]}</p>`;
+            container.appendChild(el);
+            setTimeout(() => {
+                el.classList.replace('fade-in', 'fade-out');
+                setTimeout(() => navigate('MENU'), 1200);
+            }, 4000);
+        }
+
+        // --- Main Menu ---
+        function renderMenu() {
+            const menuItems = [
+                { id: 'GAME', key: 'START' },
+                { id: 'OPTIONS', key: 'OPTIONS' },
+                { id: 'SCORE', key: 'SCORE' },
+                { id: 'CREDITS', key: 'CREDITS' },
+                { id: 'EXIT_CONFIRM', key: 'EXIT' }
+            ];
+
+            const el = document.createElement('div');
+            el.className = 'h-full w-full bg-neutral-950 flex flex-col items-center justify-center relative p-8 text-center overflow-hidden';
+            el.innerHTML = `
+                <div class="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?q=80&w=1920')] bg-cover bg-center"></div>
+                <div class="relative z-10 w-full max-w-2xl flex flex-col items-center">
+                    <div class="mb-12 md:mb-20 fade-in">
+                        <h1 class="font-cinzel text-4xl md:text-7xl lg:text-8xl text-white tracking-tighter uppercase drop-shadow-[0_0_20px_rgba(185,28,28,0.3)]">The Triple A</h1>
+                        <div class="flex items-center justify-center mt-4 space-x-4">
+                            <div class="h-px bg-red-800 flex-1"></div>
+                            <p class="font-cinzel text-lg md:text-3xl text-red-700 tracking-[0.4em] font-bold">대괴도 AAA의 유산</p>
+                            <div class="h-px bg-red-800 flex-1"></div>
+                        </div>
+                    </div>
+                    <div id="menu-list" class="flex flex-col w-full max-w-md space-y-2"></div>
+                </div>
+                <div class="absolute bottom-10 text-neutral-600 text-[10px] md:text-xs tracking-[0.5em] uppercase font-cinzel opacity-50">WASD / ARROW KEYS TO NAVIGATE</div>
+            `;
+            container.appendChild(el);
+
+            const list = el.querySelector('#menu-list');
+            menuItems.forEach((item, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `menu-btn font-cinzel tracking-widest uppercase ${State.menuIndex === idx ? 'active' : 'text-neutral-500 hover:text-white'}`;
+                btn.innerText = TRANSLATIONS[item.key][State.language];
+                btn.onmouseenter = () => { State.menuIndex = idx; updateMenuSelection(); };
+                btn.onclick = () => navigate(item.id);
+                list.appendChild(btn);
+            });
+        }
+
+        function updateMenuSelection() {
+            const btns = document.querySelectorAll('#menu-list button');
+            btns.forEach((btn, idx) => {
+                if (idx === State.menuIndex) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+        }
+
+        // --- Game Screen ---
+        function renderGame() {
+            const scene = SCENARIO.find(s => s.id === State.currentSceneId) || SCENARIO[0];
+            const el = document.createElement('div');
+            el.className = 'relative w-full h-full bg-black flex flex-col overflow-hidden';
+            el.innerHTML = `
+                <div class="absolute top-0 left-0 w-full z-40 p-6 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent">
+                    <button id="btn-menu" class="px-6 py-2 bg-black/40 border border-white/10 rounded-full font-cinzel text-[10px] md:text-xs tracking-widest hover:bg-white/10 transition-all uppercase">Menu</button>
+                    <div class="flex space-x-3">
+                        <button id="btn-log" class="px-6 py-2 bg-black/40 border border-white/10 rounded-full font-cinzel text-[10px] md:text-xs tracking-widest hover:bg-white/10 transition-all uppercase">${TRANSLATIONS.LOG[State.language]}</button>
+                        <button id="btn-config" class="px-6 py-2 bg-black/40 border border-white/10 rounded-full font-cinzel text-[10px] md:text-xs tracking-widest hover:bg-white/10 transition-all uppercase">${TRANSLATIONS.CONFIG[State.language]}</button>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-cover bg-center transition-all duration-1000 scale-105" style="background-image: url('${scene.background}')"></div>
+                <div class="absolute inset-0 bg-black/30 z-10"></div>
+                ${scene.character ? `<div class="absolute bottom-24 md:bottom-32 left-1/2 -translate-x-1/2 z-20 flex justify-center items-end animate-fadeIn h-[60vh] md:h-[80vh] w-auto"><img src="${scene.character}" class="h-full object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.8)]"></div>` : ''}
+                <div class="mt-auto relative z-30 w-full px-4 md:px-12 pb-8 md:pb-12 cursor-pointer" id="game-click-area">
+                    <div class="w-full max-w-6xl mx-auto rounded-2xl border border-white/10 p-8 md:p-12 textbox-gradient" style="background-color: rgba(0,0,0,${State.settings.opacity})">
+                        ${scene.name ? `<div class="text-red-600 mb-4 font-bold font-cinzel text-xl md:text-2xl tracking-[0.2em] underline underline-offset-8 decoration-red-900/50">${scene.name}</div>` : ''}
+                        <div id="text-box" class="leading-relaxed text-neutral-100" style="font-size: ${State.settings.fontSize}px; font-family: '${State.settings.font}', serif; text-shadow: ${State.settings.outline ? '1px 1px 3px rgba(0,0,0,0.8)' : 'none'}"></div>
+                        <div id="quiz-area" class="mt-8 hidden"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(el);
+
+            const textBox = el.querySelector('#text-box');
+            el.querySelector('#btn-menu').onclick = (e) => { e.stopPropagation(); navigate('MENU'); };
+            el.querySelector('#btn-log').onclick = (e) => { e.stopPropagation(); navigate('LOG'); };
+            el.querySelector('#btn-config').onclick = (e) => { e.stopPropagation(); navigate('OPTIONS'); };
+
+            if (!State.history.length || State.history[State.history.length - 1].text !== scene.dialogue) {
+                State.history.push({ name: scene.name || "...", text: scene.dialogue });
+            }
+
+            let i = 0;
+            State.isTextAnimating = true;
+            const speed = 100 - (State.settings.textSpeed * 90);
+            const timer = setInterval(() => {
+                textBox.innerText += scene.dialogue[i++];
+                if (i >= scene.dialogue.length) {
+                    clearInterval(timer);
+                    State.isTextAnimating = false;
+                    textBox.classList.add('typewriter-cursor');
+                    if (scene.quiz) showQuiz(el.querySelector('#quiz-area'), scene.quiz);
+                }
+            }, speed);
+
+            el.querySelector('#game-click-area').onclick = () => {
+                if (State.isTextAnimating) {
+                    clearInterval(timer);
+                    textBox.innerText = scene.dialogue;
+                    State.isTextAnimating = false;
+                    textBox.classList.add('typewriter-cursor');
+                    if (scene.quiz) showQuiz(el.querySelector('#quiz-area'), scene.quiz);
+                } else if (!scene.quiz) {
+                    handleNext(scene);
+                }
+            };
+        }
+
+        function handleNext(scene) {
+            if (scene.nextId === 'GAME_OVER') {
+                const nick = prompt("Congratulations! Enter your nickname (3 chars):", "AAA") || "AAA";
+                State.scores.unshift({ nickname: nick.substring(0,3).toUpperCase(), date: new Date().toLocaleDateString(), playtime: Date.now() - State.startTime });
+                localStorage.setItem('aaa_scores', JSON.stringify(State.scores));
+                navigate('SCORE');
+            } else if (scene.nextId) {
+                State.currentSceneId = scene.nextId;
+                render();
+            }
+        }
+
+        function showQuiz(area, quiz) {
+            area.classList.remove('hidden');
+            area.innerHTML = `
+                <div class="flex flex-col md:flex-row gap-4 p-6 bg-white/5 border border-white/10 rounded-xl fade-in">
+                    <input type="text" id="quiz-input" placeholder="${quiz.question}" class="flex-1 bg-black/60 border border-white/20 p-4 text-white outline-none focus:border-red-600 transition-all font-serif">
+                    <button id="quiz-submit" class="bg-red-800 hover:bg-red-700 px-12 py-4 font-cinzel font-bold tracking-widest transition-all">CHECK</button>
+                </div>
+            `;
+            const input = area.querySelector('#quiz-input');
+            input.focus();
+            const submit = () => {
+                if (input.value.trim() === quiz.answer) State.currentSceneId = quiz.successId;
+                else State.currentSceneId = quiz.failureId;
+                render();
+            };
+            area.querySelector('#quiz-submit').onclick = (e) => { e.stopPropagation(); submit(); };
+            input.onkeydown = (e) => { e.stopPropagation(); if(e.key === 'Enter') submit(); };
+            input.onclick = (e) => e.stopPropagation();
+        }
+
+        // --- Options ---
+        function renderOptions() {
+            const el = document.createElement('div');
+            el.className = 'h-full w-full bg-neutral-900 flex items-center justify-center p-6';
+            el.innerHTML = `
+                <div class="w-full max-w-4xl bg-black border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col h-full md:h-auto max-h-[90vh]">
+                    <div class="p-8 border-b border-white/10 bg-neutral-950/50 flex justify-between items-center">
+                        <h2 class="text-3xl font-cinzel text-red-700 tracking-tighter">CONFIGURATIONS</h2>
+                        <button id="opt-close" class="text-2xl font-cinzel opacity-50 hover:opacity-100 transition-all">X</button>
+                    </div>
+                    <div class="p-8 md:p-12 overflow-y-auto custom-scrollbar space-y-12">
+                        <!-- Sound -->
+                        <section class="space-y-6">
+                            <h3 class="text-xs text-neutral-500 font-cinzel tracking-widest uppercase border-b border-white/5 pb-2">Sound Settings</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                ${['Master', 'BGM', 'SFX', 'Voice'].map(v => `
+                                    <div class="space-y-2">
+                                        <div class="flex justify-between text-[10px] text-neutral-400 font-cinzel"><span>${v} VOLUME</span><span>${State.settings[v.toLowerCase()+'Vol']}%</span></div>
+                                        <input type="range" data-setting="${v.toLowerCase()}Vol" value="${State.settings[v.toLowerCase()+'Vol']}" class="w-full">
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </section>
+                        <!-- Language -->
+                        <section class="space-y-6">
+                            <h3 class="text-xs text-neutral-500 font-cinzel tracking-widest uppercase border-b border-white/5 pb-2">Language Selection</h3>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                ${Object.entries(LANGUAGES).map(([code, name]) => `
+                                    <button data-lang="${code}" class="p-3 border rounded text-xs transition-all font-cinzel ${State.language === code ? 'bg-red-900/40 border-red-600 text-white' : 'border-white/10 text-neutral-500 hover:bg-white/5'}">${name}</button>
+                                `).join('')}
+                            </div>
+                        </section>
+                        <!-- Visuals -->
+                        <section class="space-y-6">
+                            <h3 class="text-xs text-neutral-500 font-cinzel tracking-widest uppercase border-b border-white/5 pb-2">Visual & Display</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-[10px] text-neutral-400 font-cinzel"><span>TEXTBOX OPACITY</span><span>${Math.round(State.settings.opacity * 100)}%</span></div>
+                                    <input type="range" data-setting="opacity" min="30" max="100" value="${State.settings.opacity * 100}" class="w-full">
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-[10px] text-neutral-400 font-cinzel"><span>FONT SIZE</span><span>${State.settings.fontSize}px</span></div>
+                                    <input type="range" data-setting="fontSize" min="18" max="40" value="${State.settings.fontSize}" class="w-full">
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="p-8 border-t border-white/10 bg-neutral-950/50 flex gap-4">
+                        <button id="opt-apply" class="flex-1 py-4 bg-red-800 hover:bg-red-700 font-cinzel font-bold transition-all uppercase tracking-widest text-sm">Apply & Close</button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(el);
+
+            el.querySelectorAll('input[type=range]').forEach(input => {
+                input.oninput = (e) => {
+                    const key = e.target.dataset.setting;
+                    const val = parseInt(e.target.value);
+                    State.settings[key] = key === 'opacity' ? val / 100 : val;
+                    renderOptions(); // Update display values
+                };
+            });
+
+            el.querySelectorAll('button[data-lang]').forEach(btn => {
+                btn.onclick = () => { State.language = btn.dataset.lang; renderOptions(); };
+            });
+
+            el.querySelector('#opt-apply').onclick = () => navigate('MENU');
+            el.querySelector('#opt-close').onclick = () => navigate('MENU');
+        }
+
+        // --- Log ---
+        function renderLog() {
+            const el = document.createElement('div');
+            el.className = 'fixed inset-0 bg-black/95 z-50 p-8 flex flex-col backdrop-blur-xl';
+            el.innerHTML = `
+                <div class="flex justify-between items-center border-b border-white/10 pb-6 mb-8"><h2 class="text-4xl font-cinzel text-red-700 uppercase tracking-tighter">DIALOUGE LOG</h2><button id="close-log" class="text-2xl font-cinzel hover:text-red-600 transition-all">X</button></div>
+                <div class="flex-1 overflow-y-auto space-y-6 custom-scrollbar pr-6">${State.history.map(h => `<div class="p-6 border-l-2 border-red-900/30 bg-white/5 rounded-r-xl fade-in"><div class="text-red-500 text-[10px] mb-2 font-cinzel uppercase tracking-[0.3em]">${h.name}</div><div class="text-lg md:text-xl leading-relaxed">${h.text}</div></div>`).join('')}</div>
+            `;
+            container.appendChild(el);
+            el.querySelector('#close-log').onclick = () => navigate('GAME');
+        }
+
+        // --- Score ---
+        function renderScore() {
+            const el = document.createElement('div');
+            el.className = 'h-full w-full bg-neutral-950 flex flex-col p-8 md:p-20 overflow-hidden';
+            el.innerHTML = `
+                <div class="mb-12"><h2 class="text-5xl md:text-7xl font-cinzel text-red-700 uppercase tracking-tighter">RECORDS</h2><div class="h-1 bg-red-900/30 w-32 mt-4"></div></div>
+                <div class="flex-1 overflow-y-auto custom-scrollbar pr-6"><table class="w-full text-left">
+                    <thead class="text-neutral-500 text-[10px] font-cinzel border-b border-white/10 uppercase tracking-[0.5em]"><tr><th class="py-4">INVESTIGATOR</th><th class="py-4">DATE</th><th class="py-4 text-right">PLAYTIME</th></tr></thead>
+                    <tbody>${State.scores.map(s => `<tr class="border-b border-white/5 font-cinzel hover:bg-white/5 transition-all"><td class="py-8 text-2xl md:text-4xl text-red-600">${s.nickname}</td><td class="py-8 text-neutral-400 text-xs md:text-sm">${s.date}</td><td class="py-8 text-right text-base md:text-2xl font-mono">${(s.playtime/1000).toFixed(1)}s</td></tr>`).join('')}</tbody>
+                </table></div>
+                <button onclick="window.navigateToMenu()" class="mt-12 py-6 bg-neutral-900 hover:bg-neutral-800 font-cinzel text-xl tracking-[0.4em] uppercase transition-all shadow-2xl">Return to Shadows</button>
+            `;
+            container.appendChild(el);
+            window.navigateToMenu = () => navigate('MENU');
+        }
+
+        // --- Credits ---
+        function renderCredits() {
+            const el = document.createElement('div');
+            el.className = 'h-full w-full bg-black flex flex-col items-center justify-center p-12 text-center relative overflow-hidden';
+            el.innerHTML = `
+                <div class="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=1920')] bg-cover grayscale"></div>
+                <div class="relative z-10 space-y-16 animate-fadeIn">
+                    <h2 class="text-5xl md:text-8xl font-cinzel text-red-700 tracking-tighter drop-shadow-2xl">CREDITS</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-32 gap-y-16">
+                        <div><h3 class="text-neutral-500 uppercase tracking-[0.5em] text-[10px] mb-4 font-cinzel">Engine Architect</h3><p class="text-3xl font-serif">Senior Game Engineer</p></div>
+                        <div><h3 class="text-neutral-500 uppercase tracking-[0.5em] text-[10px] mb-4 font-cinzel">Scenario Writer</h3><p class="text-3xl font-serif">Mystery Specialist</p></div>
+                        <div><h3 class="text-neutral-500 uppercase tracking-[0.5em] text-[10px] mb-4 font-cinzel">Original Lore</h3><p class="text-neutral-400 text-sm italic">zzgulani.wo.to archives</p></div>
+                        <div><h3 class="text-neutral-500 uppercase tracking-[0.5em] text-[10px] mb-4 font-cinzel">Art Direction</h3><p class="text-3xl font-serif">AI Digital Artist</p></div>
+                    </div>
+                    <button id="cred-back" class="mt-12 px-24 py-5 border border-white/20 uppercase tracking-[0.5em] text-xs font-cinzel hover:bg-white/10 transition-all">Return</button>
+                </div>
+            `;
+            container.appendChild(el);
+            el.querySelector('#cred-back').onclick = () => navigate('MENU');
+        }
+
+        // --- Exit Confirm ---
+        function renderExitConfirm() {
+            const el = document.createElement('div');
+            el.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-2xl px-8';
+            el.innerHTML = `
+                <div class="max-w-lg w-full bg-neutral-900 border border-white/10 p-12 rounded-[2rem] text-center shadow-2xl animate-fadeIn">
+                    <p class="text-2xl md:text-3xl mb-12 font-serif leading-relaxed text-neutral-300">${TRANSLATIONS.QUIT_CONFIRM[State.language]}</p>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <button id="exit-yes" class="flex-1 py-5 bg-red-800 hover:bg-red-700 rounded-xl font-cinzel font-bold uppercase transition-all shadow-xl tracking-widest">YES</button>
+                        <button id="exit-no" class="flex-1 py-5 bg-neutral-800 hover:bg-neutral-700 rounded-xl font-cinzel font-bold uppercase transition-all shadow-xl tracking-widest">NO</button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(el);
+            el.querySelector('#exit-yes').onclick = () => window.close();
+            el.querySelector('#exit-no').onclick = () => navigate('MENU');
+        }
+
+        // --- Keyboard Support ---
+        window.addEventListener('keydown', (e) => {
+            if (State.screen === 'MENU') {
+                if (e.key === 'w' || e.key === 'ArrowUp') {
+                    State.menuIndex = (State.menuIndex === 0) ? 4 : State.menuIndex - 1;
+                    updateMenuSelection();
+                } else if (e.key === 's' || e.key === 'ArrowDown') {
+                    State.menuIndex = (State.menuIndex === 4) ? 0 : State.menuIndex + 1;
+                    updateMenuSelection();
+                } else if (e.key === 'Enter') {
+                    const screens = ['GAME', 'OPTIONS', 'SCORE', 'CREDITS', 'EXIT_CONFIRM'];
+                    navigate(screens[State.menuIndex]);
+                }
+            }
+        });
+
+        // Initialize
+        (function init() {
+            const browserLang = navigator.language.split('-')[0].toUpperCase();
+            if (LANGUAGES[browserLang]) State.language = browserLang;
+            render();
+        })();
+    </script>
+<script type="module" src="/index.tsx"></script>
 </body>
-
 </html>
