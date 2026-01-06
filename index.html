@@ -618,8 +618,11 @@
             input.focus();
             const submit = () => {
                 const answers = Array.isArray(event.value) ? event.value : [event.value];
-                const inputVal = input.value.trim().toLowerCase();
-                const isCorrect = answers.some(ans => inputVal === String(ans).toLowerCase());
+                const inputVal = input.value.trim().toLowerCase().replace(/\s+/g, '');
+                const isCorrect = answers.some(ans => {
+                    const normalizedAns = String(ans).trim().toLowerCase().replace(/\s+/g, '');
+                    return inputVal === normalizedAns;
+                });
 
                 if (isCorrect) {
                     overlay.classList.add('fade-out');
