@@ -1,0 +1,219 @@
+{
+    "AAA": {
+        "KO": "AAA",
+        "EN": "AAA",
+        "JP": "AAA"
+    },
+    "알루카드": {
+        "KO": "알루카드",
+        "EN": "Alucard",
+        "JP": "アルカード"
+    },
+    "정성훈": {
+        "KO": "정성훈",
+        "EN": "Jung Sung-hoon",
+        "JP": "チョン・ソンフン"
+    },
+    "시스템": {
+        "KO": "시스템",
+        "EN": "SYSTEM",
+        "JP": "시스템"
+    },
+    "비문": {
+        "KO": "비문",
+        "EN": "Inscription",
+        "JP": "碑文"
+    },
+    "문지기": {
+        "KO": "문지기",
+        "EN": "Gatekeeper",
+        "JP": "門番"
+    },
+    "DISCLAIMER": {
+        "KO": "해당 게임은 단편의 짧은 게임이기에 세이브를 지원하지 않습니다. 게임 플레이 시, 창을 닫으면 처음부터 시작해야합니다. 또한 이 작품에서 등장한 모든 이름, 인물, 사건들은 허구입니다. 실존하는 인물, 장소, 건물, 제품과는 일절 관련이 없습니다.",
+        "EN": "This game is a short story and does not support saving. Closing the window will reset progress. All entities in this work are fictional and not related to real persons or places.",
+        "JP": "このゲームは短編のためセーブ機能はありません。ブラウザを閉じると最初부터になります。また、本作에 등장한 이름, 이름, 인물, 사건들은 모두 피션입니다.",
+        "CN_S": "本游戏为短篇故事，不支持存档. 关闭窗口将重置进度. 所有名称、人物和事件均为虚构.",
+        "CN_T": "本遊戲為短篇故事，不支援存檔. 關閉窗口將重置進度. 所有名稱、人物和事件均為虛構.",
+        "ES": "Este juego es una historia corta y no admite guardado. Todos los nombres son ficticios."
+    },
+    "START_GAME": {
+        "KO": "게임 시작",
+        "EN": "START GAME",
+        "JP": "ゲーム開始",
+        "CN_S": "开始游戏",
+        "CN_T": "開始遊戲",
+        "ES": "INICIAR"
+    },
+    "OPTIONS": {
+        "KO": "옵션",
+        "EN": "OPTIONS",
+        "JP": "OPTIONS",
+        "CN_S": "选项",
+        "CN_T": "選項",
+        "ES": "OPCIONES"
+    },
+    "SCORE": {
+        "KO": "스코어",
+        "EN": "SCORE",
+        "JP": "스코어",
+        "CN_S": "得分",
+        "CN_T": "得分",
+        "ES": "PUNTOS"
+    },
+    "CREDITS": {
+        "KO": "제작진",
+        "EN": "CREDITS",
+        "JP": "クレジット",
+        "CN_S": "制作人员",
+        "CN_T": "製作人員",
+        "ES": "CRÉDITOS"
+    },
+    "EXIT": {
+        "KO": "종료",
+        "EN": "EXIT",
+        "JP": "終了",
+        "CN_S": "退出",
+        "CN_T": "退出",
+        "ES": "SALIR"
+    },
+    "QUIT_CONFIRM": {
+        "KO": "현재 창을 닫고 게임을 종료하시겠습니까?",
+        "EN": "Quit and close window?",
+        "JP": "ゲームを終了しますか？",
+        "CN_S": "确定退出吗？",
+        "CN_T": "確定退出嗎？",
+        "ES": "¿Cerrar el juego?"
+    },
+    "YES": {
+        "KO": "예",
+        "EN": "YES",
+        "JP": "はい",
+        "CN_S": "은",
+        "CN_T": "是",
+        "ES": "SÍ"
+    },
+    "NO": {
+        "KO": "아니오",
+        "EN": "NO",
+        "JP": "いいえ",
+        "CN_S": "否",
+        "CN_T": "否",
+        "ES": "NO"
+    },
+    "PROLOGUE_001": {
+        "KO": "안녕하십니까. 이 편지를 받는 모든 분들께 깊은 감사를 느끼고 있습니다.",
+        "EN": "Greetings. I feel deep gratitude to all who receive this letter.",
+        "JP": "皆様、この手紙を手に取っていただき、深く感謝しております。"
+    },
+    "PROLOGUE_002": {
+        "KO": "제 이름은 AAA. 저를 잘 아시는 분들은 멋쟁이 A나 트리플 에이라고들 불러주시죠.",
+        "EN": "My name is AAA. To those who know me, I am Dashing A or Triple A.",
+        "JP": "私の名前はAAA。私をよく知る人々は、おしゃれなAやトリプルAと呼んでくれます。"
+    },
+    "PROLOGUE_003": {
+        "KO": "저는 소싯적에 대도였습니다. 세계 각지를 돌아다니면서 유명한 부호들의 저택을 털었죠.",
+        "EN": "I was a master thief in my youth. I traveled the world and robbed the mansions of billionaires.",
+        "JP": "私は若い頃、大泥棒でした。世界各地を巡り、有名な富豪たちの屋敷를 襲いました。"
+    },
+    "PROLOGUE_004": {
+        "KO": "제가 훔쳐온 명화들은 전부 모조품으로 바꿔치기 했습니다. 진짜와 구별할 수 없는 완벽한 모조품으로요.",
+        "EN": "All the paintings I stole were replaced with replicas. Perfect copies, indistinguishable from the originals.",
+        "JP": "私が盗んできた名画の数々は、すべて模造品にす리替えました。本物と見分けがつかない完璧な模造品입니다."
+    },
+    "PROLOGUE_005": {
+        "KO": "하지만 사람은 늙고 결국 죽게 됩니다. 재산을 후계자에게 남길 생각은 없습니다.",
+        "EN": "But man grows old and eventually dies. I have no intention of leaving my fortune to an heir.",
+        "JP": "しかし、人は老いて最後には死にます。財産を後継者に残すつもりはありません。"
+    },
+    "PROLOGUE_006": {
+        "KO": "저의 모든 재화는 '그곳'에서 새로운 주인만을 기다리고 있을 것입니다.",
+        "EN": "All my wealth is waiting for a new master in 'that place'.",
+        "JP": "私のすべての財産は「あの場所」で新しい主人を待っています。"
+    },
+    "PROLOGUE_007": {
+        "KO": "도전하시겠습니까? 하지만 그곳은 쉽게 갈 수 있는 곳이 아닙니다. 수많은 함정과 미로를 헤쳐나가야 하죠.",
+        "EN": "Will you accept the challenge? But it is not a place easily reached. You must navigate countless traps and labyrinths.",
+        "JP": "挑戦しますか？ しかし、そこは簡単に行ける場所ではありません。数多くの罠と迷宮を切り抜けなければなりません。"
+    },
+    "PROLOGUE_008": {
+        "KO": "생명의 위협이 두렵다면 즉시 이 편지를 버리시는 게 좋을 겁니다. 하하하하!",
+        "EN": "If you fear for your life, you should discard this letter immediately. Hahahaha!",
+        "JP": "命の危険が怖いのであれば、すぐにこの手紙を捨てたほうがいいでしょう。ハハハハ！"
+    },
+    "PROLOGUE_009": {
+        "KO": "파티가 시작되는 장소는 Alucard 집사의 집에서 시작합니다. 우선 그가 있는 나라로 가는 것이 좋을 겁니다.",
+        "EN": "The party begins at the home of my butler, Alucard. First, you should travel to the country where he resides.",
+        "JP": "パーティーが始まる場所は、執事アルカードの家から始まります。まず、彼がいる国へ行くのがよいでしょう。"
+    },
+    "S1_1_001": {
+        "KO": "루마니아... 이곳인가.",
+        "EN": "Romania... is this the place?",
+        "JP": "ルーマニア… ここか。"
+    },
+    "S1_1_002": {
+        "KO": "이메일이 도착했습니다.",
+        "EN": "A new email has arrived.",
+        "JP": "メールが届きました。"
+    },
+    "S1_1_003": {
+        "KO": "이미 당신이 올 것을 알고 있었습니다. 트랜실바니아(Transylvania)로 오십시오.",
+        "EN": "I already knew you were coming. Come to Transylvania.",
+        "JP": "あなたが来ることはすでに分かっていました。トランシルバニアへお越しください。"
+    },
+    "S1_2_001": {
+        "KO": "비밀의 방 안에서 검은 창을 발견했다.",
+        "EN": "A black spear was found inside a secret room.",
+        "JP": "秘密の部屋の中で黒い槍を見つけた。"
+    },
+    "S1_2_002": {
+        "KO": "나는 번개이며, 관통하는 자이다. 결코 빗나가지 않으며 꺾이지 않는다. 나는 아스가르드의 신의 창이다.",
+        "EN": "I am thunder, I am the piercer. I never miss and cannot be broken. I am the spear of the god of Asgard.",
+        "JP": "私は雷であり、貫く者である。決して外れず、折れることもない。私はアスガルドの神の槍である。"
+    },
+    "S1_3_001": {
+        "KO": "창을 구멍에 꽂았다. 육중한 소리와 함께 문이 열린다.",
+        "EN": "I inserted the spear into the hole. The door opens with a heavy sound.",
+        "JP": "槍を穴に差し込んだ。重々しい音とともに門が開く。"
+    },
+    "S1_3_002": {
+        "KO": "함정과 미궁이 기다리고 있다. 준비되었는가?",
+        "EN": "Traps and labyrinths await. Are you prepared?",
+        "JP": "罠と迷宮が待ち受けている。準備はいいか？"
+    },
+    "S1_3_003": {
+        "KO": "포기하지 않겠다.",
+        "EN": "I will not give up.",
+        "JP": "諦めない。"
+    },
+    "S1_4_001": {
+        "KO": "벽이 좁혀져 온다! 케르베로스의 첫 번째 답을 입력해야 한다.",
+        "EN": "The walls are closing in! Enter the first answer to Kerberos.",
+        "JP": "壁が迫ってくる！ ケルベロ스의最初の答えを入力しなければならない。"
+    },
+    "S1_5_001": {
+        "KO": "두 번째 머리의 답은 펜의 획수를 알파벳으로 치환한 것이다.",
+        "EN": "The answer for the second head is the stroke count of the pen converted to an alphabet.",
+        "JP": "二番目の頭の答えは、ペンの画数をアルファベットに置換したものだ。"
+    },
+    "S1_6_001": {
+        "KO": "세 번째 머리를 지배(Dominate)하라.",
+        "EN": "Dominate the third head.",
+        "JP": "三番目の頭を支配（Dominate）せよ。"
+    },
+    "S1_7_001": {
+        "KO": "바닥에 26개의 구멍이 뚫려 있고 조잡한 창이 꽂혀 있다.",
+        "EN": "There are 26 holes in the floor, and a crude spear is stuck there.",
+        "JP": "床に26個の穴が開いており、粗末な槍가 刺さっている。"
+    },
+    "S1_7_002": {
+        "KO": "나는 신을 찌른 창이다.",
+        "EN": "I am the spear that pierced God.",
+        "JP": "私は神を突いた槍である。"
+    },
+    "S1_7_003": {
+        "KO": "1번 구멍에 창을 3번 꽂았다. 벽이 열리며 푸른 비단에 덮인 그림이 나타난다.",
+        "EN": "I inserted the spear into hole #1 three times. The wall opens, revealing a painting covered in blue silk.",
+        "JP": "1番の穴に槍を3回差し込んだ. 壁が開き、青い絹에 덮인 그림이 나타난다."
+    }
+}
