@@ -617,7 +617,11 @@
 
             input.focus();
             const submit = () => {
-                if (input.value.trim().toLowerCase() === event.value.toLowerCase()) {
+                const answers = Array.isArray(event.value) ? event.value : [event.value];
+                const inputVal = input.value.trim().toLowerCase();
+                const isCorrect = answers.some(ans => inputVal === String(ans).toLowerCase());
+
+                if (isCorrect) {
                     overlay.classList.add('fade-out');
                     setTimeout(() => {
                         overlay.classList.add('hidden');
@@ -625,8 +629,8 @@
                         processNextEvent();
                     }, 1000);
                 } else {
-                    overlay.querySelector('.w-\\[1200px\\]').classList.add('animate-shake');
-                    setTimeout(() => overlay.querySelector('.w-\\[1200px\\]').classList.remove('animate-shake'), 500);
+                    overlay.querySelector('.w-[1200px]').classList.add('animate-shake');
+                    setTimeout(() => overlay.querySelector('.w-[1200px]').classList.remove('animate-shake'), 500);
                     input.value = '';
                 }
             };
