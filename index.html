@@ -260,6 +260,8 @@
             },
             isTextAnimating: false,
             isInteractionWaiting: false,
+            isChoiceActive: false,
+            isQuizActive: false,
             currentEvent: null,
             currentVoice: null,
             stats: { hp: 100, keywords: [] }
@@ -641,6 +643,11 @@
             },
 
             handleChoice(data) {
+                // Force Auto-off and block it
+                State.settings.autoMode = false;
+                State.isChoiceActive = true;
+                document.getElementById('auto-btn').innerText = `AUTO: OFF`;
+
                 const layer = document.getElementById('interaction-layer');
                 const container = document.createElement('div');
                 container.className = 'flex flex-col gap-6 items-center justify-center h-full bg-black/40';
@@ -650,6 +657,7 @@
                     btn.className = 'premium-btn glass px-20 py-8 rounded-2xl text-2xl w-[600px] text-white';
                     btn.innerText = this.t(txt);
                     btn.onclick = () => {
+                        State.isChoiceActive = false; // Reset flag
                         layer.innerHTML = '';
                         this.executeEvent(target);
                     };
@@ -663,6 +671,11 @@
             },
 
             handleQuiz(data) {
+                // Force Auto-off and block it
+                State.settings.autoMode = false;
+                State.isQuizActive = true;
+                document.getElementById('auto-btn').innerText = `AUTO: OFF`;
+
                 const layer = document.getElementById('interaction-layer');
                 layer.innerHTML = '';
                 const quizBox = document.createElement('div');
@@ -691,6 +704,7 @@
                     const val = input.value.toLowerCase().replace(/\s/g, '');
                     const isCorrect = answers.some(a => String(a).toLowerCase().replace(/\s/g, '') === val);
                     if (isCorrect) {
+                        State.isQuizActive = false; // Reset flag
                         layer.innerHTML = '';
                         this.next(data.Index, 'Read');
                     } else {
@@ -743,6 +757,10 @@
 
             // --- UI ---
             toggleAuto() {
+                if (State.isChoiceActive || State.isQuizActive) {
+                    alert("Unavailable during interaction.");
+                    return;
+                }
                 State.settings.autoMode = !State.settings.autoMode;
                 document.getElementById('auto-btn').innerText = `AUTO: ${State.settings.autoMode ? 'ON' : 'OFF'}`;
                 if (State.settings.autoMode && !State.isTextAnimating) {
@@ -766,7 +784,33 @@
                 }
             },
             showSettings() { alert("Volume and Speed settings in progress..."); },
-            toMenu() { if (confirm("Quit to main menu?")) location.reload(); }
+            toMenu() {
+                if (confirm("Quit to main menu?")) {
+                    // Reset UI
+                    document.getElementById('menu-layer').style.display = 'block';
+                    document.getElementById('menu-layer').style.opacity = '1';
+                    document.getElementById('menu-layer').classList.remove('fade-out');
+                    document.getElementById('dialogue-layer').style.display = 'none';
+                    document.getElementById('interaction-layer').innerHTML = '';
+                    document.getElementById('character-layer').innerHTML = '';
+                    document.getElementById('bgimage-layer').innerHTML = '';
+                    document.getElementById('bgcolor-layer').style.backgroundColor = '#000';
+                    document.getElementById('title-layer').innerHTML = '';
+
+                    // Stop Audio
+                    this.stopAudio('bgm');
+                    this.stopAudio('amb');
+
+                    // Reset State
+                    State.currentIndex = 0;
+                    State.characters = {};
+                    State.settings.autoMode = false;
+                    State.isInteractionWaiting = false;
+                    State.isChoiceActive = false;
+                    State.isQuizActive = false;
+                    document.getElementById('auto-btn').innerText = `AUTO: OFF`;
+                }
+            }
         }
 
         window.onload = () => Engine.init();
