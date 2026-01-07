@@ -157,11 +157,70 @@
         .char-obj {
             transition: all 1s ease-in-out;
         }
+
+        /* Disclaimer Note UI */
+        .note-popup {
+            background: #fdf6e3;
+            color: #5c4b37;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), inset 0 0 50px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            width: 400px;
+            font-family: 'Noto Serif KR', serif;
+            transform-origin: center;
+            z-index: 100;
+        }
+
+        .note-popup::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(transparent, transparent 24px, rgba(0, 0, 0, 0.05) 25px);
+            pointer-events: none;
+        }
+
+        /* Menu Selection */
+        .menu-item.active {
+            color: var(--accent-gold);
+            transform: scale(1.1);
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .menu-item.active::before {
+            content: '▶';
+            position: absolute;
+            left: -40px;
+            animation: bounceLeft 0.5s infinite alternate;
+        }
+
+        @keyframes bounceLeft {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-10px);
+            }
+        }
+
+        /* Tabs */
+        .tab-btn.active {
+            border-bottom: 3px solid var(--accent-gold);
+            color: var(--accent-gold);
+        }
     </style>
 </head>
 
 <body>
     <div id="game-container">
+        <!-- disclaimer -->
+        <div id="disclaimer-layer" class="layer" style="z-index: 1000; background: #000; display: none;">
+            <div class="flex items-center justify-center h-full p-20 text-center">
+                <p id="disclaimer-text" class="text-3xl leading-loose font-serif max-w-4xl"></p>
+            </div>
+        </div>
+
         <!-- bgcolor -->
         <div id="bgcolor-layer" class="layer" style="z-index: 0; background-color: #000000;"></div>
 
@@ -190,16 +249,22 @@
         <div id="title-layer" class="layer" style="z-index: 70;"></div>
 
         <!-- Main Menu Layer -->
-        <div id="menu-layer" class="layer layer-interactive" style="z-index: 150; background: #000;">
+        <div id="menu-layer" class="layer layer-interactive" style="z-index: 150; background: #000; display: none;">
             <div class="flex flex-col items-center justify-center h-full space-y-12">
-                <h1 class="text-8xl font-cinzel text-accent-gold tracking-tighter fade-in" style="--duration: 2s">THE
+                <h1 id="title-logo" class="text-8xl font-cinzel text-accent-gold tracking-tighter fade-in"
+                    style="--duration: 2s">THE
                     LEGACY OF<br><span class="text-white">THE TRIPLE A</span></h1>
-                <div class="flex flex-col space-y-4 w-96">
-                    <button onclick="Engine.startGame()"
-                        class="premium-btn py-6 rounded-xl text-2xl font-bold tracking-widest text-white">START
-                        GAME</button>
-                    <button class="premium-btn py-4 rounded-xl text-xl text-white/60">GALLERY</button>
-                    <button class="premium-btn py-4 rounded-xl text-xl text-white/60">SETTINGS</button>
+                <div id="main-menu-list" class="flex flex-col space-y-4 w-96">
+                    <button data-menu="start"
+                        class="menu-item premium-btn py-6 rounded-xl text-2xl font-bold tracking-widest text-white uppercase"></button>
+                    <button data-menu="options"
+                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/80 uppercase"></button>
+                    <button data-menu="score"
+                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/80 uppercase"></button>
+                    <button data-menu="credits"
+                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/80 uppercase"></button>
+                    <button data-menu="exit"
+                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/80 uppercase"></button>
                 </div>
             </div>
         </div>
@@ -208,7 +273,8 @@
         <div id="interaction-layer" class="layer layer-interactive" style="z-index: 80;"></div>
 
         <!-- System UI (Always on top) -->
-        <div id="system-ui" class="absolute top-0 w-full p-6 flex justify-between items-center" style="z-index: 100;">
+        <div id="system-ui" class="absolute top-0 w-full p-6 flex justify-between items-center hidden"
+            style="z-index: 100;">
             <button onclick="Engine.toggleBacklog()"
                 class="premium-btn px-6 py-2 rounded-full text-sm tracking-widest uppercase text-white">Log</button>
             <div class="flex gap-4">
@@ -221,13 +287,62 @@
             </div>
         </div>
 
-        <!-- Backlog Modal -->
-        <div id="backlog-modal" class="absolute inset-0 glass z-[200] hidden flex flex-col p-20">
+        <!-- Modals -->
+        <div id="options-modal" class="absolute inset-0 glass z-[300] hidden flex flex-col p-20">
             <div class="flex justify-between items-center mb-10 border-b border-white/10 pb-4">
-                <h2 class="text-4xl font-cinzel">HISTORY</h2>
-                <button onclick="Engine.toggleBacklog()" class="text-2xl">✕</button>
+                <h2 class="text-4xl font-cinzel tracking-widest" id="options-header">OPTIONS</h2>
+                <button onclick="Engine.closeModal('options-modal')" class="text-4xl">✕</button>
             </div>
-            <div id="backlog-content" class="flex-1 overflow-y-auto pr-4 space-y-6 text-xl"></div>
+            <div class="flex gap-10 mb-10">
+                <button onclick="Engine.switchTab('sound')" id="tab-sound"
+                    class="tab-btn text-2xl font-bold pb-2 active uppercase">Sound</button>
+                <button onclick="Engine.switchTab('display')" id="tab-display"
+                    class="tab-btn text-2xl font-bold pb-2 uppercase">Display</button>
+            </div>
+            <div id="tab-content" class="space-y-10 text-xl overflow-y-auto pr-4">
+                <!-- Content injection -->
+            </div>
+        </div>
+
+        <div id="score-modal" class="absolute inset-0 glass z-[300] hidden flex flex-col p-20">
+            <div class="flex justify-between items-center mb-10 border-b border-white/10 pb-4">
+                <h2 class="text-4xl font-cinzel tracking-widest" id="score-header">SCOREBOARD</h2>
+                <button onclick="Engine.closeModal('score-modal')" class="text-4xl">✕</button>
+            </div>
+            <div id="score-summary" class="grid grid-cols-2 gap-10 mb-10 p-8 bg-white/5 rounded-3xl text-center">
+                <!-- Summary injection -->
+            </div>
+            <div id="score-list" class="flex-1 overflow-y-auto space-y-4 pr-4">
+                <!-- List injection -->
+            </div>
+        </div>
+
+        <div id="credits-modal"
+            class="absolute inset-0 glass z-[300] hidden flex flex-col items-center justify-center p-20">
+            <div class="w-full max-w-4xl text-center space-y-20">
+                <h2 class="text-6xl font-cinzel text-accent-gold" id="credits-header">CREDITS</h2>
+                <div class="space-y-8 text-2xl leading-loose" id="credits-body">
+                    <p><span class="opacity-50">Producer</span><br><b>Joe Choe</b></p>
+                    <p><span class="opacity-50">Engine Development</span><br><b>Joe Choe</b></p>
+                    <p><span class="opacity-50">Scenario & Design</span><br><b>Joe Choe</b></p>
+                    <p><span class="opacity-50">Globalization</span><br><b>Joe Choe</b></p>
+                </div>
+                <button onclick="Engine.closeModal('credits-modal')"
+                    class="premium-btn px-20 py-4 rounded-xl text-xl">CLOSE</button>
+            </div>
+        </div>
+
+        <div id="exit-confirm"
+            class="absolute inset-0 bg-black/80 backdrop-blur-sm z-[1000] hidden flex items-center justify-center">
+            <div class="glass p-12 rounded-3xl text-center space-y-10">
+                <p id="exit-msg" class="text-3xl"></p>
+                <div class="flex gap-6 justify-center">
+                    <button onclick="window.close()" id="exit-yes"
+                        class="premium-btn px-16 py-4 rounded-xl text-2xl bg-primary-red/20 border-primary-red uppercase"></button>
+                    <button onclick="Engine.closeModal('exit-confirm')" id="exit-no"
+                        class="premium-btn px-16 py-4 rounded-xl text-2xl uppercase"></button>
+                </div>
+            </div>
         </div>
 
         <!-- Debug Overlay -->
@@ -238,22 +353,25 @@
 
     <script>
         const State = {
+            lang: 'KO',
             currentIndex: 0,
             eventHistory: [],
             events: [],
             localization: {},
             backlog: [],
-            characters: {}, // { id: { el, pos, expression, ... } }
-            backgrounds: {}, // { num: { el, ... } }
+            characters: {},
+            backgrounds: {},
             audio: {
                 bgm: new Audio(),
                 amb: new Audio(),
-                sfx: new Audio()
+                sfx: new Audio(),
+                voice: new Audio(),
+                masterMute: false
             },
             settings: {
-                textSpeed: 'normal',
+                textSpeed: 30, // 10, 30, 100
                 autoMode: false,
-                opacity: 0.7,
+                opacity: 0.8,
                 bgmVol: 0.5,
                 sfxVol: 0.5,
                 voiceVol: 0.8
@@ -264,12 +382,28 @@
             isQuizActive: false,
             currentEvent: null,
             currentVoice: null,
-            stats: { hp: 100, keywords: [] }
+            stats: {
+                hp: 100,
+                keywords: [],
+                startTime: null,
+                totalTime: 0
+            },
+            menuIndex: 0,
+            isNoteVisible: false
         };
 
         const Engine = {
             async init() {
                 try {
+                    // Set language from browser
+                    const browserLang = navigator.language.slice(0, 2).toUpperCase();
+                    const supported = ['KO', 'EN', 'JP', 'ES'];
+                    const fullSupported = { 'zh-CN': 'CN_S', 'zh-TW': 'CN_T', 'zh-HK': 'CN_T' };
+
+                    if (fullSupported[navigator.language]) State.lang = fullSupported[navigator.language];
+                    else if (supported.includes(browserLang)) State.lang = browserLang;
+                    else State.lang = 'KO';
+
                     const [resP, resL] = await Promise.all([
                         fetch('assets/Table/PLAY.JSON'),
                         fetch('assets/Table/LOCALIZATION.JSON')
@@ -278,36 +412,107 @@
                     State.events.sort((a, b) => a.Index - b.Index);
                     State.localization = await resL.json();
 
-                    // window listener for global interaction
-                    window.addEventListener('keydown', (e) => {
-                        if (e.code === 'Space' || e.code === 'Enter') {
-                            if (State.isInteractionWaiting) this.handleGlobalInteraction();
-                        }
-                    });
+                    // Key listeners
+                    window.addEventListener('keydown', (e) => this.handleKeyDown(e));
 
                     document.getElementById('game-container').addEventListener('mousedown', (e) => {
-                        if (State.isInteractionWaiting) this.handleGlobalInteraction();
+                        this.handleMouseDown(e);
                     });
+
+                    this.showDisclaimer();
 
                 } catch (e) {
                     this.debug(`Failed to load tables: ${e.message}`);
                 }
             },
 
+            showDisclaimer() {
+                const layer = document.getElementById('disclaimer-layer');
+                const text = document.getElementById('disclaimer-text');
+                layer.style.display = 'block';
+                text.innerText = this.t('DISCLAIMER');
+                text.classList.add('fade-in');
+
+                setTimeout(() => {
+                    text.classList.remove('fade-in');
+                    text.classList.add('fade-out');
+                    setTimeout(() => {
+                        layer.classList.add('fade-out');
+                        setTimeout(() => {
+                            layer.style.display = 'none';
+                            this.showTitle();
+                        }, 1000);
+                    }, 1000);
+                }, 5000);
+            },
+
+            showTitle() {
+                const layer = document.getElementById('menu-layer');
+                layer.style.display = 'block';
+                layer.classList.remove('fade-out');
+                layer.classList.add('fade-in');
+                this.updateTitleMenu();
+            },
+
+            updateTitleMenu() {
+                const items = document.querySelectorAll('.menu-item');
+                const keys = ['START_GAME', 'OPTIONS', 'SCORE', 'CREDITS', 'EXIT'];
+                items.forEach((item, i) => {
+                    item.innerText = this.t(keys[i]);
+                    item.classList.toggle('active', i === State.menuIndex);
+                });
+            },
+
+            handleKeyDown(e) {
+                // Menu Navigation
+                if (document.getElementById('menu-layer').style.display !== 'none' && !State.isInteractionWaiting) {
+                    if (e.code === 'ArrowDown' || e.code === 'KeyS') {
+                        State.menuIndex = (State.menuIndex + 1) % 5;
+                        this.updateTitleMenu();
+                    } else if (e.code === 'ArrowUp' || e.code === 'KeyW') {
+                        State.menuIndex = (State.menuIndex - 1 + 5) % 5;
+                        this.updateTitleMenu();
+                    } else if (e.code === 'Enter' || e.code === 'Space') {
+                        this.executeMenuAction();
+                    }
+                    return;
+                }
+
+                // Global interaction
+                if (e.code === 'Space' || e.code === 'Enter') {
+                    if (State.isInteractionWaiting) this.handleGlobalInteraction();
+                }
+            },
+
+            handleMouseDown(e) {
+                // Clicking center to advance
+                if (State.isInteractionWaiting) {
+                    const cx = window.innerWidth / 2;
+                    const cy = window.innerHeight / 2;
+                    const dist = Math.sqrt((e.clientX - cx) ** 2 + (e.clientY - cy) ** 2);
+                    if (dist < 200) { // Center click
+                        this.handleGlobalInteraction();
+                        return;
+                    }
+                }
+
+                if (State.isInteractionWaiting) this.handleGlobalInteraction();
+            },
+
+            executeMenuAction() {
+                const actions = ['startGame', 'showOptions', 'showScore', 'showCredits', 'showExit'];
+                this[actions[State.menuIndex]]();
+            },
+
             startGame() {
                 const menu = document.getElementById('menu-layer');
                 menu.classList.add('fade-out');
+                State.stats.startTime = Date.now();
                 setTimeout(() => {
                     menu.style.display = 'none';
+                    document.getElementById('system-ui').classList.remove('hidden');
                     this.executeEvent(State.events[0].Index);
                 }, 1000);
-            },
-
-            debug(msg) {
-                const el = document.getElementById('debug-overlay');
-                el.innerText = `[DEBUG] ${msg}`;
-                el.classList.remove('hidden');
-                setTimeout(() => el.classList.add('hidden'), 5000);
             },
 
             t(key) {
@@ -316,7 +521,7 @@
                 if (key.startsWith('"') && key.endsWith('"')) return key.slice(1, -1);
                 if (State.localization[key]) {
                     const entry = State.localization[key];
-                    return entry['KO'] || entry['EN'] || key;
+                    return entry[State.lang] || entry['KO'] || entry['EN'] || key;
                 }
                 return key;
             },
@@ -716,9 +921,28 @@
 
                 quizBox.querySelector('#quiz-submit').onclick = check;
                 input.onkeydown = (e) => { if (e.key === 'Enter') check(); };
-                quizBox.querySelector('#hint-1').onclick = () => alert(this.t(data.Value03));
-                if (data.Value04) quizBox.querySelector('#hint-2').onclick = () => alert(this.t(data.Value04));
-                if (data.Value05) quizBox.querySelector('#hint-3').onclick = () => alert(this.t(data.Value05));
+
+                const showHint = (hintKey) => {
+                    const hintTxt = this.t(data[hintKey]);
+                    if (!hintTxt) return;
+
+                    let note = document.getElementById('hint-note');
+                    if (!note) {
+                        note = document.createElement('div');
+                        note.id = 'hint-note';
+                        note.className = 'note-popup fade-in';
+                        layer.appendChild(note);
+                    }
+                    note.style.left = '50%';
+                    note.style.top = '30%';
+                    note.style.transform = 'translate(-50%, -50%) rotate(-2deg)';
+                    note.innerText = hintTxt;
+                    note.onclick = () => note.remove();
+                };
+
+                quizBox.querySelector('#hint-1').onclick = () => showHint('Value03');
+                if (data.Value04) quizBox.querySelector('#hint-2').onclick = () => showHint('Value04');
+                if (data.Value05) quizBox.querySelector('#hint-3').onclick = () => showHint('Value05');
             },
 
             handleAniEffect(data) {
@@ -783,13 +1007,119 @@
                     modal.classList.add('hidden');
                 }
             },
-            showSettings() { alert("Volume and Speed settings in progress..."); },
+            showSettings() { this.showOptions(); },
+
+            showOptions() {
+                const modal = document.getElementById('options-modal');
+                modal.classList.remove('hidden');
+                document.getElementById('options-header').innerText = this.t('OPTIONS');
+                this.switchTab('sound');
+            },
+
+            closeModal(id) {
+                document.getElementById(id).classList.add('hidden');
+            },
+
+            switchTab(tab) {
+                document.getElementById('tab-sound').classList.toggle('active', tab === 'sound');
+                document.getElementById('tab-display').classList.toggle('active', tab === 'display');
+                const content = document.getElementById('tab-content');
+                content.innerHTML = '';
+
+                if (tab === 'sound') {
+                    content.innerHTML = `
+                        <div class="space-y-6">
+                            <div class="flex justify-between items-center">
+                                <span>${this.t('MASTER_MUTE')}</span>
+                                <input type="checkbox" onchange="Engine.updateSetting('masterMute', this.checked)" ${State.audio.masterMute ? 'checked' : ''} class="w-8 h-8">
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between"><span>${this.t('BGM_VOL')}</span><span>${Math.round(State.settings.bgmVol * 100)}%</span></div>
+                                <input type="range" class="w-full h-2 bg-white/20 rounded-lg accent-gold" oninput="Engine.updateSetting('bgmVol', this.value/100)" value="${State.settings.bgmVol * 100}">
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between"><span>${this.t('SFX_VOL')}</span><span>${Math.round(State.settings.sfxVol * 100)}%</span></div>
+                                <input type="range" class="w-full h-2 bg-white/20 rounded-lg accent-gold" oninput="Engine.updateSetting('sfxVol', this.value/100)" value="${State.settings.sfxVol * 100}">
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between"><span>${this.t('VOICE_VOL')}</span><span>${Math.round(State.settings.voiceVol * 100)}%</span></div>
+                                <input type="range" class="w-full h-2 bg-white/20 rounded-lg accent-gold" oninput="Engine.updateSetting('voiceVol', this.value/100)" value="${State.settings.voiceVol * 100}">
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    content.innerHTML = `
+                        <div class="space-y-6">
+                            <div class="space-y-2">
+                                <div class="flex justify-between"><span>${this.t('TEXT_SPEED')}</span></div>
+                                <input type="range" min="10" max="100" step="10" class="w-full h-2 bg-white/20 rounded-lg accent-gold" oninput="Engine.updateSetting('textSpeed', 110 - this.value)" value="${110 - State.settings.textSpeed}">
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span>${this.t('AUTO_MODE_TITLE')}</span>
+                                <input type="checkbox" onchange="Engine.updateSetting('autoMode', this.checked)" ${State.settings.autoMode ? 'checked' : ''} class="w-8 h-8">
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between"><span>${this.t('DIALOGUE_OPACITY')}</span><span>${Math.round(State.settings.opacity * 100)}%</span></div>
+                                <input type="range" class="w-full h-2 bg-white/20 rounded-lg accent-gold" oninput="Engine.updateSetting('opacity', this.value/100)" value="${State.settings.opacity * 100}">
+                            </div>
+                        </div>
+                    `;
+                }
+            },
+
+            updateSetting(key, val) {
+                if (key === 'masterMute') {
+                    State.audio.masterMute = val;
+                } else if (State.settings.hasOwnProperty(key)) {
+                    State.settings[key] = val;
+                    if (key === 'opacity') {
+                        document.getElementById('dialogue-box').style.opacity = val;
+                    }
+                }
+                this.switchTab(document.getElementById('tab-sound').classList.contains('active') ? 'sound' : 'display');
+            },
+
+            showScore() {
+                const modal = document.getElementById('score-modal');
+                modal.classList.remove('hidden');
+                document.getElementById('score-header').innerText = this.t('SCORE');
+
+                const scores = JSON.parse(localStorage.getItem('aaa_scores') || '[]');
+                const totalPlayers = scores.length;
+                const totalTime = scores.reduce((acc, s) => acc + (s.time || 0), 0);
+
+                document.getElementById('score-summary').innerHTML = `
+                    <div><div class="text-sm opacity-50">${this.t('TOTAL_PLAYERS')}</div><div class="text-4xl font-bold">${totalPlayers}</div></div>
+                    <div><div class="text-sm opacity-50">${this.t('TOTAL_TIME')}</div><div class="text-4xl font-bold">${Math.floor(totalTime / 60)}m ${totalTime % 60}s</div></div>
+                `;
+
+                document.getElementById('score-list').innerHTML = scores.slice(0, 10).map(s => `
+                    <div class="flex justify-between bg-white/5 p-4 rounded-xl border border-white/10">
+                        <span class="font-bold text-accent-gold">${s.name}</span>
+                        <span class="opacity-70">${s.date}</span>
+                        <span>${Math.floor(s.time / 60)}m ${s.time % 60}s</span>
+                    </div>
+                `).join('') || '<p class="text-center opacity-30 mt-10">NO DATA</p>';
+            },
+
+            showCredits() {
+                document.getElementById('credits-modal').classList.remove('hidden');
+            },
+
+            showExit() {
+                const modal = document.getElementById('exit-confirm');
+                modal.classList.remove('hidden');
+                document.getElementById('exit-msg').innerText = this.t('QUIT_CONFIRM');
+                document.getElementById('exit-yes').innerText = this.t('YES');
+                document.getElementById('exit-no').innerText = this.t('NO');
+            },
+
             toMenu() {
-                if (confirm("Quit to main menu?")) {
-                    // Reset UI
+                if (confirm(this.t('QUIT_CONFIRM'))) {
+                    this.closeAllModals();
                     document.getElementById('menu-layer').style.display = 'block';
-                    document.getElementById('menu-layer').style.opacity = '1';
                     document.getElementById('menu-layer').classList.remove('fade-out');
+                    document.getElementById('system-ui').classList.add('hidden');
                     document.getElementById('dialogue-layer').style.display = 'none';
                     document.getElementById('interaction-layer').innerHTML = '';
                     document.getElementById('character-layer').innerHTML = '';
@@ -797,11 +1127,10 @@
                     document.getElementById('bgcolor-layer').style.backgroundColor = '#000';
                     document.getElementById('title-layer').innerHTML = '';
 
-                    // Stop Audio
                     this.stopAudio('bgm');
                     this.stopAudio('amb');
+                    this.stopAudio('voice');
 
-                    // Reset State
                     State.currentIndex = 0;
                     State.characters = {};
                     State.settings.autoMode = false;
@@ -809,7 +1138,18 @@
                     State.isChoiceActive = false;
                     State.isQuizActive = false;
                     document.getElementById('auto-btn').innerText = `AUTO: OFF`;
+                    this.updateTitleMenu();
                 }
+            },
+
+            closeAllModals() {
+                ['options-modal', 'score-modal', 'credits-modal', 'exit-confirm', 'backlog-modal'].forEach(id => {
+                    document.getElementById(id).classList.add('hidden');
+                });
+            },
+
+            debug(msg) {
+                console.log("[DEBUG]", msg);
             }
         }
 
