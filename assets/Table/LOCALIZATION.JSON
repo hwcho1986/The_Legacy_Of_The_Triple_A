@@ -2,32 +2,50 @@
     "AAA": {
         "KO": "AAA",
         "EN": "AAA",
-        "JP": "AAA"
+        "JP": "AAA",
+        "CN_S": "AAA",
+        "CN_T": "AAA",
+        "ES": "AAA"
     },
     "알루카드": {
         "KO": "알루카드",
         "EN": "Alucard",
-        "JP": "アルカード"
+        "JP": "アル카드",
+        "CN_S": "阿鲁卡多",
+        "CN_T": "阿魯卡多",
+        "ES": "Alucard"
     },
     "정성훈": {
         "KO": "정성훈",
         "EN": "Jung Sung-hoon",
-        "JP": "チョン・ソンフン"
+        "JP": "チョン・ソンフン",
+        "CN_S": "郑成勋",
+        "CN_T": "鄭成勳",
+        "ES": "Jung Sung-hoon"
     },
     "시스템": {
         "KO": "시스템",
         "EN": "SYSTEM",
-        "JP": "시스템"
+        "JP": "시스템",
+        "CN_S": "系统",
+        "CN_T": "系統",
+        "ES": "SISTEMA"
     },
     "비문": {
         "KO": "비문",
         "EN": "Inscription",
-        "JP": "碑文"
+        "JP": "碑文",
+        "CN_S": "碑文",
+        "CN_T": "碑文",
+        "ES": "Inscripción"
     },
     "문지기": {
         "KO": "문지기",
         "EN": "Gatekeeper",
-        "JP": "門番"
+        "JP": "門番",
+        "CN_S": "守门人",
+        "CN_T": "守門人",
+        "ES": "Guardián"
     },
     "DISCLAIMER": {
         "KO": "해당 게임은 단편의 짧은 게임이기에 세이브를 지원하지 않습니다. 게임 플레이 시, 창을 닫으면 처음부터 시작해야합니다. 또한 이 작품에서 등장한 모든 이름, 인물, 사건들은 허구입니다. 실존하는 인물, 장소, 건물, 제품과는 일절 관련이 없습니다.",
@@ -101,45 +119,165 @@
         "CN_T": "否",
         "ES": "NO"
     },
+    "SOUND": {
+        "KO": "사운드",
+        "EN": "SOUND",
+        "JP": "サウンド",
+        "CN_S": "声音",
+        "CN_T": "聲音",
+        "ES": "SONIDO"
+    },
+    "DISPLAY": {
+        "KO": "출력",
+        "EN": "DISPLAY",
+        "JP": "表示",
+        "CN_S": "显示",
+        "CN_T": "顯示",
+        "ES": "PANTALLA"
+    },
+    "MASTER_MUTE": {
+        "KO": "전체 음소거",
+        "EN": "MASTER MUTE",
+        "JP": "全体ミュート",
+        "CN_S": "静音",
+        "CN_T": "靜音",
+        "ES": "SILENCIAR TODO"
+    },
+    "BGM_VOL": {
+        "KO": "배경음악 볼륨",
+        "EN": "BGM VOLUME",
+        "JP": "BGM音量",
+        "CN_S": "背景音乐音量",
+        "CN_T": "背景音樂音量",
+        "ES": "VOLUMEN BGM"
+    },
+    "SFX_VOL": {
+        "KO": "효과음 볼륨",
+        "EN": "SFX VOLUME",
+        "JP": "効果音音量",
+        "CN_S": "音效音量",
+        "CN_T": "音效音量",
+        "ES": "VOLUMEN SFX"
+    },
+    "VOICE_VOL": {
+        "KO": "대사 볼륨",
+        "EN": "VOICE VOLUME",
+        "JP": "ボイス音量",
+        "CN_S": "语音音量",
+        "CN_T": "語音音量",
+        "ES": "VOLUMEN VOZ"
+    },
+    "TEXT_SPEED": {
+        "KO": "텍스트 출력 속도",
+        "EN": "TEXT SPEED",
+        "JP": "テキスト速度",
+        "CN_S": "文字速度",
+        "CN_T": "文字速度",
+        "ES": "VELOCIDAD TEXTO"
+    },
+    "AUTO_MODE_TITLE": {
+        "KO": "오토 모드",
+        "EN": "AUTO MODE",
+        "JP": "オートモード",
+        "CN_S": "自动模式",
+        "CN_T": "自動模式",
+        "ES": "MODO AUTO"
+    },
+    "DIALOGUE_OPACITY": {
+        "KO": "대사창 투명도",
+        "EN": "DIALOGUE OPACITY",
+        "JP": "ウィンドウ透明도",
+        "CN_S": "对话框透明度",
+        "CN_T": "對話框透明度",
+        "ES": "OPACIDAD VENTANA"
+    },
+    "NICKNAME_PROMPT": {
+        "KO": "닉네임을 입력하세요 (3글자)",
+        "EN": "Enter Nickname (3 chars)",
+        "JP": "ニックネームを入力 (3文字)",
+        "CN_S": "输入昵称 (3字)",
+        "CN_T": "輸入暱稱 (3字)",
+        "ES": "Nick (3 letras)"
+    },
+    "TOTAL_PLAYERS": {
+        "KO": "총 클리어 인원",
+        "EN": "TOTAL CLEARED",
+        "JP": "クリア人数",
+        "CN_S": "总通关人数",
+        "CN_T": "總通關人數",
+        "ES": "TOTAL COMPLETADOS"
+    },
+    "TOTAL_TIME": {
+        "KO": "총 플레이 타임",
+        "EN": "TOTAL PLAY TIME",
+        "JP": "合計プレイ時間",
+        "CN_S": "总游戏时间",
+        "CN_T": "總遊戲時間",
+        "ES": "TIEMPO TOTAL"
+    },
     "PROLOGUE_001": {
         "KO": "안녕하십니까. 이 편지를 받는 모든 분들께 깊은 감사를 느끼고 있습니다.",
         "EN": "Greetings. I feel deep gratitude to all who receive this letter.",
-        "JP": "皆様、この手紙を手に取っていただき、深く感謝しております。"
+        "JP": "皆様、この手紙を手に取っていただき、深く感謝しております。",
+        "CN_S": "您好。对收到这封信的各位，我深表感谢。",
+        "CN_T": "您好。對收到這封信的各位，我深表感謝。",
+        "ES": "Saludos. Siento una profunda gratitud hacia todos los que reciben esta carta."
     },
     "PROLOGUE_002": {
         "KO": "제 이름은 AAA. 저를 잘 아시는 분들은 멋쟁이 A나 트리플 에이라고들 불러주시죠.",
         "EN": "My name is AAA. To those who know me, I am Dashing A or Triple A.",
-        "JP": "私の名前はAAA。私をよく知る人々は、おしゃれなAやトリプルAと呼んでくれます。"
+        "JP": "私の名前はAAA。私をよく知る人々は、おしゃれなAやトリプルAと呼んでくれます。",
+        "CN_S": "我叫AAA。熟悉我的人都称我为时髦의 A或Triple A。",
+        "CN_T": "我叫AAA。熟悉我的人都稱我為時髦的A或Triple A。",
+        "ES": "Mi nombre es AAA. Para aquellos que me conocen, soy el Elegante A o Triple A."
     },
     "PROLOGUE_003": {
         "KO": "저는 소싯적에 대도였습니다. 세계 각지를 돌아다니면서 유명한 부호들의 저택을 털었죠.",
         "EN": "I was a master thief in my youth. I traveled the world and robbed the mansions of billionaires.",
-        "JP": "私は若い頃、大泥棒でした。世界各地を巡り、有名な富豪たちの屋敷를 襲いました。"
+        "JP": "私は若い頃、大泥棒でした。世界各地を巡り、有名な富豪たちの屋敷を襲いました。",
+        "CN_S": "我年轻时曾是一名大盗。我走遍世界各地，洗劫了著名富豪的豪宅。",
+        "CN_T": "我年輕時曾是一名大盜。我走遍世界各地，洗劫了著名富豪的豪宅。",
+        "ES": "Fui un gran ladrón en mi juventud. Viajé por todo el mundo y robé las mansiones de famosos multimillonarios."
     },
     "PROLOGUE_004": {
         "KO": "제가 훔쳐온 명화들은 전부 모조품으로 바꿔치기 했습니다. 진짜와 구별할 수 없는 완벽한 모조품으로요.",
         "EN": "All the paintings I stole were replaced with replicas. Perfect copies, indistinguishable from the originals.",
-        "JP": "私が盗んできた名画の数々は、すべて模造品にす리替えました。本物と見分けがつかない完璧な模造品입니다."
+        "JP": "私が盗んできた名画の数々は、すべて模造品にすり替えました。本物と見分けがつかない完璧な模造品です。",
+        "CN_S": "我偷来的名画全部换成了赝品。是与真品无异的完美赝品。",
+        "CN_T": "我偷來的名畫全部換成了贗品。是與真品無異的贗品。",
+        "ES": "Todas las pinturas famosas que robé fueron reemplazadas por réplicas. Réplicas perfectas, indistinguibles de las originales."
     },
     "PROLOGUE_005": {
         "KO": "하지만 사람은 늙고 결국 죽게 됩니다. 재산을 후계자에게 남길 생각은 없습니다.",
         "EN": "But man grows old and eventually dies. I have no intention of leaving my fortune to an heir.",
-        "JP": "しかし、人は老いて最後には死にます。財産を後継者に残すつもりはありません。"
+        "JP": "しかし、人は老いて最後에는 죽습니다. 재산을 후계자에 남길 생각은 없습니다.",
+        "CN_S": "但人终究会老去并死去。我不打算把财产留给继承人。",
+        "CN_T": "但人終究會老去並死去。我不打算把財產留給繼承人。",
+        "ES": "Pero el hombre envejece y finalmente muere. No tengo intención de dejar mi fortuna a un heredero."
     },
     "PROLOGUE_006": {
         "KO": "저의 모든 재화는 '그곳'에서 새로운 주인만을 기다리고 있을 것입니다.",
         "EN": "All my wealth is waiting for a new master in 'that place'.",
-        "JP": "私のすべての財産は「あの場所」で新しい主人を待っています。"
+        "JP": "私のすべての財産は「あの場所」で新しい主人を待っています。",
+        "CN_S": "我所有的财富都在“那个地方”等待着新的主人。",
+        "CN_T": "我所有的財富都在「那個地方」等待著新的主人。",
+        "ES": "Toda mi riqueza estará esperando a un nuevo dueño en 'ese lugar'."
     },
     "PROLOGUE_007": {
         "KO": "도전하시겠습니까? 하지만 그곳은 쉽게 갈 수 있는 곳이 아닙니다. 수많은 함정과 미로를 헤쳐나가야 하죠.",
         "EN": "Will you accept the challenge? But it is not a place easily reached. You must navigate countless traps and labyrinths.",
-        "JP": "挑戦しますか？ しかし、そこは簡単に行ける場所ではありません。数多くの罠と迷宮を切り抜けなければなりません。"
+        "JP": "挑戦しますか？ しかし、そこは簡単に行ける場所ではありません。数多くの罠と迷宮を切り抜けなければなりません。",
+        "CN_S": "你敢挑战吗？但那个地方可不容易到达。你必须穿过无数的陷阱和迷宫。",
+        "CN_T": "你敢挑戰嗎？但那個地方可不容易到達。你必須穿過無數的陷阱和迷宮。",
+        "ES": "¿Te atreves a intentarlo? Pero ese lugar no es fácil de alcanzar. Debes atravesar innumerables trampas y laberintos."
     },
     "PROLOGUE_008": {
         "KO": "생명의 위협이 두렵다면 즉시 이 편지를 버리시는 게 좋을 겁니다. 하하하하!",
         "EN": "If you fear for your life, you should discard this letter immediately. Hahahaha!",
-        "JP": "命の危険が怖いのであれば、すぐにこの手紙を捨てたほうがいいでしょう。ハハハハ！"
+        "JP": "命の危険が怖いのであれば、すぐにこの手紙を捨てたほうがいいでしょう。ハハハハ！",
+        "CN_S": "如果你害怕生命危险，最好立即丢掉这封信。哈哈哈哈！",
+        "CN_T": "如果你害怕生命危險，最好立即丟掉這封信。哈哈哈哈！",
+        "ES": "Si temes por tu vida, sería mejor que tiraras esta carta de inmediato. ¡Jajajaja!"
     },
     "PROLOGUE_009": {
         "KO": "파티가 시작되는 장소는 Alucard 집사의 집에서 시작합니다. 우선 그가 있는 나라로 가는 것이 좋을 겁니다.",
@@ -189,7 +327,7 @@
     "S1_4_001": {
         "KO": "벽이 좁혀져 온다! 케르베로스의 첫 번째 답을 입력해야 한다.",
         "EN": "The walls are closing in! Enter the first answer to Kerberos.",
-        "JP": "壁が迫ってくる！ ケルベロ스의最初の答えを入力しなければならない。"
+        "JP": "壁が迫ってくる！ ケルベロスの最初の答えを入力しなければならない。"
     },
     "S1_5_001": {
         "KO": "두 번째 머리의 답은 펜의 획수를 알파벳으로 치환한 것이다.",
@@ -215,5 +353,21 @@
         "KO": "1번 구멍에 창을 3번 꽂았다. 벽이 열리며 푸른 비단에 덮인 그림이 나타난다.",
         "EN": "I inserted the spear into hole #1 three times. The wall opens, revealing a painting covered in blue silk.",
         "JP": "1番の穴に槍を3回差し込んだ. 壁が開き、青い絹에 덮인 그림이 나타난다."
+    },
+    "END_OF_CHAPTER": {
+        "KO": "챕터가 종료되었습니다.",
+        "EN": "Chapter ended.",
+        "JP": "チャプターが終了しました。",
+        "CN_S": "章节已结束。",
+        "CN_T": "章節已結束。",
+        "ES": "Capítulo finalizado."
+    },
+    "UNAVAILABLE_INTERACTION": {
+        "KO": "상호작용 중에는 사용할 수 없습니다.",
+        "EN": "Unavailable during interaction.",
+        "JP": "インタラクション中は利用できません。",
+        "CN_S": "交互期间不可用。",
+        "CN_T": "交互期間不可用。",
+        "ES": "No disponible durante la interacción."
     }
 }

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Legacy Of The Triple A - 대괴도 AAA의 유산 v1.0</title>
+    <title>The Legacy Of The Triple A - 대괴도 AAA의 유산 v0.5</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Cinzel:wght@400;700&family=Outfit:wght@300;400;600&display=swap"
@@ -181,17 +181,32 @@
         }
 
         /* Menu Selection */
-        .menu-item.active {
+        .menu-item.active,
+        .menu-item:hover {
             color: var(--accent-gold);
             transform: scale(1.1);
             text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            border-color: var(--accent-gold);
+            background: rgba(255, 255, 255, 0.2);
         }
 
-        .menu-item.active::before {
+        .menu-item.active::before,
+        .menu-item:hover::before {
             content: '▶';
             position: absolute;
             left: -40px;
             animation: bounceLeft 0.5s infinite alternate;
+        }
+
+        .backlog-choice-selected {
+            color: #4ade80;
+            /* emerald-400 */
+            font-weight: bold;
+        }
+
+        .backlog-choice-unselected {
+            text-decoration: line-through;
+            opacity: 0.5;
         }
 
         @keyframes bounceLeft {
@@ -332,16 +347,38 @@
             </div>
         </div>
 
-        <div id="exit-confirm"
+        <!-- Universal Confirm Modal -->
+        <div id="universal-confirm"
             class="absolute inset-0 bg-black/80 backdrop-blur-sm z-[1000] hidden flex items-center justify-center">
-            <div class="glass p-12 rounded-3xl text-center space-y-10">
-                <p id="exit-msg" class="text-3xl"></p>
+            <div class="glass p-12 rounded-3xl text-center space-y-10 max-w-2xl">
+                <p id="confirm-msg" class="text-3xl leading-relaxed"></p>
                 <div class="flex gap-6 justify-center">
-                    <button onclick="window.close()" id="exit-yes"
-                        class="premium-btn px-16 py-4 rounded-xl text-2xl bg-primary-red/20 border-primary-red uppercase"></button>
-                    <button onclick="Engine.closeModal('exit-confirm')" id="exit-no"
-                        class="premium-btn px-16 py-4 rounded-xl text-2xl uppercase"></button>
+                    <button id="confirm-yes"
+                        class="premium-btn px-16 py-4 rounded-xl text-2xl bg-primary-red/20 border-primary-red uppercase">YES</button>
+                    <button id="confirm-no" class="premium-btn px-16 py-4 rounded-xl text-2xl uppercase">NO</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Universal Alert Modal -->
+        <div id="universal-alert"
+            class="absolute inset-0 bg-black/80 backdrop-blur-sm z-[1000] hidden flex items-center justify-center">
+            <div class="glass p-12 rounded-3xl text-center space-y-10 max-w-xl">
+                <p id="alert-msg" class="text-3xl leading-relaxed"></p>
+                <div class="flex justify-center">
+                    <button id="alert-ok"
+                        class="premium-btn px-20 py-4 rounded-xl text-2xl bg-accent-gold/20 border-accent-gold text-accent-gold uppercase">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="backlog-modal" class="absolute inset-0 glass z-[300] hidden flex flex-col p-20">
+            <div class="flex justify-between items-center mb-10 border-b border-white/10 pb-4">
+                <h2 class="text-4xl font-cinzel tracking-widest">LOG</h2>
+                <button onclick="Engine.closeModal('backlog-modal')" class="text-4xl">✕</button>
+            </div>
+            <div id="backlog-content" class="flex-1 overflow-y-auto space-y-6 pr-4 font-serif text-xl leading-relaxed">
+                <!-- Log injection -->
             </div>
         </div>
 
@@ -457,9 +494,22 @@
             updateTitleMenu() {
                 const items = document.querySelectorAll('.menu-item');
                 const keys = ['START_GAME', 'OPTIONS', 'SCORE', 'CREDITS', 'EXIT'];
+                const actions = ['startGame', 'showOptions', 'showScore', 'showCredits', 'showExit'];
+
                 items.forEach((item, i) => {
                     item.innerText = this.t(keys[i]);
                     item.classList.toggle('active', i === State.menuIndex);
+
+                    // Mouse events
+                    item.onclick = (e) => {
+                        e.stopPropagation();
+                        State.menuIndex = i;
+                        this.executeMenuAction();
+                    };
+                    item.onmouseenter = () => {
+                        State.menuIndex = i;
+                        this.updateTitleMenu();
+                    };
                 });
             },
 
@@ -639,8 +689,7 @@
                         break;
 
                     case 'end':
-                        alert("END OF CHAPTER");
-                        location.reload();
+                        this.showAlert(this.t('END_OF_CHAPTER'), () => location.reload());
                         break;
 
                     default:
@@ -857,21 +906,31 @@
                 const container = document.createElement('div');
                 container.className = 'flex flex-col gap-6 items-center justify-center h-full bg-black/40';
 
-                const addBtn = (txt, target) => {
+                const choices = [];
+                choices.push({ text: this.t(data.Value01), target: data.Value02 });
+                if (data.Value03) choices.push({ text: this.t(data.Value03), target: data.Value04 });
+
+                const addBtn = (choice, idx) => {
                     const btn = document.createElement('button');
                     btn.className = 'premium-btn glass px-20 py-8 rounded-2xl text-2xl w-[600px] text-white';
-                    btn.innerText = this.t(txt);
+                    btn.innerText = choice.text;
                     btn.onclick = () => {
                         State.isChoiceActive = false; // Reset flag
+
+                        // Record to backlog with selection info
+                        State.backlog.push({
+                            type: 'choice',
+                            choices: choices.map(c => c.text),
+                            selectedIndex: idx
+                        });
+
                         layer.innerHTML = '';
-                        this.executeEvent(target);
+                        this.executeEvent(choice.target);
                     };
                     container.appendChild(btn);
                 };
 
-                addBtn(data.Value01, data.Value02);
-                if (data.Value03) addBtn(data.Value03, data.Value04);
-
+                choices.forEach((c, idx) => addBtn(c, idx));
                 layer.appendChild(container);
             },
 
@@ -982,7 +1041,7 @@
             // --- UI ---
             toggleAuto() {
                 if (State.isChoiceActive || State.isQuizActive) {
-                    alert("Unavailable during interaction.");
+                    this.showAlert(this.t('UNAVAILABLE_INTERACTION'));
                     return;
                 }
                 State.settings.autoMode = !State.settings.autoMode;
@@ -996,12 +1055,28 @@
                 const modal = document.getElementById('backlog-modal');
                 const content = document.getElementById('backlog-content');
                 if (modal.classList.contains('hidden')) {
-                    content.innerHTML = State.backlog.map(item => `
-                        <div class="border-b border-white/5 pb-4">
-                            <span class="text-accent-gold font-bold mr-4">[${item.name || 'SYSTEM'}]</span>
-                            <span>${item.text}</span>
-                        </div>
-                    `).join('');
+                    content.innerHTML = State.backlog.map(item => {
+                        if (item.type === 'choice') {
+                            const choiceHtml = item.choices.map((c, idx) => `
+                                <div class="${idx === item.selectedIndex ? 'backlog-choice-selected' : 'backlog-choice-unselected'}">
+                                    ${idx === item.selectedIndex ? '▶ ' : '　 '}${c}
+                                </div>
+                            `).join('');
+                            return `
+                                <div class="border-b border-white/5 pb-4 space-y-2">
+                                    <div class="text-accent-gold font-bold mr-4 text-sm opacity-50">[DECISION]</div>
+                                    <div class="pl-4 border-l-2 border-white/10">${choiceHtml}</div>
+                                </div>
+                            `;
+                        } else {
+                            return `
+                                <div class="border-b border-white/5 pb-4">
+                                    <span class="text-accent-gold font-bold mr-4">[${item.name || 'SYSTEM'}]</span>
+                                    <span>${item.text}</span>
+                                </div>
+                            `;
+                        }
+                    }).join('');
                     modal.classList.remove('hidden');
                 } else {
                     modal.classList.add('hidden');
@@ -1107,15 +1182,13 @@
             },
 
             showExit() {
-                const modal = document.getElementById('exit-confirm');
-                modal.classList.remove('hidden');
-                document.getElementById('exit-msg').innerText = this.t('QUIT_CONFIRM');
-                document.getElementById('exit-yes').innerText = this.t('YES');
-                document.getElementById('exit-no').innerText = this.t('NO');
+                this.showConfirm(this.t('QUIT_CONFIRM'), () => {
+                    window.close();
+                });
             },
 
             toMenu() {
-                if (confirm(this.t('QUIT_CONFIRM'))) {
+                this.showConfirm(this.t('QUIT_CONFIRM'), () => {
                     this.closeAllModals();
                     document.getElementById('menu-layer').style.display = 'block';
                     document.getElementById('menu-layer').classList.remove('fade-out');
@@ -1139,13 +1212,46 @@
                     State.isQuizActive = false;
                     document.getElementById('auto-btn').innerText = `AUTO: OFF`;
                     this.updateTitleMenu();
-                }
+                });
             },
 
             closeAllModals() {
-                ['options-modal', 'score-modal', 'credits-modal', 'exit-confirm', 'backlog-modal'].forEach(id => {
-                    document.getElementById(id).classList.add('hidden');
+                ['options-modal', 'score-modal', 'credits-modal', 'universal-confirm', 'universal-alert', 'backlog-modal'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.add('hidden');
                 });
+            },
+
+            showAlert(msg, cb) {
+                const modal = document.getElementById('universal-alert');
+                document.getElementById('alert-msg').innerText = msg;
+                const btn = document.getElementById('alert-ok');
+                btn.onclick = () => {
+                    modal.classList.add('hidden');
+                    if (cb) cb();
+                };
+                modal.classList.remove('hidden');
+            },
+
+            showConfirm(msg, onYes, onNo) {
+                const modal = document.getElementById('universal-confirm');
+                document.getElementById('confirm-msg').innerText = msg;
+
+                const yesBtn = document.getElementById('confirm-yes');
+                const noBtn = document.getElementById('confirm-no');
+
+                yesBtn.innerText = this.t('YES');
+                noBtn.innerText = this.t('NO');
+
+                yesBtn.onclick = () => {
+                    modal.classList.add('hidden');
+                    if (onYes) onYes();
+                };
+                noBtn.onclick = () => {
+                    modal.classList.add('hidden');
+                    if (onNo) onNo();
+                };
+                modal.classList.remove('hidden');
             },
 
             debug(msg) {
