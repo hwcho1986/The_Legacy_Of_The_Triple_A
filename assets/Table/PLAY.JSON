@@ -1,299 +1,128 @@
 [
     {
-        "id": 1001,
-        "type": "BG_CHANGE",
-        "value": "assets/images/bg/bg_mansion_hall.png"
+        "Index": 100,
+        "type": "bgcolor",
+        "Value01": "#000000",
+        "Value02": 0
     },
     {
-        "id": 1002,
-        "type": "BGM_PLAY",
-        "value": "assets/audio/bgm/bgm_main.mp3"
+        "Index": 110,
+        "type": "onbgimage",
+        "Value01": "assets/images/bg/bg_mansion_hall.png",
+        "Value02": "fadein",
+        "Value03": 2.0,
+        "Value04": 1
     },
     {
-        "id": 1003,
-        "type": "CHAR_ENTER",
-        "target": "AAA",
-        "value": "center"
+        "Index": 120,
+        "type": "onbgm",
+        "Value01": "assets/audio/bgm/bgm_main.mp3",
+        "Value02": "loop",
+        "Value03": 0
     },
     {
-        "id": 1004,
-        "type": "DIALOGUE",
-        "target": "AAA",
-        "value": "PROLOGUE_001"
+        "Index": 130,
+        "type": "oncharacter",
+        "Value01": "jung",
+        "Value02": "normal",
+        "Value03": "center",
+        "Value04": "fadein",
+        "Value05": 1.0
     },
     {
-        "id": 1005,
-        "type": "DIALOGUE",
-        "target": "AAA",
-        "value": "PROLOGUE_002"
+        "Index": 140,
+        "type": "speak",
+        "Value01": "none",
+        "Value02": "시스템",
+        "Value03": "대괴도 AAA의 유산에 오신 것을 환영합니다.",
+        "Value05": "#5F9EA0"
     },
     {
-        "id": 1006,
-        "type": "DIALOGUE",
-        "target": "AAA",
-        "value": "PROLOGUE_003"
+        "Index": 150,
+        "type": "speak",
+        "Value01": "jung",
+        "Value02": "정성훈",
+        "Value03": "드디어 이곳에 도착했군... AAA의 유산이 정말 이곳에 있는 걸까?",
+        "Value04": "assets/audio/voice/jung_voice01.mp3"
     },
     {
-        "id": 1007,
-        "type": "DIALOGUE",
-        "target": "AAA",
-        "value": "PROLOGUE_004"
+        "Index": 160,
+        "type": "anieffect",
+        "Value01": "jung",
+        "Value02": "shake",
+        "Value03": 0.5
     },
     {
-        "id": 1008,
-        "type": "DIALOGUE",
-        "target": "AAA",
-        "value": "PROLOGUE_005"
+        "Index": 170,
+        "type": "oncolor",
+        "Value01": "#FF0000",
+        "Value02": 0.2,
+        "Value03": "30%"
     },
     {
-        "id": 1009,
-        "type": "DIALOGUE",
-        "target": "AAA",
-        "value": "PROLOGUE_006"
+        "Index": 180,
+        "type": "offcolor",
+        "Value01": 0.5
     },
     {
-        "id": 1010,
-        "type": "DIALOGUE",
-        "target": "AAA",
-        "value": "PROLOGUE_007"
+        "Index": 190,
+        "type": "choice",
+        "Value01": "안으로 들어간다",
+        "Value02": 1000,
+        "Value03": "도망친다",
+        "Value04": 2000,
+        "Value05": [
+            1,
+            "courage_up"
+        ]
     },
     {
-        "id": 1011,
-        "type": "DIALOGUE",
-        "target": "AAA",
-        "value": "PROLOGUE_008"
+        "Index": 1000,
+        "type": "title",
+        "Value04": "제 1장: 열리지 않는 문",
+        "Value03": "#FFFFFF",
+        "Value02": 60
     },
     {
-        "id": 1012,
-        "type": "DIALOGUE",
-        "target": "AAA",
-        "value": "PROLOGUE_009"
+        "Index": 1010,
+        "type": "onbgimage",
+        "Value01": "assets/images/bg/bg_secret_room.jpg",
+        "Value02": "blind",
+        "Value03": 1.5,
+        "Value04": 1
     },
     {
-        "id": 1013,
-        "type": "QUIZ",
-        "target": "quiz_1",
-        "value": [
-            "romania",
-            "루마니아",
-            "로마니아",
-            "România",
-            "romu-ania",
-            "ro-man-ia"
-        ],
-        "options": {
-            "hint": "1. Turn, 2. 나라 이름 (소문자로)",
-            "question": "그가 있는 나라는 어디인가?"
-        }
-    },
-    {
-        "id": 1014,
-        "type": "BG_CHANGE",
-        "value": "assets/images/bg/bg_transylvania.png"
-    },
-    {
-        "id": 1015,
-        "type": "CHAR_EXIT",
-        "target": "AAA"
-    },
-    {
-        "id": 1016,
-        "type": "DIALOGUE",
-        "target": "정성훈",
-        "value": "S1_1_001"
-    },
-    {
-        "id": 1017,
-        "type": "SFX_PLAY",
-        "value": "assets/audio/effect/sfx_email.mp3"
-    },
-    {
-        "id": 1018,
-        "type": "DIALOGUE",
-        "target": "시스템",
-        "value": "S1_1_002"
-    },
-    {
-        "id": 1019,
-        "type": "DIALOGUE",
-        "target": "알루카드",
-        "value": "S1_1_003"
-    },
-    {
-        "id": 1020,
-        "type": "QUIZ",
-        "target": "quiz_2",
-        "value": [
+        "Index": 1020,
+        "type": "quiz01",
+        "Value01": "루마니아의 흡혈귀 전설과 관련된 성의 이름은?",
+        "Value02": [
             "brancastle",
             "브란성"
         ],
-        "options": {
-            "hint": "집사의 집 이름 (소문자로, 공백 없이)",
-            "question": "어디로 가야 하는가?"
-        }
+        "Value03": "드라큘라의 실제 모델이 머물렀던 성이야.",
+        "Value04": "ㅂㄹㅅ",
+        "Value05": "영어로는 Bran Castle이라고 해."
     },
     {
-        "id": 1021,
-        "type": "BG_CHANGE",
-        "value": "assets/images/bg/bg_secret_room.jpg"
+        "Index": 1030,
+        "type": "speak",
+        "Value01": "none",
+        "Value02": "시스템",
+        "Value03": "정답입니다! 당신은 진실에 한 걸음 더 다가갔습니다."
     },
     {
-        "id": 1022,
-        "type": "DIALOGUE",
-        "target": "정성훈",
-        "value": "S1_2_001"
+        "Index": 1040,
+        "type": "end"
     },
     {
-        "id": 1023,
-        "type": "DIALOGUE",
-        "target": "비문",
-        "value": "S1_2_002"
+        "Index": 2000,
+        "type": "speak",
+        "Value01": "jung",
+        "Value02": "정성훈",
+        "Value03": "아무래도 내 분수에 맞지 않는 일인 것 같아... 돌아가자."
     },
     {
-        "id": 1024,
-        "type": "QUIZ",
-        "target": "quiz_3",
-        "value": [
-            "gungnir",
-            "궁니르"
-        ],
-        "options": {
-            "hint": "아스가르드의 신의 창",
-            "question": "창의 이름을 입력하세요."
-        }
-    },
-    {
-        "id": 1025,
-        "type": "SFX_PLAY",
-        "value": "assets/audio/effect/sfx_door_open.mp3"
-    },
-    {
-        "id": 1026,
-        "type": "DIALOGUE",
-        "target": "정성훈",
-        "value": "S1_3_001"
-    },
-    {
-        "id": 1027,
-        "type": "DIALOGUE",
-        "target": "문지기",
-        "value": "S1_3_002"
-    },
-    {
-        "id": 1028,
-        "type": "DIALOGUE",
-        "target": "정성훈",
-        "value": "S1_3_003"
-    },
-    {
-        "id": 1029,
-        "type": "BG_CHANGE",
-        "value": "assets/images/bg/bg_cave.jpg"
-    },
-    {
-        "id": 1030,
-        "type": "DIALOGUE",
-        "target": "시스템",
-        "value": "S1_4_001"
-    },
-    {
-        "id": 1031,
-        "type": "QUIZ",
-        "target": "quiz_4",
-        "value": [
-            "1151825181519"
-        ],
-        "options": {
-            "hint": "K(11)e(5)r(18)b(2)e(5)r(18)o(15)s(19)",
-            "question": "첫 번째 머리의 답을 입력하세요."
-        }
-    },
-    {
-        "id": 1032,
-        "type": "DIALOGUE",
-        "target": "시스템",
-        "value": "S1_5_001"
-    },
-    {
-        "id": 1033,
-        "type": "QUIZ",
-        "target": "quiz_5",
-        "value": [
-            "j"
-        ],
-        "options": {
-            "hint": "펜의 획수를 세어보자. (10 -> j)",
-            "question": "두 번째 머리의 답을 입력하세요."
-        }
-    },
-    {
-        "id": 1034,
-        "type": "DIALOGUE",
-        "target": "시스템",
-        "value": "S1_6_001"
-    },
-    {
-        "id": 1035,
-        "type": "QUIZ",
-        "target": "quiz_6",
-        "value": [
-            "heracles",
-            "헤라클레스"
-        ],
-        "options": {
-            "hint": "케르베로스를 굴복시킨 영웅",
-            "question": "세 번째 머리의 답을 입력하세요."
-        }
-    },
-    {
-        "id": 1036,
-        "type": "DIALOGUE",
-        "target": "정성훈",
-        "value": "S1_7_001"
-    },
-    {
-        "id": 1037,
-        "type": "DIALOGUE",
-        "target": "비문",
-        "value": "S1_7_002"
-    },
-    {
-        "id": 1038,
-        "type": "QUIZ",
-        "target": "quiz_7",
-        "value": [
-            "111"
-        ],
-        "options": {
-            "hint": "창의 이름을 숫자로 치환하여 합산하라 (LONGINUS)",
-            "question": "창을 꽂을 구멍 번호를 입력하세요."
-        }
-    },
-    {
-        "id": 1039,
-        "type": "SFX_PLAY",
-        "value": "assets/audio/effect/sfx_door_open.mp3"
-    },
-    {
-        "id": 1040,
-        "type": "DIALOGUE",
-        "target": "시스템",
-        "value": "S1_7_003"
-    },
-    {
-        "id": 1041,
-        "type": "BG_CHANGE",
-        "value": "assets/images/bg/bg_painting.jpg"
-    },
-    {
-        "id": 1042,
-        "type": "DIALOGUE",
-        "target": "정성훈",
-        "value": "이것이... AAA의 유산인가?"
-    },
-    {
-        "id": 1043,
-        "type": "GAME_END",
-        "value": "SUCCESS"
+        "Index": 2010,
+        "type": "end"
     }
 ]

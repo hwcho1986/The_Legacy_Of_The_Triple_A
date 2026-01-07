@@ -4,15 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Legacy Of The Triple A - 대괴도 AAA의 유산 v0.1</title>
+    <title>The Legacy Of The Triple A - 대괴도 AAA의 유산 v1.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Cinzel:wght@400;700&family=Nanum+Myeongjo:wght@400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Cinzel:wght@400;700&family=Outfit:wght@300;400;600&display=swap"
         rel="stylesheet">
     <style>
         :root {
             --primary-red: #b91c1c;
-            --overlay-dark: rgba(0, 0, 0, 0.85);
+            --accent-gold: #d4af37;
+            --glass-bg: rgba(0, 0, 0, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
         body {
@@ -20,34 +22,46 @@
             padding: 0;
             overflow: hidden;
             background-color: #000;
-            font-family: 'Noto Serif KR', 'Nanum Myeongjo', serif;
+            font-family: 'Outfit', 'Noto Serif KR', serif;
             color: #fff;
             user-select: none;
-            -webkit-tap-highlight-color: transparent;
         }
 
-        .font-cinzel {
-            font-family: 'Cinzel', serif;
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            position: relative;
         }
 
-        /* Animations */
+        /* Layer System */
+        .layer {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .layer-interactive {
+            pointer-events: auto;
+        }
+
+        /* Effects & Animations */
         .fade-in {
-            animation: fadeIn 1.5s ease-out forwards;
+            animation: fadeIn var(--duration, 1s) ease forwards;
         }
 
         .fade-out {
-            animation: fadeOut 1.2s ease-in forwards;
+            animation: fadeOut var(--duration, 1s) ease forwards;
         }
 
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(10px);
             }
 
             to {
                 opacity: 1;
-                transform: translateY(0);
             }
         }
 
@@ -61,49 +75,69 @@
             }
         }
 
-        /* UI Elements */
-        .menu-btn {
+        .shake {
+            animation: shake 0.5s infinite;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            25% {
+                transform: translate(-5px, 5px);
+            }
+
+            50% {
+                transform: translate(5px, -5px);
+            }
+
+            75% {
+                transform: translate(-5px, -5px);
+            }
+        }
+
+        .blind-in {
+            clip-path: inset(0 0 100% 0);
+            animation: blindIn var(--duration, 1s) ease forwards;
+        }
+
+        @keyframes blindIn {
+            to {
+                clip-path: inset(0 0 0 0);
+            }
+        }
+
+        /* Glassmorphism UI */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .premium-btn {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
             position: relative;
-            padding: 1rem 2.5rem;
-            font-size: 1.25rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            text-align: left;
-            border-left: 0px solid var(--primary-red);
             overflow: hidden;
+            cursor: pointer;
         }
 
-        .menu-btn.active {
-            background: linear-gradient(90deg, rgba(185, 28, 28, 0.2) 0%, transparent 100%);
-            border-left-width: 6px;
-            padding-left: 3.5rem;
-            color: #fff;
-            text-shadow: 0 0 10px rgba(185, 28, 28, 0.5);
+        .premium-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--accent-gold);
+            transform: translateY(-2px);
         }
 
-        .menu-btn::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0%;
-            height: 1px;
-            background-color: rgba(255, 255, 255, 0.2);
-            transition: width 0.3s ease;
-        }
-
-        .menu-btn:hover::before {
-            width: 100%;
-        }
-
-        .textbox-gradient {
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.8));
-            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .typewriter-cursor::after {
+        /* Typewriter & Icon */
+        .cursor-blink::after {
             content: '▼';
             margin-left: 8px;
-            color: var(--primary-red);
+            color: var(--accent-gold);
             animation: blink 0.8s infinite;
         }
 
@@ -119,581 +153,586 @@
             }
         }
 
-        /* Custom Range Slider Styling */
-        input[type=range] {
-            -webkit-appearance: none;
-            appearance: none;
-            background: transparent;
+        /* Character Transitions */
+        .char-obj {
+            transition: all 1s ease-in-out;
         }
-
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 4px;
-            background: #333;
-            border-radius: 2px;
-        }
-
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 16px;
-            width: 16px;
-            border-radius: 50%;
-            background: var(--primary-red);
-            margin-top: -6px;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(185, 28, 28, 0.5);
-        }
-
-        /* Cinematic Effects */
-        .bg-transition {
-            transition: background-image 1.5s ease-in-out;
-        }
-
-        .crt-effect {
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-        }
-
-        .terminal-text {
-            color: #0f0;
-            text-shadow: 0 0 5px #0f0;
-            font-family: 'Courier New', Courier, monospace;
-        }
-
-        @keyframes scanline {
-            0% {
-                transform: translateY(-100%);
-            }
-
-            100% {
-                transform: translateY(100%);
-            }
-        }
-
-        .scanline {
-            width: 100%;
-            height: 100px;
-            z-index: 100;
-            background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(0, 0, 0, 0) 100%);
-            opacity: 0.1;
-            position: absolute;
-            bottom: 100%;
-            animation: scanline 8s linear infinite;
-        }
-
-        .animate-shake {
-            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
-        }
-
-        @keyframes shake {
-
-            10%,
-            90% {
-                transform: translate3d(-1px, 0, 0);
-            }
-
-            20%,
-            80% {
-                transform: translate3d(2px, 0, 0);
-            }
-
-            30%,
-            50%,
-            70% {
-                transform: translate3d(-4px, 0, 0);
-            }
-
-            40%,
-            60% {
-                transform: translate3d(4px, 0, 0);
-            }
-        }
-
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #444;
-            border-radius: 10px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
-        }
-    </style>
-    <style>
-        /* [Existing Styles Kept for Brevity in this thought, but will be in the actual replacement] */
     </style>
 </head>
 
 <body>
-    <div id="game-container" class="w-full h-screen relative overflow-hidden bg-black">
-        <!-- Screens will be injected here -->
+    <div id="game-container">
+        <!-- bgcolor -->
+        <div id="bgcolor-layer" class="layer" style="z-index: 0; background-color: #000000;"></div>
+
+        <!-- onbgimage (multiple) -->
+        <div id="bgimage-layer" class="layer" style="z-index: 10;"></div>
+
+        <!-- oncharacter -->
+        <div id="character-layer" class="layer"
+            style="z-index: 20; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 5%;">
+        </div>
+
+        <!-- dialogue / speak -->
+        <div id="dialogue-layer" class="layer layer-interactive" style="z-index: 40; display: none;">
+            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 w-[90%] max-w-[1400px] glass p-8 rounded-3xl cursor-pointer"
+                id="dialogue-box">
+                <div id="speaker-name"
+                    class="text-3xl font-bold text-accent-gold mb-4 border-l-4 border-primary-red pl-4"></div>
+                <div id="dialogue-text" class="text-2xl leading-relaxed font-serif min-h-[100px]"></div>
+            </div>
+        </div>
+
+        <!-- oncolor / onimage -->
+        <div id="overlay-layer" class="layer" style="z-index: 50;"></div>
+
+        <!-- title / ontitle -->
+        <div id="title-layer" class="layer" style="z-index: 70;"></div>
+
+        <!-- choice / quiz -->
+        <div id="interaction-layer" class="layer layer-interactive" style="z-index: 80;"></div>
+
+        <!-- System UI (Always on top) -->
+        <div id="system-ui" class="absolute top-0 w-full p-6 flex justify-between items-center" style="z-index: 100;">
+            <button onclick="Engine.toggleBacklog()"
+                class="premium-btn px-6 py-2 rounded-full text-sm tracking-widest uppercase text-white">Log</button>
+            <div class="flex gap-4">
+                <button onclick="Engine.toggleAuto()" id="auto-btn"
+                    class="premium-btn px-6 py-2 rounded-full text-sm text-white">AUTO: OFF</button>
+                <button onclick="Engine.showSettings()"
+                    class="premium-btn px-6 py-2 rounded-full text-sm text-white">SETTING</button>
+                <button onclick="Engine.toMenu()"
+                    class="premium-btn px-6 py-2 rounded-full text-sm text-white">EXIT</button>
+            </div>
+        </div>
+
+        <!-- Backlog Modal -->
+        <div id="backlog-modal" class="absolute inset-0 glass z-[200] hidden flex flex-col p-20">
+            <div class="flex justify-between items-center mb-10 border-b border-white/10 pb-4">
+                <h2 class="text-4xl font-cinzel">HISTORY</h2>
+                <button onclick="Engine.toggleBacklog()" class="text-2xl">✕</button>
+            </div>
+            <div id="backlog-content" class="flex-1 overflow-y-auto pr-4 space-y-6 text-xl"></div>
+        </div>
+
+        <!-- Debug Overlay -->
+        <div id="debug-overlay"
+            class="absolute top-20 right-6 w-80 p-4 glass rounded-xl text-xs font-mono text-red-400 hidden"
+            style="z-index: 1000;"></div>
     </div>
 
     <script>
-        async function loadGameTables() {
-            try {
-                const [locRes, playRes] = await Promise.all([
-                    fetch('assets/Table/LOCALIZATION.JSON'),
-                    fetch('assets/Table/PLAY.JSON')
-                ]);
-
-                if (!locRes.ok || !playRes.ok) throw new Error("Could not find table files.");
-                State.localization = await locRes.json();
-                State.events = await playRes.json();
-                return true;
-            } catch (err) {
-                console.error("Load Error:", err);
-                return false;
-            }
-        }
         const State = {
-            screen: 'LOADING',
-            language: 'KO',
-            menuIndex: 0,
-            currentEventIndex: 0,
+            currentIndex: 0,
+            eventHistory: [],
             events: [],
             localization: {},
-            startTime: 0,
-            isTextAnimating: false,
-            history: [],
-            scores: JSON.parse(localStorage.getItem('aaa_scores') || '[]'),
-            settings: {
-                masterVol: 80, bgmVol: 60, sfxVol: 70, voiceVol: 80, mute: false,
-                lang: 'KO', textSpeed: 0.8, autoWait: 2000,
-                opacity: 0.85, fontSize: 32, font: 'Noto Serif KR', outline: true
-            },
-            currentView: {
-                background: '',
-                characters: {}, // { id: position }
-                name: '',
-                dialogue: '',
-                quiz: null
-            },
+            backlog: [],
+            characters: {}, // { id: { el, pos, expression, ... } }
+            backgrounds: {}, // { num: { el, ... } }
             audio: {
-                bgm: null,
+                bgm: new Audio(),
+                amb: new Audio(),
                 sfx: new Audio()
-            }
-        };
-
-        const container = document.getElementById('game-container');
-
-        // Audio Controller
-        const AudioManager = {
-            playBGM: (url) => {
-                if (State.audio.bgm) {
-                    State.audio.bgm.pause();
-                }
-                State.audio.bgm = new Audio(url);
-                State.audio.bgm.loop = true;
-                State.audio.bgm.volume = (State.settings.bgmVol / 100) * (State.settings.masterVol / 100);
-                State.audio.bgm.play().catch(() => console.log("User interaction required for audio"));
             },
-            playSFX: (url) => {
-                const sfx = new Audio(url);
-                sfx.volume = (State.settings.sfxVol / 100) * (State.settings.masterVol / 100);
-                sfx.play().catch(() => { });
-            }
+            settings: {
+                textSpeed: 'normal',
+                autoMode: false,
+                opacity: 0.7,
+                bgmVol: 0.5,
+                sfxVol: 0.5,
+                voiceVol: 0.8
+            },
+            isTextAnimating: false,
+            currentVoice: null,
+            stats: { hp: 100, keywords: [] }
         };
 
-        async function initGame() {
-            if (window.location.protocol === 'file:') {
-                alert("Security Note: Some browsers block external data loading when opened as a local file (file://).\n\nIf the game shows a black screen, please use a local web server (like VS Code Live Server) or use Firefox.");
-            }
+        const Engine = {
+            async init() {
+                try {
+                    const [resP, resL] = await Promise.all([
+                        fetch('assets/Table/PLAY.JSON'),
+                        fetch('assets/Table/LOCALIZATION.JSON')
+                    ]);
+                    State.events = await resP.json();
+                    State.events.sort((a, b) => a.Index - b.Index);
+                    State.localization = await resL.json();
 
-            render(); // Show initial loading screen
-            const success = await loadGameTables();
+                    this.executeEvent(State.events[0].Index);
+                } catch (e) {
+                    this.debug(`Failed to load tables: ${e.message}`);
+                    // Fallback to manual event if files missing
+                }
+            },
 
-            if (!success) {
-                State.screen = 'LOAD_ERROR';
-                render();
-                return;
-            }
+            debug(msg) {
+                const el = document.getElementById('debug-overlay');
+                el.innerText = `[DEBUG] ${msg}`;
+                el.classList.remove('hidden');
+                setTimeout(() => el.classList.add('hidden'), 5000);
+            },
 
-            const browserLang = navigator.language.split('-')[0].toUpperCase();
-            const supportedLangs = ['KO', 'EN', 'JP', 'CN_S', 'CN_T', 'ES'];
-            if (supportedLangs.includes(browserLang)) State.language = browserLang;
+            t(key) {
+                if (!key) return '';
+                if (typeof key !== 'string') return JSON.stringify(key);
+                if (key.startsWith('"') && key.endsWith('"')) return key.slice(1, -1);
+                if (State.localization[key]) {
+                    const entry = State.localization[key];
+                    return entry['KO'] || entry['EN'] || key;
+                }
+                return key;
+            },
 
-            State.screen = 'DISCLAIMER';
-            render();
-            window.addEventListener('resize', handleResize);
-            handleResize();
-        }
+            async executeEvent(index) {
+                const event = State.events.find(e => e.Index === index);
+                if (!event) {
+                    this.debug(`Index ${index} not found`);
+                    return;
+                }
+                const currentRelIdx = State.events.indexOf(event);
+                State.currentIndex = currentRelIdx;
 
-        // [Rest of the functions remain the same: handleResize, t, navigate, processNextEvent, render, renderDisclaimer, renderMenu, renderMenuButtons, renderGame, showQuizOverlay, handleGameEnd, renderOptions, renderScore, renderCredits, renderExitConfirm]
+                console.log("Executing:", event.type, event);
 
-        // ... (I will keep the rest of the engine here in the actual file)
+                switch (event.type) {
+                    case 'bgcolor':
+                        const bgLayer = document.getElementById('bgcolor-layer');
+                        bgLayer.style.transition = `background-color ${event.Value02 || 0}s`;
+                        bgLayer.style.backgroundColor = event.Value01 || '#000000';
+                        this.next(event.Index, 'Read');
+                        break;
 
-        function handleResize() {
-            const targetWidth = 1920;
-            const targetHeight = 1080;
-            const scaleX = window.innerWidth / targetWidth;
-            const scaleY = window.innerHeight / targetHeight;
-            const scale = Math.min(scaleX, scaleY);
+                    case 'onbgimage':
+                        this.handleBGImage(event);
+                        this.next(event.Index, 'Read');
+                        break;
 
-            const gameArea = document.getElementById('game-area');
-            if (gameArea) {
-                gameArea.style.transform = `scale(${scale})`;
-                gameArea.style.left = `${(window.innerWidth - targetWidth * scale) / 2}px`;
-                gameArea.style.top = `${(window.innerHeight - targetHeight * scale) / 2}px`;
-            }
-        }
+                    case 'offbgimage':
+                        this.handleOffBGImage(event);
+                        this.next(event.Index, 'Read');
+                        break;
 
-        function t(key) {
-            if (!State.localization || !State.localization[key]) return key;
-            const entry = State.localization[key];
-            return entry[State.language] || entry['EN'] || key;
-        }
+                    case 'oncharacter':
+                        this.handleCharacter(event);
+                        this.next(event.Index, 'Read');
+                        break;
 
-        function navigate(screen) {
-            State.screen = screen;
-            if (screen === 'GAME') {
-                State.currentEventIndex = 0;
-                State.history = [];
-                State.startTime = Date.now();
-                State.currentView.characters = {};
-                processNextEvent();
-            }
-            render();
-        }
+                    case 'offcharacter':
+                        this.handleOffCharacter(event);
+                        this.next(event.Index, 'Read');
+                        break;
 
-        function processNextEvent() {
-            if (State.currentEventIndex >= State.events.length) return;
+                    case 'speak':
+                        this.handleSpeak(event);
+                        break;
 
-            const event = State.events[State.currentEventIndex];
-            State.currentEventIndex++;
+                    case 'oncolor':
+                        this.handleOverlayColor(event, true);
+                        this.next(event.Index, 'Read');
+                        break;
 
-            switch (event.type) {
-                case 'DIALOGUE':
-                    State.currentView.name = event.target || '';
-                    State.currentView.dialogue = t(event.value);
-                    State.currentView.quiz = null;
-                    render();
-                    break;
-                case 'BG_CHANGE':
-                    State.currentView.background = event.value;
-                    render();
-                    processNextEvent();
-                    break;
-                case 'CHAR_ENTER':
-                    State.currentView.characters[event.target] = event.value || 'center';
-                    render();
-                    processNextEvent();
-                    break;
-                case 'CHAR_EXIT':
-                    delete State.currentView.characters[event.target];
-                    render();
-                    processNextEvent();
-                    break;
-                case 'BGM_PLAY':
-                    AudioManager.playBGM(event.value);
-                    processNextEvent();
-                    break;
-                case 'SFX_PLAY':
-                    AudioManager.playSFX(event.value);
-                    processNextEvent();
-                    break;
-                case 'WAIT':
-                    setTimeout(processNextEvent, (event.value || 1) * 1000);
-                    break;
-                case 'QUIZ':
-                    State.currentView.quiz = event;
-                    render();
-                    break;
-                case 'GAME_END':
-                    handleGameEnd(event.value);
-                    break;
-            }
-        }
+                    case 'offcolor':
+                        this.handleOverlayColor(event, false);
+                        this.next(event.Index, 'Read');
+                        break;
 
-        function render() {
-            container.innerHTML = '';
-            const area = document.createElement('div');
-            area.id = 'game-area';
-            area.className = 'absolute w-[1920px] h-[1080px] origin-top-left overflow-hidden bg-black shadow-2xl';
-            container.appendChild(area);
+                    case 'onimage':
+                        this.handleOverlayImage(event, true);
+                        this.next(event.Index, 'Read');
+                        break;
 
-            switch (State.screen) {
-                case 'LOADING': renderLoading(area); break;
-                case 'LOAD_ERROR': renderLoadError(area); break;
-                case 'DISCLAIMER': renderDisclaimer(area); break;
-                case 'MENU': renderMenu(area); break;
-                case 'GAME': renderGame(area); break;
-                case 'OPTIONS': renderOptions(area); break;
-                case 'SCORE': renderScore(area); break;
-                case 'CREDITS': renderCredits(area); break;
-                case 'EXIT_CONFIRM': renderExitConfirm(area); break;
-            }
-            handleResize();
-        }
+                    case 'offimage':
+                        this.handleOverlayImage(event, false);
+                        this.next(event.Index, 'Read');
+                        break;
 
-        function renderLoading(parent) {
-            parent.innerHTML = `
-                <div class="flex flex-col items-center justify-center h-full space-y-8">
-                    <div class="w-24 h-24 border-t-4 border-red-700 border-solid rounded-full animate-spin"></div>
-                    <div class="text-3xl font-cinzel text-white tracking-[0.5em] animate-pulse">LOADING ASSETS</div>
-                </div>
-            `;
-        }
+                    case 'title':
+                        this.handleTitle(event);
+                        break;
 
-        function renderLoadError(parent) {
-            parent.innerHTML = `
-                <div class="flex flex-col items-center justify-center h-full space-y-12 text-center p-20">
-                    <div class="text-9xl text-red-900 mb-8">⚠</div>
-                    <div class="text-6xl font-cinzel text-white uppercase tracking-widest">Initialization Failed</div>
-                    <p class="text-3xl text-neutral-500 font-serif max-w-[1200px] leading-relaxed">
-                        The game could not load scenario or localization data.<br>
-                        This is usually caused by CORS security policies when opening index.html directly from a file folder.
-                    </p>
-                    <div class="mt-20 p-10 border border-red-900/30 bg-red-900/10 text-2xl text-red-400 font-mono">
-                        Recommendation: Use a local web server (Live Server) or host it on GitHub Pages.
-                    </div>
-                </div>
-            `;
-        }
+                    case 'ontitle':
+                        this.handleTitle(event, true);
+                        this.next(event.Index, 'Read');
+                        break;
 
-        function renderDisclaimer(parent) {
-            const el = document.createElement('div');
-            el.className = 'flex items-center justify-center h-full p-40 fade-in text-center';
-            el.innerHTML = `<p class="text-5xl text-neutral-400 italic font-serif leading-loose">${t('DISCLAIMER')}</p>`;
-            parent.appendChild(el);
-            setTimeout(() => {
-                el.classList.replace('fade-in', 'fade-out');
-                setTimeout(() => navigate('MENU'), 1200);
-            }, 5000);
-        }
+                    case 'offtitle':
+                        document.getElementById('title-layer').innerHTML = '';
+                        this.next(event.Index, 'Read');
+                        break;
 
-        function renderMenu(parent) {
-            const menuItems = [
-                { id: 'GAME', key: 'START_GAME' },
-                { id: 'OPTIONS', key: 'OPTIONS' },
-                { id: 'SCORE', key: 'SCORE' },
-                { id: 'CREDITS', key: 'CREDITS' },
-                { id: 'EXIT_CONFIRM', key: 'EXIT' }
-            ];
+                    case 'choice':
+                        this.handleChoice(event);
+                        break;
 
-            parent.innerHTML = `
-                <div class="absolute inset-0 opacity-30 bg-cover bg-center bg-[url('https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?q=80&w=1920')]"></div>
-                <div class="relative z-10 h-full flex flex-col items-center justify-center">
-                    <div class="mb-40 fade-in text-center">
-                        <h1 class="font-cinzel text-[10rem] text-white tracking-tighter uppercase drop-shadow-[0_0_50px_rgba(185,28,28,0.6)]">The Triple A</h1>
-                        <div class="flex items-center justify-center mt-8 space-x-16">
-                            <div class="h-px bg-red-800 w-48 opacity-50"></div>
-                            <p class="font-cinzel text-5xl text-red-700 tracking-[0.6em] font-bold">대괴도 AAA의 유산</p>
-                            <div class="h-px bg-red-800 w-48 opacity-50"></div>
-                        </div>
-                    </div>
-                    <div id="menu-list" class="flex flex-col w-[700px] space-y-4"></div>
-                    <div class="absolute bottom-20 text-neutral-600 text-xl tracking-[1em] uppercase font-cinzel opacity-40">SELECT YOUR DESTINY</div>
-                </div>
-            `;
+                    case 'quiz01':
+                        this.handleQuiz(event);
+                        break;
 
-            const list = parent.querySelector('#menu-list');
-            menuItems.forEach((item, idx) => {
-                const btn = document.createElement('button');
-                btn.className = `menu-btn font-cinzel text-4xl tracking-widest uppercase py-8 ${State.menuIndex === idx ? 'active' : 'text-neutral-500 hover:text-white'}`;
-                btn.innerText = t(item.key);
-                btn.onmouseenter = () => { State.menuIndex = idx; renderMenuButtons(); };
-                btn.onclick = () => navigate(item.id);
-                list.appendChild(btn);
-            });
-        }
+                    case 'onbgm':
+                        this.playAudio('bgm', event.Value01, event.Value02 === 'loop', event.Value03);
+                        this.next(event.Index, 'Read');
+                        break;
 
-        function renderMenuButtons() {
-            const btns = document.querySelectorAll('.menu-btn');
-            btns.forEach((btn, idx) => {
-                if (idx === State.menuIndex) btn.classList.add('active');
-                else btn.classList.remove('active');
-            });
-        }
+                    case 'offbgm':
+                        this.stopAudio('bgm', event.Value01);
+                        this.next(event.Index, 'Read');
+                        break;
 
-        function renderGame(parent) {
-            const view = State.currentView;
-            parent.innerHTML = `
-                <div id="bg-layer" class="absolute inset-0 bg-cover bg-center transition-all duration-1000 bg-transition" style="background-image: url('${view.background}')"></div>
-                <div class="absolute inset-0 bg-black/40 z-10"></div>
-                <div id="character-layer" class="absolute inset-0 z-20 flex justify-center items-end px-32 pointer-events-none pb-20"></div>
-                <div class="absolute top-0 left-0 w-full z-40 p-16 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent">
-                    <button id="btn-menu" class="px-12 py-4 bg-black/40 border border-white/10 rounded-full font-cinzel text-lg tracking-widest hover:bg-white/10 transition-all uppercase">Escape to Menu</button>
-                    <div class="flex space-x-8">
-                        <div class="text-neutral-500 font-cinzel border-l border-white/20 pl-8 h-8 flex items-center text-xl uppercase tracking-widest">Chapter 01: The Legacy</div>
-                    </div>
-                </div>
-                <div class="absolute bottom-0 left-0 w-full z-30 p-20 cursor-pointer" id="game-click-area">
-                    <div class="w-full max-w-[1600px] mx-auto rounded-[3rem] border border-white/10 p-16 textbox-gradient min-h-[350px]" style="background-color: rgba(0,0,0,${State.settings.opacity})">
-                        <div id="name-box" class="text-red-700 mb-8 font-bold font-cinzel text-4xl tracking-[0.4em] border-l-8 border-red-900 pl-8 min-h-[1.5em]">
-                            ${view.name ? t(view.name) : ''}
-                        </div>
-                        <div id="text-box" class="leading-relaxed text-neutral-100 italic font-serif" style="font-size: ${State.settings.fontSize}px; line-height: 1.6;"></div>
-                    </div>
-                </div>
-                <div id="quiz-overlay" class="absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden">
-                    <div class="w-[1200px] bg-neutral-950 border border-green-900/50 rounded-2xl overflow-hidden relative shadow-[0_0_100px_rgba(34,197,94,0.1)]">
-                        <div class="bg-neutral-900 px-8 py-4 flex justify-between items-center border-b border-white/5">
-                            <div class="flex space-x-2">
-                                <div class="w-3 h-3 rounded-full bg-red-500/50"></div>
-                                <div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
-                                <div class="w-3 h-3 rounded-full bg-green-500/50"></div>
-                            </div>
-                            <div class="text-xs font-mono text-neutral-600 tracking-widest">TRIPLE-A SYSTEM OVERRIDE</div>
-                        </div>
-                        <div class="p-20 relative overflow-hidden">
-                            <div class="absolute inset-0 crt-effect"></div>
-                            <div class="scanline"></div>
-                            <div class="relative z-10">
-                                <div class="mb-12 terminal-text text-xl opacity-60 font-mono">> ACCESSING SECURE NODE...</div>
-                                <div id="quiz-question" class="terminal-text text-4xl mb-16 leading-relaxed"></div>
-                                <div class="flex border-2 border-green-900/30 p-4 bg-black/40">
-                                    <span class="terminal-text text-4xl mr-6">></span>
-                                    <input type="text" id="quiz-input" autocomplete="off" class="flex-1 bg-transparent terminal-text text-4xl outline-none placeholder:opacity-20 uppercase tracking-widest" placeholder="...">
-                                </div>
-                                <div class="mt-12 flex justify-between items-end">
-                                    <div class="terminal-text text-lg opacity-40 italic" id="quiz-hint"></div>
-                                    <button id="quiz-submit" class="border border-green-900/50 hover:bg-green-900/10 px-16 py-6 terminal-text text-2xl tracking-[0.5em] transition-all">EXECUTE</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
+                    case 'jump':
+                        this.executeEvent(parseInt(event.Value01));
+                        break;
 
-            const charLayer = parent.querySelector('#character-layer');
-            Object.entries(view.characters).forEach(([id, pos]) => {
+                    case 'Wait':
+                        setTimeout(() => this.next(event.Index, 'Read'), (event.Value01 || 0) * 1000);
+                        break;
+
+                    case 'anieffect':
+                        this.handleAniEffect(event);
+                        this.next(event.Index, 'Read');
+                        break;
+
+                    case 'next':
+                        this.initNextChapter(event.Value01);
+                        break;
+
+                    case 'end':
+                        alert("END OF CHAPTER");
+                        location.reload();
+                        break;
+
+                    default:
+                        this.debug(`Unknown type: ${event.type}`);
+                        this.next(event.Index, 'Read');
+                }
+            },
+
+            next(index, mode) {
+                if (mode === 'Read') {
+                    const nextRelIdx = State.currentIndex + 1;
+                    if (nextRelIdx < State.events.length) {
+                        this.executeEvent(State.events[nextRelIdx].Index);
+                    }
+                }
+            },
+
+            // --- Handlers ---
+            handleBGImage(data) {
+                const layer = document.getElementById('bgimage-layer');
                 const img = document.createElement('img');
-                // Character mapping
-                const seed = id === 'AAA' ? 'TreasureHunter' : (id === '알루카드' ? 'ButlerA' : id);
-                img.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
-                img.className = `h-[900px] object-contain drop-shadow-[0_50px_100px_rgba(0,0,0,0.95)] transition-all duration-1000 animate-fadeIn`;
-                if (pos === 'left') img.style.marginRight = 'auto';
-                else if (pos === 'right') img.style.marginLeft = 'auto';
-                charLayer.appendChild(img);
-            });
+                img.src = data.Value01;
+                img.className = `layer object-cover w-full h-full fade-in`;
+                img.style.setProperty('--duration', `${data.Value03 || 0}s`);
+                img.dataset.num = data.Value04 || 1;
 
-            const textBox = parent.querySelector('#text-box');
-            parent.querySelector('#btn-menu').onclick = (e) => { e.stopPropagation(); navigate('MENU'); };
+                layer.appendChild(img);
+                const sorted = [...layer.querySelectorAll('img')].sort((a, b) => b.dataset.num - a.dataset.num);
+                layer.innerHTML = '';
+                sorted.forEach(el => layer.appendChild(el));
+            },
 
-            if (view.dialogue) {
-                let i = 0;
-                State.isTextAnimating = true;
-                textBox.innerText = '';
-                const speed = 100 - (State.settings.textSpeed * 90);
-                const timer = setInterval(() => {
-                    textBox.innerText += view.dialogue[i++];
-                    if (i >= view.dialogue.length) {
-                        clearInterval(timer);
-                        State.isTextAnimating = false;
-                        textBox.classList.add('typewriter-cursor');
-                        if (view.quiz) showQuizOverlay(parent, view.quiz);
+            handleOffBGImage(data) {
+                const layer = document.getElementById('bgimage-layer');
+                const target = layer.querySelector(`img[data-num="${data.Value01}"]`);
+                if (target) {
+                    target.classList.add('fade-out');
+                    setTimeout(() => target.remove(), (data.Value03 || 0.5) * 1000);
+                }
+            },
+
+            handleCharacter(data) {
+                const layer = document.getElementById('character-layer');
+                let char = State.characters[data.Value01];
+                if (!char) {
+                    const el = document.createElement('img');
+                    el.className = 'char-obj h-full object-contain mx-[-10%]';
+                    char = { el, id: data.Value01 };
+                    State.characters[data.Value01] = char;
+                    layer.appendChild(el);
+                }
+
+                char.el.src = `assets/images/character/${data.Value01}.png`;
+                if (data.Value02 && data.Value02 !== 'normal') char.el.src = `assets/images/character/${data.Value01}_${data.Value02}.png`;
+
+                if (data.Value04 === 'fadein') {
+                    char.el.classList.add('fade-in');
+                    char.el.style.setProperty('--duration', `${data.Value05 || 1}s`);
+                }
+            },
+
+            handleOffCharacter(data) {
+                const char = State.characters[data.Value01];
+                if (char) {
+                    char.el.classList.add('fade-out');
+                    setTimeout(() => {
+                        char.el.remove();
+                        delete State.characters[data.Value01];
+                    }, (data.Value05 || 0.5) * 1000);
+                }
+            },
+
+            handleSpeak(data) {
+                const layer = document.getElementById('dialogue-layer');
+                const speaker = document.getElementById('speaker-name');
+                const text = document.getElementById('dialogue-text');
+                const box = document.getElementById('dialogue-box');
+
+                layer.style.display = 'block';
+                const nameStr = this.t(data.Value02);
+                speaker.innerText = nameStr;
+
+                // Highlight character
+                Object.values(State.characters).forEach(c => {
+                    if (c.id === data.Value01) {
+                        c.el.style.transform = 'scale(1.15)';
+                        c.el.style.filter = 'brightness(1.1)';
+                        c.el.style.zIndex = '30';
+                    } else {
+                        c.el.style.transform = 'scale(1)';
+                        c.el.style.filter = 'brightness(0.7)';
+                        c.el.style.zIndex = '20';
                     }
-                }, speed);
-
-                parent.querySelector('#game-click-area').onclick = () => {
-                    if (State.isTextAnimating) {
-                        clearInterval(timer);
-                        textBox.innerText = view.dialogue;
-                        State.isTextAnimating = false;
-                        textBox.classList.add('typewriter-cursor');
-                        if (view.quiz) showQuizOverlay(parent, view.quiz);
-                    } else if (!view.quiz) {
-                        processNextEvent();
-                    }
-                };
-            }
-        }
-
-        function showQuizOverlay(parent, event) {
-            const overlay = parent.querySelector('#quiz-overlay');
-            const qText = parent.querySelector('#quiz-question');
-            const hText = parent.querySelector('#quiz-hint');
-            const input = parent.querySelector('#quiz-input');
-            const submitBtn = parent.querySelector('#quiz-submit');
-
-            overlay.classList.remove('hidden');
-            qText.innerText = event.options.question;
-            hText.innerText = `HINT: ${event.options.hint}`;
-
-            input.focus();
-            const submit = () => {
-                const answers = Array.isArray(event.value) ? event.value : [event.value];
-                const inputVal = input.value.trim().toLowerCase().replace(/\s+/g, '');
-                const isCorrect = answers.some(ans => {
-                    const normalizedAns = String(ans).trim().toLowerCase().replace(/\s+/g, '');
-                    return inputVal === normalizedAns;
                 });
 
-                if (isCorrect) {
-                    overlay.classList.add('fade-out');
-                    setTimeout(() => {
-                        overlay.classList.add('hidden');
-                        overlay.classList.remove('fade-out');
-                        processNextEvent();
-                    }, 1000);
-                } else {
-                    overlay.querySelector('.w-[1200px]').classList.add('animate-shake');
-                    setTimeout(() => overlay.querySelector('.w-[1200px]').classList.remove('animate-shake'), 500);
-                    input.value = '';
+                const content = this.t(data.Value03);
+                State.backlog.push({ name: nameStr, text: content });
+
+                this.typeText(text, content, () => {
+                    if (State.settings.autoMode) {
+                        const autoWait = 1000 + (content.length * 50);
+                        setTimeout(() => {
+                            if (State.settings.autoMode && !State.isTextAnimating) this.next(data.Index, 'Read');
+                        }, autoWait);
+                    }
+                });
+
+                if (data.Value04) {
+                    this.playAudio('voice', data.Value04);
                 }
-            };
 
-            submitBtn.onclick = (e) => { e.stopPropagation(); submit(); };
-            input.onkeydown = (e) => { e.stopPropagation(); if (e.key === 'Enter') submit(); };
-        }
+                box.onclick = (e) => {
+                    e.stopPropagation();
+                    if (State.isTextAnimating) {
+                        State.isTextAnimating = false;
+                    } else {
+                        box.onclick = null;
+                        this.next(data.Index, 'Read');
+                    }
+                };
+            },
 
-        function handleGameEnd(value) {
-            const nick = prompt("MISSION ACCOMPLISHED! Enter your code-name (3 chars):", "AAA") || "AAA";
-            State.scores.unshift({ nickname: nick.substring(0, 3).toUpperCase(), date: new Date().toLocaleDateString(), playtime: Date.now() - State.startTime });
-            localStorage.setItem('aaa_scores', JSON.stringify(State.scores));
-            navigate('SCORE');
-        }
+            typeText(el, str, cb) {
+                el.innerText = '';
+                el.classList.remove('cursor-blink');
+                State.isTextAnimating = true;
+                let i = 0;
+                const speeds = { slow: 100, normal: 30, fast: 10 };
+                const speed = speeds[State.settings.textSpeed] || 30;
 
-        function renderOptions(parent) {
-            parent.innerHTML = `
-                <div class="h-full flex flex-col items-center justify-center space-y-20">
-                    <div class="relative z-10 w-[1000px] space-y-16 bg-neutral-950/50 p-20 rounded-[4rem] border border-white/5">
-                        <div class="text-center font-cinzel text-5xl tracking-[1em] text-white">CONFIG</div>
-                        <div class="space-y-12">
-                            <div class="flex justify-between items-center text-4xl font-serif px-10">
-                                <span class="text-neutral-500">Language</span>
-                                <div class="flex gap-4">
-                                    ${['KO', 'EN', 'JP'].map(l => `<button class="px-8 py-3 border ${State.language === l ? 'border-red-600 bg-red-900/20 text-white' : 'border-white/10 text-neutral-600'} transition-all" onclick="window.setLang('${l}')">${l}</button>`).join('')}
-                                </div>
-                            </div>
+                const timer = setInterval(() => {
+                    if (!State.isTextAnimating) {
+                        el.innerText = str;
+                        clearInterval(timer);
+                        el.classList.add('cursor-blink');
+                        cb();
+                        return;
+                    }
+                    el.innerText += str[i++];
+                    if (i >= str.length) {
+                        clearInterval(timer);
+                        State.isTextAnimating = false;
+                        el.classList.add('cursor-blink');
+                        cb();
+                    }
+                }, speed);
+            },
+
+            handleOverlayColor(data, on) {
+                const layer = document.getElementById('overlay-layer');
+                if (on) {
+                    layer.style.pointerEvents = 'auto';
+                    const el = document.createElement('div');
+                    el.className = 'layer fade-in';
+                    el.style.backgroundColor = data.Value01;
+                    const opacityStr = data.Value03 || '100%';
+                    el.style.opacity = opacityStr.includes('%') ? parseInt(opacityStr) / 100 : opacityStr;
+                    el.style.setProperty('--duration', `${data.Value02 || 0.5}s`);
+                    layer.appendChild(el);
+                } else {
+                    layer.innerHTML = '';
+                    layer.style.pointerEvents = 'none';
+                }
+            },
+
+            handleOverlayImage(data, on) {
+                const layer = document.getElementById('overlay-layer');
+                if (on) {
+                    const el = document.createElement('img');
+                    el.src = data.Value01;
+                    el.className = 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 fade-in';
+                    if (data.Value02) {
+                        const parts = String(data.Value02).split(',');
+                        if (parts.length === 2) {
+                            el.style.width = parts[0] + 'px';
+                            el.style.height = parts[1] + 'px';
+                        }
+                    }
+                    layer.appendChild(el);
+                } else {
+                    layer.innerHTML = '';
+                }
+            },
+
+            handleTitle(data, keep = false) {
+                const layer = document.getElementById('title-layer');
+                const el = document.createElement('div');
+                el.className = 'absolute inset-0 flex items-center justify-center text-center p-20 z-10';
+                el.style.fontFamily = data.Value01 || 'Cinzel, serif';
+                el.style.fontSize = (data.Value02 || 48) + 'px';
+                el.style.color = data.Value03 || '#fff';
+                el.innerText = '';
+                layer.appendChild(el);
+
+                this.typeText(el, this.t(data.Value04), () => {
+                    if (!keep) {
+                        setTimeout(() => {
+                            el.classList.add('fade-out');
+                            setTimeout(() => { el.remove(); this.next(data.Index, 'Read'); }, 1000);
+                        }, 2000);
+                    }
+                });
+            },
+
+            handleChoice(data) {
+                const layer = document.getElementById('interaction-layer');
+                const container = document.createElement('div');
+                container.className = 'flex flex-col gap-6 items-center justify-center h-full bg-black/40';
+
+                const addBtn = (txt, target) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'premium-btn glass px-20 py-8 rounded-2xl text-2xl w-[600px] text-white';
+                    btn.innerText = this.t(txt);
+                    btn.onclick = () => {
+                        layer.innerHTML = '';
+                        this.executeEvent(target);
+                    };
+                    container.appendChild(btn);
+                };
+
+                addBtn(data.Value01, data.Value02);
+                if (data.Value03) addBtn(data.Value03, data.Value04);
+
+                layer.appendChild(container);
+            },
+
+            handleQuiz(data) {
+                const layer = document.getElementById('interaction-layer');
+                layer.innerHTML = '';
+                const quizBox = document.createElement('div');
+                quizBox.className = 'absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm';
+                quizBox.innerHTML = `
+                    <div class="glass p-12 rounded-[3rem] w-[800px] text-center">
+                        <div class="text-xl opacity-60 mb-8 border-b border-white/10 pb-4 tracking-[0.5em]">QUERY NODE</div>
+                        <div class="text-3xl mb-12 font-serif">${this.t(data.Value01)}</div>
+                        <input id="quiz-input" autocomplete="off" class="w-full bg-white/5 border border-white/20 p-6 rounded-xl text-3xl mb-8 focus:border-accent-gold outline-none text-center" placeholder="...">
+                        <div class="flex gap-4 mb-8">
+                            <button id="hint-1" class="premium-btn p-4 rounded-xl flex-1 text-xs text-white">HINT 1</button>
+                            ${data.Value04 ? `<button id="hint-2" class="premium-btn p-4 rounded-xl flex-1 text-xs text-white">HINT 2</button>` : ''}
+                            ${data.Value05 ? `<button id="hint-3" class="premium-btn p-4 rounded-xl flex-1 text-xs text-white">HINT 3</button>` : ''}
                         </div>
-                        <button class="w-full py-10 bg-neutral-900 hover:bg-red-900 text-3xl font-cinzel tracking-[0.5em] transition-all" onclick="window.navigateToMenu()">RETURN</button>
+                        <button id="quiz-submit" class="premium-btn w-full p-6 rounded-xl text-2xl bg-primary-red/20 border-primary-red text-white">EXECUTE</button>
                     </div>
-                </div>
-             `;
-            window.setLang = (l) => { State.language = l; render(); };
-            window.navigateToMenu = () => navigate('MENU');
+                `;
+                layer.appendChild(quizBox);
+
+                const input = quizBox.querySelector('#quiz-input');
+                input.focus();
+
+                const answers = Array.isArray(data.Value02) ? data.Value02 : [data.Value02];
+
+                const check = () => {
+                    const val = input.value.toLowerCase().replace(/\s/g, '');
+                    const isCorrect = answers.some(a => String(a).toLowerCase().replace(/\s/g, '') === val);
+                    if (isCorrect) {
+                        layer.innerHTML = '';
+                        this.next(data.Index, 'Read');
+                    } else {
+                        quizBox.querySelector('.glass').classList.add('shake');
+                        setTimeout(() => quizBox.querySelector('.glass').classList.remove('shake'), 500);
+                        input.value = '';
+                    }
+                };
+
+                quizBox.querySelector('#quiz-submit').onclick = check;
+                input.onkeydown = (e) => { if (e.key === 'Enter') check(); };
+                quizBox.querySelector('#hint-1').onclick = () => alert(this.t(data.Value03));
+                if (data.Value04) quizBox.querySelector('#hint-2').onclick = () => alert(this.t(data.Value04));
+                if (data.Value05) quizBox.querySelector('#hint-3').onclick = () => alert(this.t(data.Value05));
+            },
+
+            handleAniEffect(data) {
+                const target = data.Value01 === 'all' ? document.getElementById('game-container') : (State.characters[data.Value01]?.el);
+                if (target) {
+                    target.classList.add(data.Value02);
+                    setTimeout(() => target.classList.remove(data.Value02), (data.Value03 || 1) * 1000);
+                }
+            },
+
+            playAudio(type, path, loop = false, delay = 0) {
+                setTimeout(() => {
+                    let aud = State.audio[type];
+                    if (!aud) aud = new Audio();
+                    aud.src = path;
+                    aud.loop = loop;
+                    aud.volume = (State.settings[type + 'Vol'] || 0.5);
+                    aud.play().catch(e => console.log("Audio play blocked", e));
+                }, delay * 1000);
+            },
+
+            stopAudio(type, fade = 0) {
+                const aud = State.audio[type];
+                if (!aud) return;
+                if (fade > 0) {
+                    let vol = aud.volume;
+                    const interval = setInterval(() => {
+                        vol -= 0.05;
+                        if (vol <= 0) {
+                            aud.pause();
+                            clearInterval(interval);
+                        } else aud.volume = vol;
+                    }, fade * 100);
+                } else aud.pause();
+            },
+
+            // --- UI ---
+            toggleAuto() {
+                State.settings.autoMode = !State.settings.autoMode;
+                document.getElementById('auto-btn').innerText = `AUTO: ${State.settings.autoMode ? 'ON' : 'OFF'}`;
+                if (State.settings.autoMode && !State.isTextAnimating) {
+                    const nextRelIdx = State.currentIndex + 1;
+                    if (nextRelIdx < State.events.length) this.executeEvent(State.events[nextRelIdx].Index);
+                }
+            },
+            toggleBacklog() {
+                const modal = document.getElementById('backlog-modal');
+                const content = document.getElementById('backlog-content');
+                if (modal.classList.contains('hidden')) {
+                    content.innerHTML = State.backlog.map(item => `
+                        <div class="border-b border-white/5 pb-4">
+                            <span class="text-accent-gold font-bold mr-4">[${item.name || 'SYSTEM'}]</span>
+                            <span>${item.text}</span>
+                        </div>
+                    `).join('');
+                    modal.classList.remove('hidden');
+                } else {
+                    modal.classList.add('hidden');
+                }
+            },
+            showSettings() { alert("Volume and Speed settings in progress..."); },
+            toMenu() { if (confirm("Quit to main menu?")) location.reload(); }
         }
 
-        function renderScore(parent) {
-            parent.innerHTML = `
-                <div class="p-32 h-full flex flex-col">
-                    <h2 class="text-9xl font-cinzel text-red-800 mb-20 tracking-tighter uppercase">Hall of Infamy</h2>
-                    <div class="flex-1 overflow-y-auto pr-10 custom-scrollbar">
-                        <table class="w-full text-left text-5xl font-cinzel">
-                            <thead class="text-neutral-600 text-2xl uppercase tracking-[1em] border-b border-white/5">
-                                <tr><th class="pb-10">CODE NAME</th><th class="pb-10">DATE</th></tr>
-                            </thead>
-                            <tbody>
-                                ${State.scores.map(s => `<tr class="border-b border-white/5 hover:bg-white/5 transition-all"><td class="py-12 text-red-600">${s.nickname}</td><td class="text-neutral-400">${s.date}</td></tr>`).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                    <button class="mt-20 py-10 border border-white/10 hover:bg-white/5 text-4xl font-cinzel tracking-[1em] uppercase transition-all" onclick="window.navigateToMenu()">RETURN</button>
-                </div>
-            `;
-            window.navigateToMenu = () => navigate('MENU');
-        }
-
-        function renderCredits(parent) { navigate('MENU'); }
-        function renderExitConfirm(parent) { navigate('MENU'); }
-
-        initGame();
+        window.onload = () => Engine.init();
     </script>
 </body>
 
