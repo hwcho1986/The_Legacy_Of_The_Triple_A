@@ -189,6 +189,21 @@
         <!-- title / ontitle -->
         <div id="title-layer" class="layer" style="z-index: 70;"></div>
 
+        <!-- Main Menu Layer -->
+        <div id="menu-layer" class="layer layer-interactive" style="z-index: 150; background: #000;">
+            <div class="flex flex-col items-center justify-center h-full space-y-12">
+                <h1 class="text-8xl font-cinzel text-accent-gold tracking-tighter fade-in" style="--duration: 2s">THE
+                    LEGACY OF<br><span class="text-white">THE TRIPLE A</span></h1>
+                <div class="flex flex-col space-y-4 w-96">
+                    <button onclick="Engine.startGame()"
+                        class="premium-btn py-6 rounded-xl text-2xl font-bold tracking-widest text-white">START
+                        GAME</button>
+                    <button class="premium-btn py-4 rounded-xl text-xl text-white/60">GALLERY</button>
+                    <button class="premium-btn py-4 rounded-xl text-xl text-white/60">SETTINGS</button>
+                </div>
+            </div>
+        </div>
+
         <!-- choice / quiz -->
         <div id="interaction-layer" class="layer layer-interactive" style="z-index: 80;"></div>
 
@@ -244,6 +259,8 @@
                 voiceVol: 0.8
             },
             isTextAnimating: false,
+            isInteractionWaiting: false,
+            currentEvent: null,
             currentVoice: null,
             stats: { hp: 100, keywords: [] }
         };
@@ -259,11 +276,29 @@
                     State.events.sort((a, b) => a.Index - b.Index);
                     State.localization = await resL.json();
 
-                    this.executeEvent(State.events[0].Index);
+                    // window listener for global interaction
+                    window.addEventListener('keydown', (e) => {
+                        if (e.code === 'Space' || e.code === 'Enter') {
+                            if (State.isInteractionWaiting) this.handleGlobalInteraction();
+                        }
+                    });
+
+                    document.getElementById('game-container').addEventListener('mousedown', (e) => {
+                        if (State.isInteractionWaiting) this.handleGlobalInteraction();
+                    });
+
                 } catch (e) {
                     this.debug(`Failed to load tables: ${e.message}`);
-                    // Fallback to manual event if files missing
                 }
+            },
+
+            startGame() {
+                const menu = document.getElementById('menu-layer');
+                menu.classList.add('fade-out');
+                setTimeout(() => {
+                    menu.style.display = 'none';
+                    this.executeEvent(State.events[0].Index);
+                }, 1000);
             },
 
             debug(msg) {
@@ -510,15 +545,17 @@
                     this.playAudio('voice', data.Value04);
                 }
 
-                box.onclick = (e) => {
-                    e.stopPropagation();
-                    if (State.isTextAnimating) {
-                        State.isTextAnimating = false;
-                    } else {
-                        box.onclick = null;
-                        this.next(data.Index, 'Read');
-                    }
-                };
+                State.isInteractionWaiting = true;
+                State.currentEvent = data;
+            },
+
+            handleGlobalInteraction() {
+                if (State.isTextAnimating) {
+                    State.isTextAnimating = false;
+                } else if (State.isInteractionWaiting) {
+                    State.isInteractionWaiting = false;
+                    this.next(State.currentEvent.Index, 'Read');
+                }
             },
 
             typeText(el, str, cb) {
