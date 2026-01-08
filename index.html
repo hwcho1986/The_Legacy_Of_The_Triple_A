@@ -1044,13 +1044,23 @@
                     const container = document.createElement('div');
                     container.className = 'char-container';
 
+                    // Wrapper for effects (shake etc) to avoid conflict with positioning
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'char-effect-wrap';
+                    wrapper.style.width = '100%';
+                    wrapper.style.height = '100%';
+                    wrapper.style.display = 'flex';
+                    wrapper.style.alignItems = 'flex-end';
+                    wrapper.style.justifyContent = 'center';
+
                     const el = document.createElement('img');
                     el.className = 'char-obj';
 
-                    container.appendChild(el);
+                    wrapper.appendChild(el);
+                    container.appendChild(wrapper);
                     layer.appendChild(container);
 
-                    char = { el: container, img: el, id: data.Value01 };
+                    char = { el: container, wrapper: wrapper, img: el, id: data.Value01 };
                     State.characters[data.Value01] = char;
                 }
 
@@ -1363,10 +1373,10 @@
             },
 
             handleAniEffect(data) {
-                // 특정 캐릭터 컨테이너(el) 또는 전체 컨테이너에 효과 적용
+                // 특정 캐릭터 래퍼(wrapper) 또는 전체 컨테이너에 효과 적용
                 const target = data.Value01 === 'all' ?
                     document.getElementById('game-container') :
-                    State.characters[data.Value01]?.el; // 컨테이너(el)에 적용하여 변환값 유지
+                    State.characters[data.Value01]?.wrapper; // 래퍼에 적용하여 위치(container)와 분리
 
                 if (target) {
                     target.classList.add(data.Value02);

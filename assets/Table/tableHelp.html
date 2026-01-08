@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Legacy of the Triple A - Engine Type Ref.</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Cinzel:wght@400;700&family=Outfit:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary-red: #8b0000;
+            --accent-gold: #c5a059;
+            --bg-deep: #121212;
+            --glass-bg: rgba(26, 26, 26, 0.95);
+            --glass-border: rgba(197, 160, 89, 0.2);
+            --text-main: #e0e0e0;
+            --font-serif: 'Cinzel', 'Noto Serif KR', serif;
+            --font-sans: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            margin: 0;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: var(--font-serif);
+            color: var(--accent-gold);
+        }
+
+        h1 {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border-bottom: 1px solid var(--accent-gold);
+            padding-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-top: 4rem;
+            margin-bottom: 2rem;
+            border-left: 5px solid var(--primary-red);
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            color: #fff;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: rgba(197, 160, 89, 0.1);
+            color: var(--accent-gold);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        code {
+            font-family: 'Consolas', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            color: #ff9d9d;
+        }
+
+        pre {
+            background: #000;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        pre code {
+            background: transparent;
+            color: #a5d6ff;
+            padding: 0;
+        }
+
+        .tag-req {
+            color: #ff6b6b;
+            font-size: 0.8em;
+            margin-left: 0.5em;
+        }
+
+        .tag-opt {
+            color: #888;
+            font-size: 0.8em;
+            margin-left: 0.5em;
+        }
+
+        .scroll-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--accent-gold);
+            color: #000;
+            padding: 1rem;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Game Engine Type Reference<br><span style="font-size: 1rem; color: #888;">JSON Schema & Functionality Guide
+                (v0.8.1)</span></h1>
+
+        <div class="card">
+            <h3>Overview</h3>
+            <p>This document details all supported <code>type</code> values for <code>PLAY.JSON</code>. Each event
+                object strictly follows the schema:</p>
+            <pre><code>{
+    "Index": 100,          // Unique ID (Integer)
+    "type": "string",      // Event Type
+    "Value01": "...",      // Parameter 1
+    "Value02": "...",      // Parameter 2
+    "Value03": "...",      // Parameter 3
+    "Value04": "...",      // Parameter 4
+    "Value05": "..."       // Parameter 5
+}</code></pre>
+        </div>
+
+        <h2>1. Functional Definition Table</h2>
+        <div class="card" style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="12%">Type</th>
+                        <th width="18%">Description</th>
+                        <th width="14%">Value01</th>
+                        <th width="14%">Value02</th>
+                        <th width="14%">Value03</th>
+                        <th width="14%">Value04</th>
+                        <th width="14%">Value05</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Background -->
+                    <tr>
+                        <td>bgcolor</td>
+                        <td>Change Background Color</td>
+                        <td>Hex Code<br>e.g. #000000</td>
+                        <td>Transition (sec)<br>e.g. 2.0</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>onbgimage</td>
+                        <td>Show Background Image</td>
+                        <td>Image Path</td>
+                        <td>Effect<br>(fadein, blind)</td>
+                        <td>Duration (sec)</td>
+                        <td>Layer Num<br>(Default: 1)</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>offbgimage</td>
+                        <td>Remove Background Image</td>
+                        <td>Layer Num</td>
+                        <td>-</td>
+                        <td>Duration (sec)</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+
+                    <!-- Character -->
+                    <tr>
+                        <td>oncharacter</td>
+                        <td>Show Character</td>
+                        <td>Char ID<br>(e.g. jung)</td>
+                        <td>State/Emotion<br>(normal)</td>
+                        <td>Position<br>(center, left, right)</td>
+                        <td>Effect<br>(fadein)</td>
+                        <td>Duration (sec)</td>
+                    </tr>
+                    <tr>
+                        <td>offcharacter</td>
+                        <td>Remove Character</td>
+                        <td>Char ID</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>Effect<br>(fadeout)</td>
+                        <td>Duration (sec)</td>
+                    </tr>
+                    <tr>
+                        <td>move</td>
+                        <td>Move Character</td>
+                        <td>Char ID</td>
+                        <td>Target Pos<br>(center, left, right)</td>
+                        <td>Duration (sec)</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>anieffect</td>
+                        <td>Animation Effect</td>
+                        <td>Char ID or 'all'</td>
+                        <td>Effect Name<br>(shake)</td>
+                        <td>Duration (sec)</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>gifeffect</td>
+                        <td>GIF Overlay on Char</td>
+                        <td>Char ID</td>
+                        <td>GIF Path</td>
+                        <td>Width (px/%)</td>
+                        <td>Height (px/%)</td>
+                        <td>Duration (sec)</td>
+                    </tr>
+
+                    <!-- Dialogue -->
+                    <tr>
+                        <td>speak</td>
+                        <td>Dialogue</td>
+                        <td>Char ID<br>(none for narr.)</td>
+                        <td>Speaker Name<br>(Locale Key)</td>
+                        <td>Text Content<br>(Locale Key)</td>
+                        <td>Voice Path</td>
+                        <td>Name Color<br>(Hex)</td>
+                    </tr>
+
+                    <!-- Overlays -->
+                    <tr>
+                        <td>oncolor</td>
+                        <td>Color Overlay</td>
+                        <td>Hex Code<br>#RRGGBB</td>
+                        <td>Duration (sec)</td>
+                        <td>Opacity<br>(0.0 ~ 1.0 or %)</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>offcolor</td>
+                        <td>Remove Color Overlay</td>
+                        <td>Duration (sec)</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>onimage</td>
+                        <td>Image Overlay</td>
+                        <td>Image Path</td>
+                        <td>Size<br>(W,H e.g. 200,200)</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>offimage</td>
+                        <td>Remove Image Overlay</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+
+                    <!-- Text / Titles -->
+                    <tr>
+                        <td>title</td>
+                        <td>Chapter Title (Temp)</td>
+                        <td>Font Family<br>(Optional)</td>
+                        <td>Font Size<br>(Default: 48)</td>
+                        <td>Color<br>#FFFFFF</td>
+                        <td>Text Content</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>ontitle</td>
+                        <td>Title (Persist)</td>
+                        <td>Font Family</td>
+                        <td>Font Size</td>
+                        <td>Color</td>
+                        <td>Text Content</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>offtitle</td>
+                        <td>Remove Title</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+
+                    <!-- Interaction -->
+                    <tr>
+                        <td>choice</td>
+                        <td>User Choice</td>
+                        <td>Choice 1 Text</td>
+                        <td>Target Index 1</td>
+                        <td>Choice 2 Text</td>
+                        <td>Target Index 2</td>
+                        <td>Stats/Flags<br>(Array)</td>
+                    </tr>
+                    <tr>
+                        <td>quiz01</td>
+                        <td>Text Input Quiz</td>
+                        <td>Question Text</td>
+                        <td>Answers<br>(String/Array)</td>
+                        <td>Hint 1</td>
+                        <td>Hint 2</td>
+                        <td>Hint 3</td>
+                    </tr>
+
+                    <!-- Audio -->
+                    <tr>
+                        <td>onbgm</td>
+                        <td>Play BGM</td>
+                        <td>Audio Path</td>
+                        <td>Loop<br>(loop)</td>
+                        <td>Delay (sec)</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>offbgm</td>
+                        <td>Stop BGM</td>
+                        <td>Type<br>(bgm)</td>
+                        <td>Fade Out Duration<br>(Optional)</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+
+                    <!-- Flow -->
+                    <tr>
+                        <td>jump</td>
+                        <td>Jump to Index</td>
+                        <td>Target Index</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>Wait</td>
+                        <td>Pause Execution</td>
+                        <td>Duration (sec)</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>end</td>
+                        <td>End Chapter</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>2. Detailed Examples</h2>
+
+        <h3>Background & Visuals</h3>
+        <div class="card">
+            <p class="mb-4"><strong>bgcolor</strong>: Smoothly transitions the background color.</p>
+            <pre><code>{
+    "Index": 100,
+    "type": "bgcolor",
+    "Value01": "#000000",
+    "Value02": 2.0  // Transition takes 2 seconds
+}</code></pre>
+
+            <p class="mt-8 mb-4"><strong>onbgimage</strong>: Fades in a background image. Supports multiple layers
+                (higher number = front).</p>
+            <pre><code>{
+    "Index": 110,
+    "type": "onbgimage",
+    "Value01": "assets/images/bg/bg_room.jpg",
+    "Value02": "fadein",
+    "Value03": 2.0,
+    "Value04": 1    // Layer 1 (z-index ordering)
+}</code></pre>
+        </div>
+
+        <h3>Character Control</h3>
+        <div class="card">
+            <p class="mb-4"><strong>oncharacter</strong>: Displays a character. If the character is already on screen,
+                it updates the image/position.</p>
+            <pre><code>{
+    "Index": 130,
+    "type": "oncharacter",
+    "Value01": "jung",      // Maps to character ID
+    "Value02": "normal",    // Becomes assets/images/character/jung_normal.png
+    "Value03": "center",    // Or "left", "right", "50%"
+    "Value04": "fadein",
+    "Value05": 1.0
+}</code></pre>
+            <p class="mt-8 mb-4"><strong>anieffect</strong>: Applies a CSS animation class (like 'shake') to the
+                character.</p>
+            <pre><code>{
+    "Index": 135,
+    "type": "anieffect",
+    "Value01": "jung",
+    "Value02": "shake",     // Defined in global CSS
+    "Value03": 0.5          // Duration
+}</code></pre>
+        </div>
+
+        <h3>Dialogue</h3>
+        <div class="card">
+            <p class="mb-4"><strong>speak</strong>: The core storytelling element. Shows text and plays voiceover.</p>
+            <pre><code>{
+    "Index": 140,
+    "type": "speak",
+    "Value01": "jung",
+    "Value02": "정성훈",      // Name shown
+    "Value03": "This is a [FF0000]warning[-] message./nNew line here.",
+    "Value04": "assets/voice/jung_01.mp3",
+    "Value05": "#C5A059"    // Custom name color
+}</code></pre>
+            <div class="mt-4 p-4 bg-white/5 rounded">
+                <strong>Text Tags:</strong>
+                <ul class="list-disc ml-5 mt-2 text-sm text-gray-400">
+                    <li><code>/n</code> or <code>\n</code>: New Line</li>
+                    <li><code>[RRGGBB]Text[-]</code>: Color text (Hex code)</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>Interactions (Choice & Quiz)</h3>
+        <div class="card">
+            <p class="mb-4"><strong>choice</strong>: Presents 2 distinct options to the player.</p>
+            <pre><code>{
+    "Index": 200,
+    "type": "choice",
+    "Value01": "Enter the room",  // Option 1
+    "Value02": 1000,              // Jump to Index 1000
+    "Value03": "Run away",        // Option 2
+    "Value04": 2000               // Jump to Index 2000
+}</code></pre>
+
+            <p class="mt-8 mb-4"><strong>quiz01</strong>: Text input field for solving puzzles.</p>
+            <pre><code>{
+    "Index": 300,
+    "type": "quiz01",
+    "Value01": "Who is the culprit?",
+    "Value02": ["Butler", "The Butler"], // Acceptable answers
+    "Value03": "He wears a suit",        // Hint 1
+    "Value04": "He was in the kitchen"   // Hint 2
+}</code></pre>
+        </div>
+
+    </div>
+
+    <div class="scroll-top" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</div>
+
+</body>
+
+</html>
