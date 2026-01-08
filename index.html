@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Legacy Of The Triple A - 대괴도 AAA의 유산 v0.8.0</title>
+    <title>The Legacy Of The Triple A - 대괴도 AAA의 유산 v0.8.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Cinzel:wght@400;700&family=Outfit:wght@300;400;600&display=swap"
@@ -35,12 +35,16 @@
             color: var(--text-main);
             user-select: none;
             height: 100vh;
+            /* Fallback for older browsers */
+            height: 100dvh;
+            /* Dynamic viewport height for mobile */
             width: 100vw;
         }
 
         #game-container {
             width: 100vw;
             height: 100vh;
+            height: 100dvh;
             background: #000;
             position: relative;
         }
@@ -197,6 +201,8 @@
             transform-origin: center;
             pointer-events: none;
             z-index: 20;
+            will-change: transform;
+            /* Performance hint for smoother animation */
             /* 기본 위치: 700px 추가 하강을 통해 머리/어깨 노출 */
             --base-y: 55%;
             --char-scale: 1;
@@ -213,6 +219,8 @@
             object-position: center top;
             filter: drop-shadow(0 10px 40px rgba(0, 0, 0, 0.9));
             pointer-events: none;
+            display: block;
+            /* Remove inline ghost space */
             /* 스케일을 이미지 자체에 적용하여 중앙 기점으로 확대 구현 */
             transform: scale(calc(var(--char-scale) * var(--mob-zoom)));
             transform-origin: center;
