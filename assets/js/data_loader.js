@@ -8,7 +8,7 @@ const SHEET_CONFIG = {
     // [USER SETUP REQUIRED]
     // Replace these URLs with your published Google Sheet CSV links.
     // See GOOGLE_SHEET_SETUP.md for instructions.
-    localizationUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRdRMDw8LGfQiBMzW_9vVnkVXIhwuVw8cFtNdHEenyamaGX41sSEJn3wcWmsDox6Uw8BPDiIwoFrOoL/pub?gid=0&single=true&output=csv"
+    localizationUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRdRMDw8LGfQiBMzW_9vVnkVXIhwuVw8cFtNdHEenyamaGX41sSEJn3wcWmsDox6Uw8BPDiIwoFrOoL/pub?gid=0&single=true&output=csv",
     playUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSovBNzdHYEOu2Tp1fkHndFo7b2CErE-DtVTwD6INEzm6d6o0x1-bt-z5yxQnJYSdIktgkPuiIFtfNj/pub?gid=0&single=true&output=csv"
 };
 
