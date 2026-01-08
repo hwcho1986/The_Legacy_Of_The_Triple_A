@@ -1,0 +1,53 @@
+﻿Key,KO,EN,JP,CN_S,CN_T,ES
+AAA,AAA,AAA,AAA,AAA,AAA,AAA
+알루카드,알루카드,Alucard,アル카드,阿鲁卡多,阿魯卡多,Alucard
+정성훈,정성훈,Jung Sung-hoon,チョン・ソンフン,郑成勋,鄭成勳,Jung Sung-hoon
+시스템,시스템,SYSTEM,시스템,系统,系統,SISTEMA
+비문,비문,Inscription,碑文,碑文,碑文,Inscripción
+문지기,문지기,Gatekeeper,門番,守门人,守門人,Guardián
+DISCLAIMER,"해당 게임은 단편의 짧은 게임이기에/n [ff0000]세이브를 지원하지 않습니다.[-]/n/n게임 플레이 시,/n창을 닫으면 [ff0000]처음부터 시작[-]해야합니다./n/n 또한 이 작품에서 등장한/n모든 이름, 인물, 사건들은 허구입니다./n실존하는 인물, 장소, 건물, 제품과는/n일절 관련이 없습니다.",This game is a short story and does not support saving./nClosing the window will reset progress. All entities in this work are fictional and not related to real persons or places.,"このゲームは短編のためセーブ機能はありません。ブラウザを閉じると最初부터になります。/nまた、本作에 등장한 이름, 이름, 인물, 사건들은 모두 피션입니다.",本游戏为短篇故事，不支持存档. 关闭窗口将重置进度. 所有名称、人物和事件均为虚构.,本遊戲為短篇故事，不支援存檔. 關閉窗口將重置進度. 所有名稱、人物和事件均為虛構.,Este juego es una historia corta y no admite guardado. Todos los nombres son ficticios.
+START_GAME,게임 시작,START GAME,ゲーム開始,开始游戏,開始遊戲,INICIAR
+OPTIONS,옵션,OPTIONS,OPTIONS,选项,選項,OPCIONES
+SCORE,스코어,SCORE,스코어,得分,得分,PUNTOS
+CREDITS,제작진,CREDITS,クレジット,制作人员,製作人員,CRÉDITOS
+EXIT,종료,EXIT,終了,退出,退出,SALIR
+QUIT_CONFIRM,현재 창을 닫고 게임을 종료하시겠습니까?,Quit and close window?,ゲームを終了しますか？,确定退出吗？,確定退出嗎？,¿Cerrar el juego?
+YES,예,YES,はい,은,是,SÍ
+NO,아니오,NO,いいえ,否,否,NO
+SOUND,사운드,SOUND,サウンド,声音,聲音,SONIDO
+DISPLAY,출력,DISPLAY,表示,显示,顯示,PANTALLA
+MASTER_MUTE,전체 음소거,MASTER MUTE,全体ミュート,静音,靜音,SILENCIAR TODO
+BGM_VOL,배경음악 볼륨,BGM VOLUME,BGM音量,背景音乐音量,背景音樂音量,VOLUMEN BGM
+SFX_VOL,효과음 볼륨,SFX VOLUME,効果音音量,音效音量,音效音量,VOLUMEN SFX
+VOICE_VOL,대사 볼륨,VOICE VOLUME,ボイス音量,语音音量,語音音量,VOLUMEN VOZ
+TEXT_SPEED,텍스트 출력 속도,TEXT SPEED,テキスト速度,文字速度,文字速度,VELOCIDAD TEXTO
+AUTO_MODE_TITLE,오토 모드,AUTO MODE,オートモード,自动模式,自動模式,MODO AUTO
+DIALOGUE_OPACITY,대사창 투명도,DIALOGUE OPACITY,ウィンドウ透明도,对话框透明度,對話框透明度,OPACIDAD VENTANA
+NICKNAME_PROMPT,닉네임을 입력하세요 (3글자),Enter Nickname (3 chars),ニックネームを入力 (3文字),输入昵称 (3字),輸入暱稱 (3字),Nick (3 letras)
+TOTAL_PLAYERS,총 클리어 인원,TOTAL CLEARED,クリア人数,总通关人数,總通關人數,TOTAL COMPLETADOS
+TOTAL_TIME,총 플레이 타임,TOTAL PLAY TIME,合計プレイ時間,总游戏时间,總遊戲時間,TIEMPO TOTAL
+PROLOGUE_001,안녕하십니까. 이 편지를 받는 모든 분들께 깊은 감사를 느끼고 있습니다.,Greetings. I feel deep gratitude to all who receive this letter.,皆様、この手紙を手に取っていただき、深く感謝しております。,您好。对收到这封信的各位，我深表感谢。,您好。對收到這封信的各位，我深表感謝。,Saludos. Siento una profunda gratitud hacia todos los que reciben esta carta.
+PROLOGUE_002,제 이름은 AAA. 저를 잘 아시는 분들은 멋쟁이 A나 트리플 에이라고들 불러주시죠.,"My name is AAA. To those who know me, I am Dashing A or Triple A.",私の名前はAAA。私をよく知る人々は、おしゃれなAやトリプルAと呼んでくれます。,我叫AAA。熟悉我的人都称我为时髦의 A或Triple A。,我叫AAA。熟悉我的人都稱我為時髦的A或Triple A。,"Mi nombre es AAA. Para aquellos que me conocen, soy el Elegante A o Triple A."
+PROLOGUE_003,저는 소싯적에 대도였습니다. 세계 각지를 돌아다니면서 유명한 부호들의 저택을 털었죠.,I was a master thief in my youth. I traveled the world and robbed the mansions of billionaires.,私は若い頃、大泥棒でした。世界各地を巡り、有名な富豪たちの屋敷を襲いました。,我年轻时曾是一名大盗。我走遍世界各地，洗劫了著名富豪的豪宅。,我年輕時曾是一名大盜。我走遍世界各地，洗劫了著名富豪的豪宅。,Fui un gran ladrón en mi juventud. Viajé por todo el mundo y robé las mansiones de famosos multimillonarios.
+PROLOGUE_004,제가 훔쳐온 명화들은 전부 모조품으로 바꿔치기 했습니다. 진짜와 구별할 수 없는 완벽한 모조품으로요.,"All the paintings I stole were replaced with replicas. Perfect copies, indistinguishable from the originals.",私が盗んできた名画の数々は、すべて模造品にすり替えました。本物と見分けがつかない完璧な模造品です。,我偷来的名画全部换成了赝品。是与真品无异的完美赝品。,我偷來的名畫全部換成了贗品。是與真品無異的贗品。,"Todas las pinturas famosas que robé fueron reemplazadas por réplicas. Réplicas perfectas, indistinguibles de las originales."
+PROLOGUE_005,하지만 사람은 늙고 결국 죽게 됩니다. 재산을 후계자에게 남길 생각은 없습니다.,But man grows old and eventually dies. I have no intention of leaving my fortune to an heir.,しかし、人は老いて最後에는 죽습니다. 재산을 후계자에 남길 생각은 없습니다.,但人终究会老去并死去。我不打算把财产留给继承人。,但人終究會老去並死去。我不打算把財產留給繼承人。,Pero el hombre envejece y finalmente muere. No tengo intención de dejar mi fortuna a un heredero.
+PROLOGUE_006,저의 모든 재화는 '그곳'에서 새로운 주인만을 기다리고 있을 것입니다.,All my wealth is waiting for a new master in 'that place'.,私のすべての財産は「あの場所」で新しい主人を待っています。,我所有的财富都在“那个地方”等待着新的主人。,我所有的財富都在「那個地方」等待著新的主人。,Toda mi riqueza estará esperando a un nuevo dueño en 'ese lugar'.
+PROLOGUE_007,도전하시겠습니까? 하지만 그곳은 쉽게 갈 수 있는 곳이 아닙니다. 수많은 함정과 미로를 헤쳐나가야 하죠.,Will you accept the challenge? But it is not a place easily reached. You must navigate countless traps and labyrinths.,挑戦しますか？ しかし、そこは簡単に行ける場所ではありません。数多くの罠と迷宮を切り抜けなければなりません。,你敢挑战吗？但那个地方可不容易到达。你必须穿过无数的陷阱和迷宫。,你敢挑戰嗎？但那個地方可不容易到達。你必須穿過無數的陷阱和迷宮。,¿Te atreves a intentarlo? Pero ese lugar no es fácil de alcanzar. Debes atravesar innumerables trampas y laberintos.
+PROLOGUE_008,생명의 위협이 두렵다면 즉시 이 편지를 버리시는 게 좋을 겁니다. 하하하하!,"If you fear for your life, you should discard this letter immediately. Hahahaha!",命の危険が怖いのであれば、すぐにこの手紙を捨てたほうがいいでしょう。ハハハハ！,如果你害怕生命危险，最好立即丢掉这封信。哈哈哈哈！,如果你害怕生命危險，最好立即丟掉這封信。哈哈哈哈！,"Si temes por tu vida, sería mejor que tiraras esta carta de inmediato. ¡Jajajaja!"
+PROLOGUE_009,파티가 시작되는 장소는 Alucard 집사의 집에서 시작합니다. 우선 그가 있는 나라로 가는 것이 좋을 겁니다.,"The party begins at the home of my butler, Alucard. First, you should travel to the country where he resides.",パーティーが始まる場所は、執事アルカードの家から始まります。まず、彼がいる国へ行くのがよいでしょう。,,,
+S1_1_001,루마니아... 이곳인가.,Romania... is this the place?,ルーマニア… ここか。,,,
+S1_1_002,이메일이 도착했습니다.,A new email has arrived.,メールが届きました。,,,
+S1_1_003,이미 당신이 올 것을 알고 있었습니다. 트랜실바니아(Transylvania)로 오십시오.,I already knew you were coming. Come to Transylvania.,あなたが来ることはすでに分かっていました。トランシルバニアへお越しください。,,,
+S1_2_001,비밀의 방 안에서 검은 창을 발견했다.,A black spear was found inside a secret room.,秘密の部屋の中で黒い槍を見つけた。,,,
+S1_2_002,"나는 번개이며, 관통하는 자이다. 결코 빗나가지 않으며 꺾이지 않는다. 나는 아스가르드의 신의 창이다.","I am thunder, I am the piercer. I never miss and cannot be broken. I am the spear of the god of Asgard.",私は雷であり、貫く者である。決して外れず、折れることもない。私はアスガルドの神の槍である。,,,
+S1_3_001,창을 구멍에 꽂았다. 육중한 소리와 함께 문이 열린다.,I inserted the spear into the hole. The door opens with a heavy sound.,槍を穴に差し込んだ。重々しい音とともに門が開く。,,,
+S1_3_002,함정과 미궁이 기다리고 있다. 준비되었는가?,Traps and labyrinths await. Are you prepared?,罠と迷宮が待ち受けている。準備はいいか？,,,
+S1_3_003,포기하지 않겠다.,I will not give up.,諦めない。,,,
+S1_4_001,벽이 좁혀져 온다! 케르베로스의 첫 번째 답을 입력해야 한다.,The walls are closing in! Enter the first answer to Kerberos.,壁が迫ってくる！ ケルベロスの最初の答えを入力しなければならない。,,,
+S1_5_001,두 번째 머리의 답은 펜의 획수를 알파벳으로 치환한 것이다.,The answer for the second head is the stroke count of the pen converted to an alphabet.,二番目の頭の答えは、ペンの画数をアルファベットに置換したものだ。,,,
+S1_6_001,세 번째 머리를 지배(Dominate)하라.,Dominate the third head.,三番目の頭を支配（Dominate）せよ。,,,
+S1_7_001,바닥에 26개의 구멍이 뚫려 있고 조잡한 창이 꽂혀 있다.,"There are 26 holes in the floor, and a crude spear is stuck there.",床に26個の穴が開いており、粗末な槍가 刺さっている。,,,
+S1_7_002,나는 신을 찌른 창이다.,I am the spear that pierced God.,私は神を突いた槍である。,,,
+S1_7_003,1번 구멍에 창을 3번 꽂았다. 벽이 열리며 푸른 비단에 덮인 그림이 나타난다.,"I inserted the spear into hole #1 three times. The wall opens, revealing a painting covered in blue silk.",1番の穴に槍を3回差し込んだ. 壁が開き、青い絹에 덮인 그림이 나타난다.,,,
+END_OF_CHAPTER,챕터가 종료되었습니다.,Chapter ended.,チャプターが終了しました。,章节已结束。,章節已結束。,Capítulo finalizado.
+UNAVAILABLE_INTERACTION,상호작용 중에는 사용할 수 없습니다.,Unavailable during interaction.,インタラクション中は利用できません。,交互期间不可用。,交互期間不可用。,No disponible durante la interacción.

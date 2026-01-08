@@ -9,6 +9,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Cinzel:wght@400;700&family=Outfit:wght@300;400;600&display=swap"
         rel="stylesheet">
+    <script src="assets/js/data_loader.js"></script>
     <style>
         :root {
             --primary-red: #8b0000;
@@ -645,13 +646,14 @@
                     else if (supported.includes(browserLang)) State.lang = browserLang;
                     else State.lang = 'KO';
 
-                    const [resP, resL] = await Promise.all([
-                        fetch('assets/Table/PLAY.JSON'),
-                        fetch('assets/Table/LOCALIZATION.JSON')
-                    ]);
-                    State.events = await resP.json();
-                    State.events.sort((a, b) => a.Index - b.Index);
-                    State.localization = await resL.json();
+                    if (fullSupported[navigator.language]) State.lang = fullSupported[navigator.language];
+                    else if (supported.includes(browserLang)) State.lang = browserLang;
+                    else State.lang = 'KO';
+
+                    // Use DataLoader to fetch data (Google Sheets or Local fallback)
+                    const data = await DataLoader.loadData();
+                    State.events = data.events;
+                    State.localization = data.localization;
 
                     // Key listeners
                     window.addEventListener('keydown', (e) => this.handleKeyDown(e));
