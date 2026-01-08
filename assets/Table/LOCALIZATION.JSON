@@ -48,9 +48,9 @@
         "ES": "Guardián"
     },
     "DISCLAIMER": {
-        "KO": "해당 게임은 단편의 짧은 게임이기에 세이브를 지원하지 않습니다. 게임 플레이 시, 창을 닫으면 처음부터 시작해야합니다. 또한 이 작품에서 등장한 모든 이름, 인물, 사건들은 허구입니다. 실존하는 인물, 장소, 건물, 제품과는 일절 관련이 없습니다.",
-        "EN": "This game is a short story and does not support saving. Closing the window will reset progress. All entities in this work are fictional and not related to real persons or places.",
-        "JP": "このゲームは短編のためセーブ機能はありません。ブラウザを閉じると最初부터になります。また、本作에 등장한 이름, 이름, 인물, 사건들은 모두 피션입니다.",
+        "KO": "해당 게임은 단편의 짧은 게임이기에/n [ff0000]세이브를 지원하지 않습니다.[-]/n/n게임 플레이 시, 창을 닫으면 [ff0000]처음부터 시작[-]해야합니다./n 또한 이 작품에서 등장한/n모든 이름, 인물, 사건들은 허구입니다./n실존하는 인물, 장소, 건물, 제품과는/n일절 관련이 없습니다.",
+        "EN": "This game is a short story and does not support saving./nClosing the window will reset progress. All entities in this work are fictional and not related to real persons or places.",
+        "JP": "このゲームは短編のためセーブ機能はありません。ブラウザを閉じると最初부터になります。/nまた、本作에 등장한 이름, 이름, 인물, 사건들은 모두 피션입니다.",
         "CN_S": "本游戏为短篇故事，不支持存档. 关闭窗口将重置进度. 所有名称、人物和事件均为虚构.",
         "CN_T": "本遊戲為短篇故事，不支援存檔. 關閉窗口將重置進度. 所有名稱、人物和事件均為虛構.",
         "ES": "Este juego es una historia corta y no admite guardado. Todos los nombres son ficticios."

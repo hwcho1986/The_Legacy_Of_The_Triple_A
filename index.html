@@ -4,27 +4,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Legacy Of The Triple A - 대괴도 AAA의 유산 v0.5</title>
+    <title>The Legacy Of The Triple A - 대괴도 AAA의 유산 v0.7.2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Cinzel:wght@400;700&family=Outfit:wght@300;400;600&display=swap"
         rel="stylesheet">
     <style>
         :root {
-            --primary-red: #b91c1c;
-            --accent-gold: #d4af37;
-            --glass-bg: rgba(0, 0, 0, 0.75);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --primary-red: #8b0000;
+            --accent-gold: #c5a059;
+            --bg-deep: #121212;
+            --glass-bg: rgba(18, 18, 18, 0.85);
+            --glass-border: rgba(197, 160, 89, 0.2);
+            --text-main: #e0e0e0;
+            --font-serif: 'Cinzel', 'Noto Serif KR', serif;
+            --font-sans: 'Outfit', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #000;
-            font-family: 'Outfit', 'Noto Serif KR', serif;
-            color: #fff;
+            background-color: var(--bg-deep);
+            font-family: var(--font-sans);
+            color: var(--text-main);
             user-select: none;
+            height: 100vh;
+            width: 100vw;
         }
 
         #game-container {
@@ -119,18 +130,37 @@
         }
 
         .premium-btn {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s;
+            background: linear-gradient(135deg, rgba(197, 160, 89, 0.1), transparent);
+            border: 1px solid var(--glass-border);
+            transition: all 0.4s cubic-bezier(0.2, 1, 0.3, 1);
             position: relative;
             overflow: hidden;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .premium-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(197, 160, 89, 0.2), transparent);
+            transition: 0.5s;
         }
 
         .premium-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(197, 160, 89, 0.15);
             border-color: var(--accent-gold);
             transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(197, 160, 89, 0.2);
+        }
+
+        .premium-btn:hover::after {
+            left: 100%;
         }
 
         /* Typewriter & Icon */
@@ -153,23 +183,97 @@
             }
         }
 
-        /* Character Transitions */
-        .char-obj {
-            transition: all 1s ease-in-out;
+        /* Character Transitions & Framing */
+        .char-container {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center;
+            pointer-events: none;
+            z-index: 20;
+            /* 기본 위치: 700px 추가 하강을 통해 머리/어깨 노출 */
+            --base-y: 55%;
+            --char-scale: 1;
+            --char-y-offset: 0%;
+            --user-y-adj: 700px;
+            transform: translateX(-50%) translateY(calc(var(--base-y) + var(--char-y-offset) + var(--user-y-adj))) scale(var(--char-scale));
         }
 
-        /* Disclaimer Note UI */
-        .note-popup {
-            background: #fdf6e3;
-            color: #5c4b37;
-            padding: 2rem;
-            border-radius: 4px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), inset 0 0 50px rgba(0, 0, 0, 0.1);
+        .char-obj {
+            height: 198% !important;
+            /* PC 웹 환경에서 기존 220% 대비 10% 축소 */
+            object-fit: contain;
+            object-position: center top;
+            filter: drop-shadow(0 10px 40px rgba(0, 0, 0, 0.9));
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .char-container {
+                left: 50% !important;
+                /* 모바일에서 가운데 정렬 강제 */
+                --base-y: 55%;
+                --user-adj: 500px;
+                /* 'user-y-adj'를 'user-adj'로 명칭 통일 시도 혹은 기존 명칭 유지 */
+                --user-y-adj: 500px;
+                /* 모바일 Y좌표 조정 */
+            }
+
+            .char-obj {
+                height: 180% !important;
+            }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 0.1;
+            }
+
+            80% {
+                opacity: 0.1;
+            }
+
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .floating-shape {
             position: absolute;
-            width: 400px;
+            background: var(--accent-gold);
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+            animation: float 15s linear infinite;
+        }
+
+        .note-popup {
+            position: absolute;
+            background: #fff;
+            color: #000;
+            padding: 20px 40px;
+            border-radius: 4px;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.05);
             font-family: 'Noto Serif KR', serif;
-            transform-origin: center;
-            z-index: 100;
+            font-size: 1.25rem;
+            z-index: 2200;
+            /* 퀴즈 상단보다 위 */
+            max-width: 300px;
+            pointer-events: auto;
+            cursor: pointer;
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }
 
         .note-popup::before {
@@ -184,29 +288,19 @@
         .menu-item.active,
         .menu-item:hover {
             color: var(--accent-gold);
-            transform: scale(1.1);
-            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            transform: scale(1.05);
+            text-shadow: 0 0 25px rgba(197, 160, 89, 0.6);
             border-color: var(--accent-gold);
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(197, 160, 89, 0.1);
         }
 
         .menu-item.active::before,
         .menu-item:hover::before {
             content: '▶';
             position: absolute;
-            left: -40px;
+            left: -30px;
+            color: var(--accent-gold);
             animation: bounceLeft 0.5s infinite alternate;
-        }
-
-        .backlog-choice-selected {
-            color: #4ade80;
-            /* emerald-400 */
-            font-weight: bold;
-        }
-
-        .backlog-choice-unselected {
-            text-decoration: line-through;
-            opacity: 0.5;
         }
 
         @keyframes bounceLeft {
@@ -219,16 +313,112 @@
             }
         }
 
+        .backlog-choice-selected {
+            color: #4ade80;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        .backlog-choice-unselected {
+            text-decoration: line-through;
+            opacity: 0.4;
+        }
+
         /* Tabs */
         .tab-btn.active {
-            border-bottom: 3px solid var(--accent-gold);
+            border-bottom: 2px solid var(--accent-gold);
             color: var(--accent-gold);
+        }
+
+        /* Mobile Responsive Overrides */
+        @media (max-width: 768px) {
+            .text-8xl {
+                font-size: 3.5rem !important;
+            }
+
+            .text-6xl {
+                font-size: 2.25rem !important;
+            }
+
+            .text-3xl {
+                font-size: 1.25rem !important;
+            }
+
+            .text-2xl {
+                font-size: 1.1rem !important;
+            }
+
+            .p-20 {
+                padding: 1.5rem !important;
+            }
+
+            .p-12 {
+                padding: 1.25rem !important;
+            }
+
+            #main-menu-list {
+                width: 90%;
+            }
+
+            #dialogue-box {
+                padding: 1.5rem;
+                bottom: 2rem;
+                width: 95% !important;
+                max-width: none !important;
+            }
+
+            #speaker-name {
+                font-size: 1.2rem;
+            }
+
+            #dialogue-text {
+                font-size: 1.1rem;
+                min-height: 70px;
+            }
+
+            .modal-content {
+                width: 95% !important;
+                padding: 1.5rem !important;
+            }
+
+            .premium-btn {
+                padding: 0.75rem !important;
+            }
+
+            .menu-item {
+                font-size: 1.25rem !important;
+                padding: 0.5rem 0 !important;
+            }
+        }
+
+        /* Ambient Pattern */
+        .ambient-pattern {
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill-opacity='0.02' fill='%23c5a059' fill-rule='evenodd'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0.5;
+        }
+
+        #ambient-canvas {
+            position: absolute;
+            inset: 0;
+            z-index: 15;
+            /* Behind characters */
+            pointer-events: none;
+            mix-blend-mode: screen;
         }
     </style>
 </head>
 
 <body>
     <div id="game-container">
+        <!-- Ambient Layers -->
+        <div class="ambient-pattern"></div>
+        <div id="shapes-container" class="layer" style="z-index: 2; pointer-events: none;"></div>
+        <canvas id="ambient-canvas"></canvas>
+
         <!-- disclaimer -->
         <div id="disclaimer-layer" class="layer" style="z-index: 1000; background: #000; display: none;">
             <div class="flex items-center justify-center h-full p-20 text-center">
@@ -244,16 +434,19 @@
 
         <!-- oncharacter -->
         <div id="character-layer" class="layer"
-            style="z-index: 20; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 5%;">
+            style="z-index: 20; display: flex; align-items: flex-end; justify-content: center;">
         </div>
 
         <!-- dialogue / speak -->
-        <div id="dialogue-layer" class="layer layer-interactive" style="z-index: 40; display: none;">
-            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 w-[90%] max-w-[1400px] glass p-8 rounded-3xl cursor-pointer"
+        <div id="dialogue-layer" class="layer layer-interactive" style="z-index: 400; display: none;">
+            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 w-[95%] max-w-[1200px] glass p-10 rounded-2xl border-l-[6px] border-primary-red shadow-2xl"
                 id="dialogue-box">
                 <div id="speaker-name"
-                    class="text-3xl font-bold text-accent-gold mb-4 border-l-4 border-primary-red pl-4"></div>
-                <div id="dialogue-text" class="text-2xl leading-relaxed font-serif min-h-[100px]"></div>
+                    class="text-2xl font-bold text-accent-gold mb-3 tracking-widest uppercase border-b border-accent-gold/20 pb-2 inline-block">
+                </div>
+                <div id="dialogue-text" class="text-xl leading-relaxed font-serif min-h-[100px] text-white/90"></div>
+                <div class="absolute bottom-4 right-6 text-accent-gold/30 text-xs tracking-widest font-sans uppercase">
+                    A.A.A. Legacy System</div>
             </div>
         </div>
 
@@ -264,7 +457,7 @@
         <div id="title-layer" class="layer" style="z-index: 70;"></div>
 
         <!-- Main Menu Layer -->
-        <div id="menu-layer" class="layer layer-interactive" style="z-index: 150; background: #000; display: none;">
+        <div id="menu-layer" class="layer layer-interactive" style="z-index: 600; background: #000; display: none;">
             <div class="flex flex-col items-center justify-center h-full space-y-12">
                 <h1 id="title-logo" class="text-8xl font-cinzel text-accent-gold tracking-tighter fade-in"
                     style="--duration: 2s">THE
@@ -285,11 +478,11 @@
         </div>
 
         <!-- choice / quiz -->
-        <div id="interaction-layer" class="layer layer-interactive" style="z-index: 80;"></div>
+        <div id="interaction-layer" class="layer layer-interactive" style="z-index: 450;"></div>
 
         <!-- System UI (Always on top) -->
         <div id="system-ui" class="absolute top-0 w-full p-6 flex justify-between items-center hidden"
-            style="z-index: 100;">
+            style="z-index: 500;">
             <button onclick="Engine.toggleBacklog()"
                 class="premium-btn px-6 py-2 rounded-full text-sm tracking-widest uppercase text-white">Log</button>
             <div class="flex gap-4">
@@ -303,7 +496,7 @@
         </div>
 
         <!-- Modals -->
-        <div id="options-modal" class="absolute inset-0 glass z-[300] hidden flex flex-col p-20">
+        <div id="options-modal" class="absolute inset-0 glass z-[2000] hidden flex flex-col p-20">
             <div class="flex justify-between items-center mb-10 border-b border-white/10 pb-4">
                 <h2 class="text-4xl font-cinzel tracking-widest" id="options-header">OPTIONS</h2>
                 <button onclick="Engine.closeModal('options-modal')" class="text-4xl">✕</button>
@@ -319,7 +512,7 @@
             </div>
         </div>
 
-        <div id="score-modal" class="absolute inset-0 glass z-[300] hidden flex flex-col p-20">
+        <div id="score-modal" class="absolute inset-0 glass z-[2000] hidden flex flex-col p-20">
             <div class="flex justify-between items-center mb-10 border-b border-white/10 pb-4">
                 <h2 class="text-4xl font-cinzel tracking-widest" id="score-header">SCOREBOARD</h2>
                 <button onclick="Engine.closeModal('score-modal')" class="text-4xl">✕</button>
@@ -333,7 +526,7 @@
         </div>
 
         <div id="credits-modal"
-            class="absolute inset-0 glass z-[300] hidden flex flex-col items-center justify-center p-20">
+            class="absolute inset-0 glass z-[2000] hidden flex flex-col items-center justify-center p-20">
             <div class="w-full max-w-4xl text-center space-y-20">
                 <h2 class="text-6xl font-cinzel text-accent-gold" id="credits-header">CREDITS</h2>
                 <div class="space-y-8 text-2xl leading-loose" id="credits-body">
@@ -349,7 +542,7 @@
 
         <!-- Universal Confirm Modal -->
         <div id="universal-confirm"
-            class="absolute inset-0 bg-black/80 backdrop-blur-sm z-[1000] hidden flex items-center justify-center">
+            class="absolute inset-0 bg-black/80 backdrop-blur-sm z-[2100] hidden flex items-center justify-center">
             <div class="glass p-12 rounded-3xl text-center space-y-10 max-w-2xl">
                 <p id="confirm-msg" class="text-3xl leading-relaxed"></p>
                 <div class="flex gap-6 justify-center">
@@ -362,7 +555,7 @@
 
         <!-- Universal Alert Modal -->
         <div id="universal-alert"
-            class="absolute inset-0 bg-black/80 backdrop-blur-sm z-[1000] hidden flex items-center justify-center">
+            class="absolute inset-0 bg-black/80 backdrop-blur-sm z-[2100] hidden flex items-center justify-center">
             <div class="glass p-12 rounded-3xl text-center space-y-10 max-w-xl">
                 <p id="alert-msg" class="text-3xl leading-relaxed"></p>
                 <div class="flex justify-center">
@@ -372,7 +565,7 @@
             </div>
         </div>
 
-        <div id="backlog-modal" class="absolute inset-0 glass z-[300] hidden flex flex-col p-20">
+        <div id="backlog-modal" class="absolute inset-0 glass z-[2000] hidden flex flex-col p-20">
             <div class="flex justify-between items-center mb-10 border-b border-white/10 pb-4">
                 <h2 class="text-4xl font-cinzel tracking-widest">LOG</h2>
                 <button onclick="Engine.closeModal('backlog-modal')" class="text-4xl">✕</button>
@@ -456,6 +649,7 @@
                         this.handleMouseDown(e);
                     });
 
+                    this.initAmbient();
                     this.showDisclaimer();
 
                 } catch (e) {
@@ -463,11 +657,76 @@
                 }
             },
 
+            initAmbient() {
+                const canvas = document.getElementById('ambient-canvas');
+                const ctx = canvas.getContext('2d');
+                let w, h, particles = [];
+
+                const resize = () => {
+                    w = canvas.width = window.innerWidth;
+                    h = canvas.height = window.innerHeight;
+                };
+                window.addEventListener('resize', resize);
+                resize();
+
+                class Particle {
+                    constructor() {
+                        this.init();
+                    }
+                    init() {
+                        this.x = Math.random() * w;
+                        this.y = Math.random() * h;
+                        this.size = Math.random() * 2 + 0.5;
+                        this.speedX = Math.random() * 0.5 - 0.25;
+                        this.speedY = Math.random() * 0.5 - 0.25;
+                        this.opacity = Math.random() * 0.5;
+                    }
+                    update() {
+                        this.x += this.speedX;
+                        this.y += this.speedY;
+                        if (this.x < 0 || this.x > w || this.y < 0 || this.y > h) this.init();
+                    }
+                    draw() {
+                        ctx.fillStyle = `rgba(197, 160, 89, ${this.opacity})`;
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+
+                for (let i = 0; i < 50; i++) particles.push(new Particle());
+
+                const animate = () => {
+                    ctx.clearRect(0, 0, w, h);
+                    particles.forEach(p => {
+                        p.update();
+                        p.draw();
+                    });
+                    requestAnimationFrame(animate);
+                };
+                animate();
+
+                // Add geometric shapes
+                const container = document.getElementById('shapes-container');
+                for (let i = 0; i < 15; i++) {
+                    const shape = document.createElement('div');
+                    shape.className = 'floating-shape';
+                    const size = Math.random() * 40 + 10;
+                    shape.style.width = size + 'px';
+                    shape.style.height = size + 'px';
+                    shape.style.left = Math.random() * 100 + 'vw';
+                    shape.style.top = '110vh';
+                    shape.style.animationDelay = Math.random() * 20 + 's';
+                    shape.style.clipPath = Math.random() > 0.5 ? 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' : 'none';
+                    container.appendChild(shape);
+                }
+            },
+
             showDisclaimer() {
                 const layer = document.getElementById('disclaimer-layer');
                 const text = document.getElementById('disclaimer-text');
                 layer.style.display = 'block';
-                text.innerText = this.t('DISCLAIMER');
+                text.innerHTML = this.formatText(this.t('DISCLAIMER'));
                 text.classList.add('fade-in');
 
                 setTimeout(() => {
@@ -574,6 +833,18 @@
                     return entry[State.lang] || entry['KO'] || entry['EN'] || key;
                 }
                 return key;
+            },
+
+            formatText(str) {
+                if (!str) return '';
+                let formatted = str.replace(/\/n|\\n/g, '<br>');
+                // 색상 태그 처리: [RRGGBB] 또는 [ColorName] 대응
+                formatted = formatted.replace(/\[([A-Za-z0-9]+)\](.*?)\[-\]/g, (match, p1, p2) => {
+                    const isHex = /^[0-9A-Fa-f]{6}$/.test(p1);
+                    const color = isHex ? `#${p1}` : p1;
+                    return `<span style="color: ${color}">${p2}</span>`;
+                });
+                return formatted;
             },
 
             async executeEvent(index) {
@@ -735,22 +1006,37 @@
                 const layer = document.getElementById('character-layer');
                 let char = State.characters[data.Value01];
                 if (!char) {
+                    const container = document.createElement('div');
+                    container.className = 'char-container';
+
                     const el = document.createElement('img');
-                    el.className = 'char-obj h-full object-contain mx-[-10%]';
-                    char = { el, id: data.Value01 };
+                    el.className = 'char-obj';
+
+                    container.appendChild(el);
+                    layer.appendChild(container);
+
+                    char = { el: container, img: el, id: data.Value01 };
                     State.characters[data.Value01] = char;
-                    layer.appendChild(el);
                 }
 
-                char.el.src = `assets/images/character/${data.Value01}.png`;
-                if (data.Value02 && data.Value02 !== 'normal') char.el.src = `assets/images/character/${data.Value01}_${data.Value02}.png`;
+                const imgPath = data.Value02 && data.Value02 !== 'normal' ?
+                    `assets/images/character/${data.Value01}_${data.Value02}.png` :
+                    `assets/images/character/${data.Value01}.png`;
+
+                char.img.src = imgPath;
+
+                // X좌표 설정 (Value03 값 그대로 사용 시도 - 이전 수치 반영)
+                let pos = data.Value03 || '50%';
+                if (pos === 'center') pos = '50%';
+                if (pos === 'left') pos = '20%';
+                if (pos === 'right') pos = '80%';
+                char.el.style.left = pos;
 
                 if (data.Value04 === 'fadein') {
                     char.el.classList.add('fade-in');
                     char.el.style.setProperty('--duration', `${data.Value05 || 1}s`);
                 }
             },
-
             handleOffCharacter(data) {
                 const char = State.characters[data.Value01];
                 if (char) {
@@ -772,15 +1058,17 @@
                 const nameStr = this.t(data.Value02);
                 speaker.innerText = nameStr;
 
-                // Highlight character
+                // Highlight character (CSS 변수 활용하여 기존 변환 상태 유지)
                 Object.values(State.characters).forEach(c => {
                     if (c.id === data.Value01) {
-                        c.el.style.transform = 'scale(1.15)';
-                        c.el.style.filter = 'brightness(1.1)';
+                        c.el.style.setProperty('--char-scale', '1.03'); // 7% -> 3% 증가로 추가 하향 조정
+                        c.el.style.setProperty('--char-y-offset', '-2%'); // 살짝 위로 띄워 강조
+                        c.el.style.filter = 'brightness(1.1) drop-shadow(0 0 30px rgba(197, 160, 89, 0.4))';
                         c.el.style.zIndex = '30';
                     } else {
-                        c.el.style.transform = 'scale(1)';
-                        c.el.style.filter = 'brightness(0.7)';
+                        c.el.style.setProperty('--char-scale', '0.95');
+                        c.el.style.setProperty('--char-y-offset', '0%');
+                        c.el.style.filter = 'brightness(0.5) grayscale(0.2)';
                         c.el.style.zIndex = '20';
                     }
                 });
@@ -815,23 +1103,53 @@
             },
 
             typeText(el, str, cb) {
-                el.innerText = '';
+                el.innerHTML = '';
                 el.classList.remove('cursor-blink');
                 State.isTextAnimating = true;
+
+                let formatted = this.formatText(str);
+
+                // 모든 일반 텍스트 문자를 개별 스판으로 래핑하여 초기에는 숨김 처리
+                const temp = document.createElement('div');
+                temp.innerHTML = formatted;
+
+                const wrapLetters = (node) => {
+                    if (node.nodeType === 3) {
+                        const text = node.textContent;
+                        const fragment = document.createDocumentFragment();
+                        for (let char of text) {
+                            const span = document.createElement('span');
+                            span.style.opacity = '0';
+                            span.style.transition = 'opacity 0.1s';
+                            span.className = 'typing-char';
+                            span.textContent = char;
+                            fragment.appendChild(span);
+                        }
+                        node.parentNode.replaceChild(fragment, node);
+                    } else if (node.nodeType === 1) {
+                        Array.from(node.childNodes).forEach(wrapLetters);
+                    }
+                };
+                wrapLetters(temp);
+                el.innerHTML = temp.innerHTML;
+
+                const chars = el.querySelectorAll('.typing-char');
                 let i = 0;
                 const speeds = { slow: 100, normal: 30, fast: 10 };
                 const speed = speeds[State.settings.textSpeed] || 30;
 
                 const timer = setInterval(() => {
                     if (!State.isTextAnimating) {
-                        el.innerText = str;
+                        chars.forEach(c => c.style.opacity = '1');
                         clearInterval(timer);
                         el.classList.add('cursor-blink');
                         cb();
                         return;
                     }
-                    el.innerText += str[i++];
-                    if (i >= str.length) {
+
+                    if (i < chars.length) {
+                        chars[i++].style.opacity = '1';
+                    } else {
                         clearInterval(timer);
                         State.isTextAnimating = false;
                         el.classList.add('cursor-blink');
@@ -1005,7 +1323,11 @@
             },
 
             handleAniEffect(data) {
-                const target = data.Value01 === 'all' ? document.getElementById('game-container') : (State.characters[data.Value01]?.el);
+                // 상단 레이어나 특정 캐릭터 이미지(img)에 효과 적용
+                const target = data.Value01 === 'all' ?
+                    document.getElementById('game-container') :
+                    (State.characters[data.Value01]?.img || State.characters[data.Value01]?.el);
+
                 if (target) {
                     target.classList.add(data.Value02);
                     setTimeout(() => target.classList.remove(data.Value02), (data.Value03 || 1) * 1000);
@@ -1224,7 +1546,7 @@
 
             showAlert(msg, cb) {
                 const modal = document.getElementById('universal-alert');
-                document.getElementById('alert-msg').innerText = msg;
+                document.getElementById('alert-msg').innerHTML = this.formatText(msg);
                 const btn = document.getElementById('alert-ok');
                 btn.onclick = () => {
                     modal.classList.add('hidden');
@@ -1235,7 +1557,7 @@
 
             showConfirm(msg, onYes, onNo) {
                 const modal = document.getElementById('universal-confirm');
-                document.getElementById('confirm-msg').innerText = msg;
+                document.getElementById('confirm-msg').innerHTML = this.formatText(msg);
 
                 const yesBtn = document.getElementById('confirm-yes');
                 const noBtn = document.getElementById('confirm-no');
