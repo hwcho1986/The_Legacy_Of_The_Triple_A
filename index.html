@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Legacy Of The Triple A - 대괴도 AAA의 유산 v0.7.2</title>
+    <title>The Legacy Of The Triple A - 대괴도 AAA의 유산 v0.8.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Cinzel:wght@400;700&family=Outfit:wght@300;400;600&display=swap"
@@ -200,9 +200,10 @@
             /* 기본 위치: 700px 추가 하강을 통해 머리/어깨 노출 */
             --base-y: 55%;
             --char-scale: 1;
+            --mob-zoom: 1;
             --char-y-offset: 0%;
             --user-y-adj: 700px;
-            transform: translateX(-50%) translateY(calc(var(--base-y) + var(--char-y-offset) + var(--user-y-adj))) scale(var(--char-scale));
+            transform: translateX(-50%) translateY(calc(var(--base-y) + var(--char-y-offset) + var(--user-y-adj)));
         }
 
         .char-obj {
@@ -212,21 +213,36 @@
             object-position: center top;
             filter: drop-shadow(0 10px 40px rgba(0, 0, 0, 0.9));
             pointer-events: none;
+            /* 스케일을 이미지 자체에 적용하여 중앙 기점으로 확대 구현 */
+            transform: scale(calc(var(--char-scale) * var(--mob-zoom)));
+            transform-origin: center;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         @media (max-width: 768px) {
             .char-container {
                 left: 50% !important;
-                /* 모바일에서 가운데 정렬 강제 */
-                --base-y: 55%;
-                --user-adj: 500px;
-                /* 'user-y-adj'를 'user-adj'로 명칭 통일 시도 혹은 기존 명칭 유지 */
-                --user-y-adj: 500px;
-                /* 모바일 Y좌표 조정 */
+                /* 모바일: 컨테이너가 캐릭터 크기에 맞춰지도록 auto 설정 */
+                height: auto !important;
+                /* 하단 정렬 유지 */
+                bottom: 0;
+
+                /* 변위 설정: 캐릭터 높이(auto)의 45%만큼 내려서 하단 가림 (상반신 노출) */
+                --base-y: 45%;
+                --mob-zoom: 1;
+                /* Zoom 불필요 (width 100%가 이미 큼) */
+                --user-y-adj: 0px;
+                --char-y-offset: 0%;
             }
 
             .char-obj {
-                height: 180% !important;
+                /* 모바일: 가로폭 꽉 채우고 비율 유지 */
+                width: 100% !important;
+                height: auto !important;
+
+                /* 스케일은 1로 리셋 (컨테이너가 이미 꽉 참) */
+                transform: scale(var(--char-scale));
+                /* transform-origin은 중앙 유지 */
             }
         }
 
@@ -459,10 +475,11 @@
         <!-- Main Menu Layer -->
         <div id="menu-layer" class="layer layer-interactive" style="z-index: 600; background: #000; display: none;">
             <div class="flex flex-col items-center justify-center h-full space-y-12">
-                <h1 id="title-logo" class="text-8xl font-cinzel text-accent-gold tracking-tighter fade-in"
+                <h1 id="title-logo"
+                    class="text-6xl md:text-8xl font-cinzel text-accent-gold tracking-tighter fade-in text-center px-4"
                     style="--duration: 2s">THE
                     LEGACY OF<br><span class="text-white">THE TRIPLE A</span></h1>
-                <div id="main-menu-list" class="flex flex-col space-y-4 w-96">
+                <div id="main-menu-list" class="flex flex-col space-y-4 w-full max-w-sm px-6">
                     <button data-menu="start"
                         class="menu-item premium-btn py-6 rounded-xl text-2xl font-bold tracking-widest text-white uppercase"></button>
                     <button data-menu="options"
@@ -955,6 +972,16 @@
                         this.next(event.Index, 'Read');
                         break;
 
+                    case 'move':
+                        this.handleMove(event);
+                        this.next(event.Index, 'Read');
+                        break;
+
+                    case 'gifeffect':
+                        this.handleGifEffect(event);
+                        this.next(event.Index, 'Read');
+                        break;
+
                     case 'next':
                         this.initNextChapter(event.Value01);
                         break;
@@ -1197,9 +1224,14 @@
             handleTitle(data, keep = false) {
                 const layer = document.getElementById('title-layer');
                 const el = document.createElement('div');
-                el.className = 'absolute inset-0 flex items-center justify-center text-center p-20 z-10';
+                el.className = 'absolute inset-0 flex items-center justify-center text-center p-10 md:p-20 z-10';
                 el.style.fontFamily = data.Value01 || 'Cinzel, serif';
-                el.style.fontSize = (data.Value02 || 48) + 'px';
+                // 폰트 크기를 vw 단위로 변경하여 반응형 대응 (기준 1920px -> 1vw = 19.2px)
+                el.style.fontSize = (data.Value02 || 48) / 19.2 + 'vw';
+                // 최소 폰트 크기 보전 (모바일 대응)
+                el.style.minFontSize = "24px";
+                // JS에서 minFontSize는 직접 지원되지 않으므로 CSS로 보완 가능하나, clamp 사용 고려
+                el.style.fontSize = `clamp(1.5rem, ${(data.Value02 || 48) / 19.2}vw, 8rem)`;
                 el.style.color = data.Value03 || '#fff';
                 el.innerText = '';
                 layer.appendChild(el);
@@ -1323,14 +1355,59 @@
             },
 
             handleAniEffect(data) {
-                // 상단 레이어나 특정 캐릭터 이미지(img)에 효과 적용
+                // 특정 캐릭터 컨테이너(el) 또는 전체 컨테이너에 효과 적용
                 const target = data.Value01 === 'all' ?
                     document.getElementById('game-container') :
-                    (State.characters[data.Value01]?.img || State.characters[data.Value01]?.el);
+                    State.characters[data.Value01]?.el; // 컨테이너(el)에 적용하여 변환값 유지
 
                 if (target) {
                     target.classList.add(data.Value02);
                     setTimeout(() => target.classList.remove(data.Value02), (data.Value03 || 1) * 1000);
+                }
+            },
+
+            handleMove(data) {
+                const char = State.characters[data.Value01];
+                if (!char) return;
+
+                let pos = data.Value02 || '50%';
+                if (pos === 'center') pos = '50%';
+                if (pos === 'left') pos = '20%';
+                if (pos === 'right') pos = '80%';
+
+                const duration = data.Value03 || 1;
+                char.el.style.transition = `left ${duration}s cubic-bezier(0.4, 0, 0.2, 1)`;
+                char.el.style.left = pos;
+
+                // 이동 후 트랜지션 복구 (0.8s는 기본값)
+                setTimeout(() => {
+                    char.el.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                }, duration * 1000);
+            },
+
+            handleGifEffect(data) {
+                const char = State.characters[data.Value01];
+                if (!char) return;
+
+                const gif = document.createElement('img');
+                gif.src = data.Value02;
+                // 캐릭터 컨테이너의 정중앙에 배치되도록 스타일 설정 (모바일 스택 상속)
+                gif.className = 'absolute pointer-events-none z-50';
+                gif.style.left = '50%';
+                gif.style.bottom = '50%';
+                gif.style.transform = 'translate(-50%, 50%)';
+
+                // 크기 조절 (Value03: 너비, Value04: 높이 또는 배율)
+                if (data.Value03) gif.style.width = data.Value03;
+                if (data.Value04) gif.style.height = data.Value04;
+
+                char.el.appendChild(gif);
+
+                if (data.Value05) {
+                    setTimeout(() => gif.remove(), data.Value05 * 1000);
+                } else {
+                    // 기본 2초 후 제거
+                    setTimeout(() => gif.remove(), 2000);
                 }
             },
 
