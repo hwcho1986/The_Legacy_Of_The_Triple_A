@@ -188,69 +188,54 @@
         }
 
         /* Character Transitions & Framing */
+        /* Character Transitions & Framing - Optimized for V-Rule */
         .char-container {
             position: absolute;
             bottom: 0;
             left: 50%;
-            width: 100%;
-            height: 100%;
+            width: auto;
+            /* Height based ensures consistent "upper body" visibility on all aspect ratios */
+            height: 85vh;
+            max-height: 90vh;
             display: flex;
             align-items: flex-end;
             justify-content: center;
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-origin: center;
+            transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: bottom center;
             pointer-events: none;
             z-index: 20;
-            will-change: transform;
-            /* Performance hint for smoother animation */
-            /* 기본 위치: 700px 추가 하강을 통해 머리/어깨 노출 */
-            --base-y: 55%;
+            will-change: transform, left;
+
+            /* Center-based generic positioning system */
+            transform: translateX(-50%);
+
             --char-scale: 1;
-            --mob-zoom: 1;
             --char-y-offset: 0%;
-            --user-y-adj: 700px;
-            transform: translateX(-50%) translateY(calc(var(--base-y) + var(--char-y-offset) + var(--user-y-adj)));
         }
 
         .char-obj {
-            height: 198% !important;
-            /* PC 웹 환경에서 기존 220% 대비 10% 축소 */
+            height: 100% !important;
+            width: auto !important;
             object-fit: contain;
-            object-position: center top;
+            object-position: bottom center;
             filter: drop-shadow(0 10px 40px rgba(0, 0, 0, 0.9));
             pointer-events: none;
             display: block;
-            /* Remove inline ghost space */
-            /* 스케일을 이미지 자체에 적용하여 중앙 기점으로 확대 구현 */
-            transform: scale(calc(var(--char-scale) * var(--mob-zoom)));
-            transform-origin: center;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+
+            transform: scale(var(--char-scale)) translateY(var(--char-y-offset));
+            transform-origin: bottom center;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         @media (max-width: 768px) {
             .char-container {
-                left: 50% !important;
-                /* 모바일: 컨테이너가 캐릭터 크기에 맞춰지도록 auto 설정 */
-                height: auto !important;
-                /* 하단 정렬 유지 */
-                bottom: 0;
-
-                /* 변위 설정: 캐릭터 높이(auto)의 45%만큼 내려서 하단 가림 (상반신 노출) */
-                --base-y: 45%;
-                --mob-zoom: 1;
-                /* Zoom 불필요 (width 100%가 이미 큼) */
-                --user-y-adj: 0px;
-                --char-y-offset: 0%;
+                /* Mobile: Height slightly smaller to avoid header conflict, but still huge enough to show chest */
+                height: 80vh;
             }
 
+            /* Allow significant overlap on mobile */
             .char-obj {
-                /* 모바일: 가로폭 꽉 채우고 비율 유지 */
-                width: 100% !important;
-                height: auto !important;
-
-                /* 스케일은 1로 리셋 (컨테이너가 이미 꽉 참) */
-                transform: scale(var(--char-scale));
-                /* transform-origin은 중앙 유지 */
+                /* Optimization for mobile GPU memory if needed, but modern phones are fine */
             }
         }
 
@@ -1071,11 +1056,19 @@
 
                 char.img.src = imgPath;
 
-                // X좌표 설정 (Value03 값 그대로 사용 시도 - 이전 수치 반영)
+                // X좌표 설정 (반응형 대응)
                 let pos = data.Value03 || '50%';
+                // Normalize keywords to percentages
                 if (pos === 'center') pos = '50%';
-                if (pos === 'left') pos = '20%';
-                if (pos === 'right') pos = '80%';
+                if (pos === 'left') pos = '15%'; // More strict on mobile
+                if (pos === 'right') pos = '85%';
+
+                // PC override for wider spacing if needed, but percentages work well generally
+                if (window.innerWidth > 768) {
+                    if (pos === '15%') pos = '20%';
+                    if (pos === '85%') pos = '80%';
+                }
+
                 char.el.style.left = pos;
 
                 if (data.Value04 === 'fadein') {
@@ -1107,14 +1100,14 @@
                 // Highlight character (CSS 변수 활용하여 기존 변환 상태 유지)
                 Object.values(State.characters).forEach(c => {
                     if (c.id === data.Value01) {
-                        c.el.style.setProperty('--char-scale', '1.03'); // 7% -> 3% 증가로 추가 하향 조정
-                        c.el.style.setProperty('--char-y-offset', '-2%'); // 살짝 위로 띄워 강조
+                        c.el.style.setProperty('--char-scale', '1.05'); // Active speaker slight zoom
+                        c.el.style.setProperty('--char-y-offset', '0%');
                         c.el.style.filter = 'brightness(1.1) drop-shadow(0 0 30px rgba(197, 160, 89, 0.4))';
                         c.el.style.zIndex = '30';
                     } else {
                         c.el.style.setProperty('--char-scale', '0.95');
-                        c.el.style.setProperty('--char-y-offset', '0%');
-                        c.el.style.filter = 'brightness(0.5) grayscale(0.2)';
+                        c.el.style.setProperty('--char-y-offset', '2%'); // Inactive slightly down
+                        c.el.style.filter = 'brightness(0.5) constrast(1.2)';
                         c.el.style.zIndex = '20';
                     }
                 });
@@ -1391,8 +1384,13 @@
 
                 let pos = data.Value02 || '50%';
                 if (pos === 'center') pos = '50%';
-                if (pos === 'left') pos = '20%';
-                if (pos === 'right') pos = '80%';
+                if (pos === 'left') pos = '15%';
+                if (pos === 'right') pos = '85%';
+
+                if (window.innerWidth > 768) {
+                    if (pos === '15%') pos = '20%';
+                    if (pos === '85%') pos = '80%';
+                }
 
                 const duration = data.Value03 || 1;
                 char.el.style.transition = `left ${duration}s cubic-bezier(0.4, 0, 0.2, 1)`;
@@ -1400,7 +1398,7 @@
 
                 // 이동 후 트랜지션 복구 (0.8s는 기본값)
                 setTimeout(() => {
-                    char.el.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                    char.el.style.transition = 'left 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
                 }, duration * 1000);
             },
 
