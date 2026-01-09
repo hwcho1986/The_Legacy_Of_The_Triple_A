@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Legacy of the Triple A - Engine Type Ref.</title>
+    <title>The Legacy of the Triple A - 엔진 타입 레퍼런스</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Cinzel:wght@400;700&family=Outfit:wght@300;400;600&display=swap"
         rel="stylesheet">
@@ -28,6 +28,7 @@
             margin: 0;
             padding: 2rem;
             line-height: 1.6;
+            word-break: keep-all;
         }
 
         .container {
@@ -80,6 +81,8 @@
             border-collapse: collapse;
             font-size: 0.95rem;
             margin-bottom: 1rem;
+            min-width: 1000px;
+            /* 테이블 가로 스크롤 확보 */
         }
 
         th,
@@ -151,31 +154,29 @@
 <body>
 
     <div class="container">
-        <h1>Game Engine Type Reference<br><span style="font-size: 1rem; color: #888;">JSON Schema & Functionality Guide
-                (v0.8.1)</span></h1>
+        <h1>게임 엔진 타입 레퍼런스<br><span style="font-size: 1rem; color: #888;">JSON 스키마 & 기능 가이드 (v0.8.2)</span></h1>
 
         <div class="card">
-            <h3>Overview</h3>
-            <p>This document details all supported <code>type</code> values for <code>PLAY.JSON</code>. Each event
-                object strictly follows the schema:</p>
+            <h3>개요 (Overview)</h3>
+            <p>이 문서는 <code>PLAY.JSON</code>에서 사용 가능한 모든 <code>type</code> 값을 설명합니다. 각 이벤트 객체는 다음 스키마를 따릅니다:</p>
             <pre><code>{
-    "Index": 100,          // Unique ID (Integer)
-    "type": "string",      // Event Type
-    "Value01": "...",      // Parameter 1
-    "Value02": "...",      // Parameter 2
-    "Value03": "...",      // Parameter 3
-    "Value04": "...",      // Parameter 4
-    "Value05": "..."       // Parameter 5
+    "Index": 100,          // 고유 ID (Integer)
+    "type": "string",      // 이벤트 타입 명
+    "Value01": "...",      // 파라미터 1
+    "Value02": "...",      // 파라미터 2
+    "Value03": "...",      // 파라미터 3
+    "Value04": "...",      // 파라미터 4
+    "Value05": "..."       // 파라미터 5
 }</code></pre>
         </div>
 
-        <h2>1. Functional Definition Table</h2>
+        <h2>1. 기능 정의표 (Functional Definition Table)</h2>
         <div class="card" style="overflow-x: auto;">
             <table>
                 <thead>
                     <tr>
-                        <th width="12%">Type</th>
-                        <th width="18%">Description</th>
+                        <th width="12%">타입 (Type)</th>
+                        <th width="18%">설명</th>
                         <th width="14%">Value01</th>
                         <th width="14%">Value02</th>
                         <th width="14%">Value03</th>
@@ -187,28 +188,28 @@
                     <!-- Background -->
                     <tr>
                         <td>bgcolor</td>
-                        <td>Change Background Color</td>
-                        <td>Hex Code<br>e.g. #000000</td>
-                        <td>Transition (sec)<br>e.g. 2.0</td>
+                        <td>배경라 변환</td>
+                        <td>Hex 코드<br>예: #000000</td>
+                        <td>전환 시간(초)<br>예: 2.0</td>
                         <td>-</td>
                         <td>-</td>
                         <td>-</td>
                     </tr>
                     <tr>
                         <td>onbgimage</td>
-                        <td>Show Background Image</td>
-                        <td>Image Path</td>
-                        <td>Effect<br>(fadein, blind)</td>
-                        <td>Duration (sec)</td>
-                        <td>Layer Num<br>(Default: 1)</td>
+                        <td>배경 이미지 표시</td>
+                        <td>이미지 경로</td>
+                        <td>효과<br>(fadein, blind)</td>
+                        <td>지연/효과 시간(초)</td>
+                        <td>레이어 번호<br>(기본값: 1)</td>
                         <td>-</td>
                     </tr>
                     <tr>
                         <td>offbgimage</td>
-                        <td>Remove Background Image</td>
-                        <td>Layer Num</td>
+                        <td>배경 이미지 제거</td>
+                        <td>레이어 번호</td>
                         <td>-</td>
-                        <td>Duration (sec)</td>
+                        <td>제거 시간(초)</td>
                         <td>-</td>
                         <td>-</td>
                     </tr>
@@ -216,75 +217,75 @@
                     <!-- Character -->
                     <tr>
                         <td>oncharacter</td>
-                        <td>Show Character</td>
-                        <td>Char ID<br>(e.g. jung)</td>
-                        <td>State/Emotion<br>(normal)</td>
-                        <td>Position<br>(center, left, right)</td>
-                        <td>Effect<br>(fadein)</td>
-                        <td>Duration (sec)</td>
+                        <td>캐릭터 표시</td>
+                        <td>캐릭터 ID<br>(예: jung)</td>
+                        <td>표정/상태<br>(normal)</td>
+                        <td>위치<br>(center, left, right)</td>
+                        <td>효과<br>(fadein)</td>
+                        <td>효과 시간(초)</td>
                     </tr>
                     <tr>
                         <td>offcharacter</td>
-                        <td>Remove Character</td>
-                        <td>Char ID</td>
+                        <td>캐릭터 제거</td>
+                        <td>캐릭터 ID</td>
                         <td>-</td>
                         <td>-</td>
-                        <td>Effect<br>(fadeout)</td>
-                        <td>Duration (sec)</td>
+                        <td>효과<br>(fadeout)</td>
+                        <td>효과 시간(초)</td>
                     </tr>
                     <tr>
                         <td>move</td>
-                        <td>Move Character</td>
-                        <td>Char ID</td>
-                        <td>Target Pos<br>(center, left, right)</td>
-                        <td>Duration (sec)</td>
+                        <td>캐릭터 이동</td>
+                        <td>캐릭터 ID</td>
+                        <td>목표 위치<br>(center, left, right)</td>
+                        <td>이동 시간(초)</td>
                         <td>-</td>
                         <td>-</td>
                     </tr>
                     <tr>
                         <td>anieffect</td>
-                        <td>Animation Effect</td>
-                        <td>Char ID or 'all'</td>
-                        <td>Effect Name<br>(shake)</td>
-                        <td>Duration (sec)</td>
+                        <td>애니메이션 효과</td>
+                        <td>캐릭터 ID 또는 'all'</td>
+                        <td>효과 이름<br>(shake)</td>
+                        <td>지속 시간(초)</td>
                         <td>-</td>
                         <td>-</td>
                     </tr>
                     <tr>
                         <td>gifeffect</td>
-                        <td>GIF Overlay on Char</td>
-                        <td>Char ID</td>
-                        <td>GIF Path</td>
-                        <td>Width (px/%)</td>
-                        <td>Height (px/%)</td>
-                        <td>Duration (sec)</td>
+                        <td>GIF 효과 오버레이</td>
+                        <td>캐릭터 ID</td>
+                        <td>GIF 경로</td>
+                        <td>너비 (px/%)</td>
+                        <td>높이 (px/%)</td>
+                        <td>지속 시간(초)<br>(0이면 2초)</td>
                     </tr>
 
                     <!-- Dialogue -->
                     <tr>
                         <td>speak</td>
-                        <td>Dialogue</td>
-                        <td>Char ID<br>(none for narr.)</td>
-                        <td>Speaker Name<br>(Locale Key)</td>
-                        <td>Text Content<br>(Locale Key)</td>
-                        <td>Voice Path</td>
-                        <td>Name Color<br>(Hex)</td>
+                        <td>대화 출력</td>
+                        <td>캐릭터 ID<br>(내레이션은 none)</td>
+                        <td>화자 이름<br>(로컬 키)</td>
+                        <td>대사 내용<br>(로컬 키)</td>
+                        <td>보이스 경로</td>
+                        <td>이름 색상<br>(Hex)</td>
                     </tr>
 
                     <!-- Overlays -->
                     <tr>
                         <td>oncolor</td>
-                        <td>Color Overlay</td>
-                        <td>Hex Code<br>#RRGGBB</td>
-                        <td>Duration (sec)</td>
-                        <td>Opacity<br>(0.0 ~ 1.0 or %)</td>
+                        <td>색상 오버레이 (화면 덮기)</td>
+                        <td>Hex 코드<br>#RRGGBB</td>
+                        <td>효과 시간(초)</td>
+                        <td>불투명도<br>(0.0 ~ 1.0 or %)</td>
                         <td>-</td>
                         <td>-</td>
                     </tr>
                     <tr>
                         <td>offcolor</td>
-                        <td>Remove Color Overlay</td>
-                        <td>Duration (sec)</td>
+                        <td>색상 오버레이 제거</td>
+                        <td>효과 시간(초)</td>
                         <td>-</td>
                         <td>-</td>
                         <td>-</td>
@@ -292,16 +293,16 @@
                     </tr>
                     <tr>
                         <td>onimage</td>
-                        <td>Image Overlay</td>
-                        <td>Image Path</td>
-                        <td>Size<br>(W,H e.g. 200,200)</td>
+                        <td>이미지 오버레이 (가운데)</td>
+                        <td>이미지 경로</td>
+                        <td>크기<br>(W,H 예: 200,200)</td>
                         <td>-</td>
                         <td>-</td>
                         <td>-</td>
                     </tr>
                     <tr>
                         <td>offimage</td>
-                        <td>Remove Image Overlay</td>
+                        <td>이미지 오버레이 제거</td>
                         <td>-</td>
                         <td>-</td>
                         <td>-</td>
@@ -312,25 +313,25 @@
                     <!-- Text / Titles -->
                     <tr>
                         <td>title</td>
-                        <td>Chapter Title (Temp)</td>
-                        <td>Font Family<br>(Optional)</td>
-                        <td>Font Size<br>(Default: 48)</td>
-                        <td>Color<br>#FFFFFF</td>
-                        <td>Text Content</td>
+                        <td>챕터 타이틀 (일시적)</td>
+                        <td>폰트 패밀리<br>(선택사항)</td>
+                        <td>폰트 크기<br>(기본: 48)</td>
+                        <td>색상<br>#FFFFFF</td>
+                        <td>타이틀 텍스트<br>(로컬키 or 텍스트)</td>
                         <td>-</td>
                     </tr>
                     <tr>
                         <td>ontitle</td>
-                        <td>Title (Persist)</td>
-                        <td>Font Family</td>
-                        <td>Font Size</td>
-                        <td>Color</td>
-                        <td>Text Content</td>
+                        <td>타이틀 유지 (지속)</td>
+                        <td>폰트 패밀리</td>
+                        <td>폰트 크기</td>
+                        <td>색상</td>
+                        <td>텍스트 내용</td>
                         <td>-</td>
                     </tr>
                     <tr>
                         <td>offtitle</td>
-                        <td>Remove Title</td>
+                        <td>타이틀 제거</td>
                         <td>-</td>
                         <td>-</td>
                         <td>-</td>
@@ -341,39 +342,66 @@
                     <!-- Interaction -->
                     <tr>
                         <td>choice</td>
-                        <td>User Choice</td>
-                        <td>Choice 1 Text</td>
-                        <td>Target Index 1</td>
-                        <td>Choice 2 Text</td>
-                        <td>Target Index 2</td>
-                        <td>Stats/Flags<br>(Array)</td>
+                        <td>선택지 (분기)</td>
+                        <td>선택지 1 텍스트</td>
+                        <td>이동 인덱스 1</td>
+                        <td>선택지 2 텍스트</td>
+                        <td>이동 인덱스 2</td>
+                        <td>스탯/플래그<br>(배열)</td>
                     </tr>
                     <tr>
                         <td>quiz01</td>
-                        <td>Text Input Quiz</td>
-                        <td>Question Text</td>
-                        <td>Answers<br>(String/Array)</td>
-                        <td>Hint 1</td>
-                        <td>Hint 2</td>
-                        <td>Hint 3</td>
+                        <td>주관식 퀴즈</td>
+                        <td>질문 텍스트</td>
+                        <td>정답 목록<br>(문자열/배열)</td>
+                        <td>힌트 1</td>
+                        <td>힌트 2</td>
+                        <td>힌트 3</td>
                     </tr>
 
                     <!-- Audio -->
                     <tr>
                         <td>onbgm</td>
-                        <td>Play BGM</td>
-                        <td>Audio Path</td>
-                        <td>Loop<br>(loop)</td>
-                        <td>Delay (sec)</td>
+                        <td>BGM 재생</td>
+                        <td>오디오 경로</td>
+                        <td>반복 여부<br>(loop)</td>
+                        <td>지연 시간(초)</td>
                         <td>-</td>
                         <td>-</td>
                     </tr>
                     <tr>
                         <td>offbgm</td>
-                        <td>Stop BGM</td>
-                        <td>Type<br>(bgm)</td>
-                        <td>Fade Out Duration<br>(Optional)</td>
+                        <td>BGM 중지</td>
+                        <td>타입<br>(bgm)</td>
+                        <td>페이드 아웃 시간(초)</td>
                         <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>onamb</td>
+                        <td>환경음(Ambience) 재생</td>
+                        <td>오디오 경로</td>
+                        <td>-(기본 loop)</td>
+                        <td>지연 시간(초)</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>offamb</td>
+                        <td>환경음 중지</td>
+                        <td>-(타입 amb)</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>onsfx</td>
+                        <td>효과음(SFX) 재생</td>
+                        <td>오디오 경로</td>
+                        <td>-(단발성)</td>
+                        <td>지연 시간(초)</td>
                         <td>-</td>
                         <td>-</td>
                     </tr>
@@ -381,8 +409,8 @@
                     <!-- Flow -->
                     <tr>
                         <td>jump</td>
-                        <td>Jump to Index</td>
-                        <td>Target Index</td>
+                        <td>인덱스 점프</td>
+                        <td>목표 인덱스 ID</td>
                         <td>-</td>
                         <td>-</td>
                         <td>-</td>
@@ -390,8 +418,8 @@
                     </tr>
                     <tr>
                         <td>Wait</td>
-                        <td>Pause Execution</td>
-                        <td>Duration (sec)</td>
+                        <td>대기 (실행 일시정지)</td>
+                        <td>대기 시간(초)</td>
                         <td>-</td>
                         <td>-</td>
                         <td>-</td>
@@ -399,7 +427,7 @@
                     </tr>
                     <tr>
                         <td>end</td>
-                        <td>End Chapter</td>
+                        <td>챕터 종료</td>
                         <td>-</td>
                         <td>-</td>
                         <td>-</td>
@@ -410,95 +438,109 @@
             </table>
         </div>
 
-        <h2>2. Detailed Examples</h2>
+        <h2>2. 상세 예시 (Detailed Examples)</h2>
 
-        <h3>Background & Visuals</h3>
+        <h3>배경 및 시각 효과 (Background & Visuals)</h3>
         <div class="card">
-            <p class="mb-4"><strong>bgcolor</strong>: Smoothly transitions the background color.</p>
+            <p class="mb-4"><strong>bgcolor</strong>: 배경색을 부드럽게 전환합니다.</p>
             <pre><code>{
     "Index": 100,
     "type": "bgcolor",
     "Value01": "#000000",
-    "Value02": 2.0  // Transition takes 2 seconds
+    "Value02": 2.0  // 2초 동안 전환
 }</code></pre>
 
-            <p class="mt-8 mb-4"><strong>onbgimage</strong>: Fades in a background image. Supports multiple layers
-                (higher number = front).</p>
+            <p class="mt-8 mb-4"><strong>onbgimage</strong>: 배경 이미지를 표시합니다. 레이어 기능을 지원합니다 (높은 숫자가 앞쪽).</p>
             <pre><code>{
     "Index": 110,
     "type": "onbgimage",
     "Value01": "assets/images/bg/bg_room.jpg",
     "Value02": "fadein",
     "Value03": 2.0,
-    "Value04": 1    // Layer 1 (z-index ordering)
+    "Value04": 1    // 레이어 1번
 }</code></pre>
         </div>
 
-        <h3>Character Control</h3>
+        <h3>캐릭터 제어 (Character Control)</h3>
         <div class="card">
-            <p class="mb-4"><strong>oncharacter</strong>: Displays a character. If the character is already on screen,
-                it updates the image/position.</p>
+            <p class="mb-4"><strong>oncharacter</strong>: 캐릭터를 표시합니다. 이미 화면에 있다면 이미지나 위치를 갱신합니다.</p>
             <pre><code>{
     "Index": 130,
     "type": "oncharacter",
-    "Value01": "jung",      // Maps to character ID
-    "Value02": "normal",    // Becomes assets/images/character/jung_normal.png
-    "Value03": "center",    // Or "left", "right", "50%"
+    "Value01": "jung",      // 캐릭터 ID
+    "Value02": "normal",    // assets/images/character/jung_normal.png 로 매핑됨
+    "Value03": "center",    // "left", "right", "50%" 등
     "Value04": "fadein",
     "Value05": 1.0
 }</code></pre>
-            <p class="mt-8 mb-4"><strong>anieffect</strong>: Applies a CSS animation class (like 'shake') to the
-                character.</p>
+            <p class="mt-8 mb-4"><strong>anieffect</strong>: 캐릭터에게 CSS 애니메이션 효과(예: shake)를 적용합니다.</p>
             <pre><code>{
     "Index": 135,
     "type": "anieffect",
     "Value01": "jung",
-    "Value02": "shake",     // Defined in global CSS
-    "Value03": 0.5          // Duration
+    "Value02": "shake",     // CSS에 정의된 애니메이션 클래스
+    "Value03": 0.5          // 지속 시간
 }</code></pre>
         </div>
 
-        <h3>Dialogue</h3>
+        <h3>대화 (Dialogue)</h3>
         <div class="card">
-            <p class="mb-4"><strong>speak</strong>: The core storytelling element. Shows text and plays voiceover.</p>
+            <p class="mb-4"><strong>speak</strong>: 게임의 핵심 스토리텔링 요소입니다. 텍스트와 음성을 출력합니다.</p>
             <pre><code>{
     "Index": 140,
     "type": "speak",
     "Value01": "jung",
-    "Value02": "정성훈",      // Name shown
-    "Value03": "This is a [FF0000]warning[-] message./nNew line here.",
+    "Value02": "정성훈",      // 표시될 이름 (로컬 키 가능)
+    "Value03": "여기는 [FF0000]위험[-] 구역입니다./n조심하세요.", // 대사 내용
     "Value04": "assets/voice/jung_01.mp3",
-    "Value05": "#C5A059"    // Custom name color
+    "Value05": "#C5A059"    // 이름 색상 커스텀
 }</code></pre>
             <div class="mt-4 p-4 bg-white/5 rounded">
-                <strong>Text Tags:</strong>
+                <strong>텍스트 태그:</strong>
                 <ul class="list-disc ml-5 mt-2 text-sm text-gray-400">
-                    <li><code>/n</code> or <code>\n</code>: New Line</li>
-                    <li><code>[RRGGBB]Text[-]</code>: Color text (Hex code)</li>
+                    <li><code>/n</code> 또는 <code>\n</code>: 줄바꿈</li>
+                    <li><code>[RRGGBB]Text[-]</code>: 텍스트 색상 변경 (Hex 코드)</li>
                 </ul>
             </div>
         </div>
 
-        <h3>Interactions (Choice & Quiz)</h3>
+        <h3>상호작용 (Interaction)</h3>
         <div class="card">
-            <p class="mb-4"><strong>choice</strong>: Presents 2 distinct options to the player.</p>
+            <p class="mb-4"><strong>choice</strong>: 2개의 선택지를 플레이어에게 제시합니다.</p>
             <pre><code>{
     "Index": 200,
     "type": "choice",
-    "Value01": "Enter the room",  // Option 1
-    "Value02": 1000,              // Jump to Index 1000
-    "Value03": "Run away",        // Option 2
-    "Value04": 2000               // Jump to Index 2000
+    "Value01": "방으로 들어간다",  // 선택지 1
+    "Value02": 1000,              // 1000번 인덱스로 점프
+    "Value03": "도망친다",        // 선택지 2
+    "Value04": 2000               // 2000번 인덱스로 점프
 }</code></pre>
 
-            <p class="mt-8 mb-4"><strong>quiz01</strong>: Text input field for solving puzzles.</p>
+            <p class="mt-8 mb-4"><strong>quiz01</strong>: 주관식 텍스트 입력 퀴즈를 실행합니다.</p>
             <pre><code>{
     "Index": 300,
     "type": "quiz01",
-    "Value01": "Who is the culprit?",
-    "Value02": ["Butler", "The Butler"], // Acceptable answers
-    "Value03": "He wears a suit",        // Hint 1
-    "Value04": "He was in the kitchen"   // Hint 2
+    "Value01": "범인은 누구인가?",
+    "Value02": ["집사", "Butler"],   // 정답 인정 목록
+    "Value03": "그는 정장을 입고 있었다", // 힌트 1
+    "Value04": "그는 부엌에 있었다"      // 힌트 2
+}</code></pre>
+        </div>
+
+        <h3>오디오 및 기타 (Audio & Misc)</h3>
+        <div class="card">
+            <p class="mb-4"><strong>onamb / onsfx</strong>: 환경음이나 효과음을 재생합니다.</p>
+            <pre><code>{
+    "Index": 400,
+    "type": "onamb",
+    "Value01": "assets/audio/amb/rain.mp3",
+    "Value03": 0.5  // 0.5초 후 재생
+}</code></pre>
+            <p class="mt-8 mb-4"><strong>Wait</strong>: 지정된 시간(초)만큼 다음 이벤트 실행을 대기합니다.</p>
+            <pre><code>{
+    "Index": 900,
+    "type": "Wait",
+    "Value01": 3.0 // 3초 대기
 }</code></pre>
         </div>
 

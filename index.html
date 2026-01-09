@@ -840,7 +840,8 @@
             t(key) {
                 if (!key) return '';
                 if (typeof key !== 'string') return JSON.stringify(key);
-                if (key.startsWith('"') && key.endsWith('"')) return key.slice(1, -1);
+                // Remove quote stripping to allow quoted text display as requested
+                // if (key.startsWith('"') && key.endsWith('"')) return key.slice(1, -1);
                 if (State.localization[key]) {
                     const entry = State.localization[key];
                     return entry[State.lang] || entry['KO'] || entry['EN'] || key;
@@ -959,8 +960,24 @@
                         this.executeEvent(parseInt(event.Value01));
                         break;
 
+                    case 'onamb':
+                        this.playAudio('amb', event.Value01, true, event.Value03); // Loop default for AMB
+                        this.next(event.Index, 'Read');
+                        break;
+
+                    case 'offamb':
+                        this.stopAudio('amb', event.Value01);
+                        this.next(event.Index, 'Read');
+                        break;
+
+                    case 'onsfx':
+                    case 'sdx': // Fallback for typo in user request
+                        this.playAudio('sfx', event.Value01, false, event.Value03);
+                        this.next(event.Index, 'Read');
+                        break;
+
                     case 'Wait':
-                        setTimeout(() => this.next(event.Index, 'Read'), (event.Value01 || 0) * 1000);
+                        setTimeout(() => this.next(event.Index, 'Read'), parseFloat(event.Value01 || 0) * 1000);
                         break;
 
                     case 'anieffect':
@@ -1239,6 +1256,7 @@
                 const layer = document.getElementById('title-layer');
                 const el = document.createElement('div');
                 el.className = 'absolute inset-0 flex items-center justify-center text-center p-10 md:p-20 z-10';
+                el.style.whiteSpace = 'pre-wrap'; // Preserve spaces
                 el.style.fontFamily = data.Value01 || 'Cinzel, serif';
                 // 폰트 크기를 vw 단위로 변경하여 반응형 대응 (기준 1920px -> 1vw = 19.2px)
                 el.style.fontSize = (data.Value02 || 48) / 19.2 + 'vw';
@@ -1248,9 +1266,19 @@
                 el.style.fontSize = `clamp(1.5rem, ${(data.Value02 || 48) / 19.2}vw, 8rem)`;
                 el.style.color = data.Value03 || '#fff';
                 el.innerText = '';
+
+                // Add Value05 to log if present (User request: speak, title, ontitle... put text data in log)
+                // Title text is usually Value04. Value05 is not used in standard title, but we check if we need to log anything else?
+                // User said "Value of title also include in log". -> Done above with titleText.
+
                 layer.appendChild(el);
 
-                this.typeText(el, this.t(data.Value04), () => {
+                const titleText = this.t(data.Value04);
+
+                // Log title
+                State.backlog.push({ name: 'TITLE', text: titleText });
+
+                this.typeText(el, titleText, () => {
                     if (!keep) {
                         setTimeout(() => {
                             el.classList.add('fade-out');
@@ -1302,6 +1330,11 @@
                 // Force Auto-off and block it
                 State.settings.autoMode = false;
                 State.isQuizActive = true;
+
+                // Log Quiz
+                const qText = this.t(data.Value01);
+                State.backlog.push({ name: 'QUIZ', text: qText });
+
                 document.getElementById('auto-btn').innerText = `AUTO: OFF`;
 
                 const layer = document.getElementById('interaction-layer');
