@@ -852,8 +852,8 @@
             formatText(str) {
                 if (!str) return '';
                 let formatted = str.replace(/\/n|\\n/g, '<br>');
-                // 색상 태그 처리: [RRGGBB] 또는 [ColorName] 대응
-                formatted = formatted.replace(/\[([A-Za-z0-9]+)\](.*?)\[-\]/g, (match, p1, p2) => {
+                // 색상 태그 처리: [#RRGGBB], [RRGGBB] 또는 [ColorName] 대응
+                formatted = formatted.replace(/\[(#?[A-Za-z0-9]+)\](.*?)\[-\]/g, (match, p1, p2) => {
                     const isHex = /^[0-9A-Fa-f]{6}$/.test(p1);
                     const color = isHex ? `#${p1}` : p1;
                     return `<span style="color: ${color}">${p2}</span>`;
@@ -987,6 +987,16 @@
 
                     case 'move':
                         this.handleMove(event);
+                        this.next(event.Index, 'Read');
+                        break;
+
+                    case 'editcharacter':
+                        this.handleEditCharacter(event);
+                        this.next(event.Index, 'Read');
+                        break;
+
+                    case 'transform':
+                        this.handleTransform(event);
                         this.next(event.Index, 'Read');
                         break;
 
@@ -1258,18 +1268,9 @@
                 el.className = 'absolute inset-0 flex items-center justify-center text-center p-10 md:p-20 z-10';
                 el.style.whiteSpace = 'pre-wrap'; // Preserve spaces
                 el.style.fontFamily = data.Value01 || 'Cinzel, serif';
-                // 폰트 크기를 vw 단위로 변경하여 반응형 대응 (기준 1920px -> 1vw = 19.2px)
-                el.style.fontSize = (data.Value02 || 48) / 19.2 + 'vw';
-                // 최소 폰트 크기 보전 (모바일 대응)
-                el.style.minFontSize = "24px";
-                // JS에서 minFontSize는 직접 지원되지 않으므로 CSS로 보완 가능하나, clamp 사용 고려
                 el.style.fontSize = `clamp(1.5rem, ${(data.Value02 || 48) / 19.2}vw, 8rem)`;
                 el.style.color = data.Value03 || '#fff';
                 el.innerText = '';
-
-                // Add Value05 to log if present (User request: speak, title, ontitle... put text data in log)
-                // Title text is usually Value04. Value05 is not used in standard title, but we check if we need to log anything else?
-                // User said "Value of title also include in log". -> Done above with titleText.
 
                 layer.appendChild(el);
 
@@ -1280,10 +1281,28 @@
 
                 this.typeText(el, titleText, () => {
                     if (!keep) {
-                        setTimeout(() => {
+                        // Wait for user input instead of auto-advancing
+                        State.isInteractionWaiting = true;
+
+                        const proceedHandler = () => {
+                            if (!State.isInteractionWaiting) return;
+                            State.isInteractionWaiting = false;
+
                             el.classList.add('fade-out');
-                            setTimeout(() => { el.remove(); this.next(data.Index, 'Read'); }, 1000);
-                        }, 2000);
+                            setTimeout(() => {
+                                el.remove();
+                                this.next(data.Index, 'Read');
+                            }, 1000);
+                        };
+
+                        // Single-use click handler
+                        const clickHandler = (e) => {
+                            if (e.target.closest('#system-ui') || e.target.closest('.premium-btn')) return;
+                            proceedHandler();
+                            document.removeEventListener('click', clickHandler);
+                        };
+
+                        document.addEventListener('click', clickHandler);
                     }
                 });
             },
@@ -1419,22 +1438,133 @@
 
                 let pos = data.Value02 || '50%';
                 if (pos === 'center') pos = '50%';
-                if (pos === 'left') pos = '15%';
-                if (pos === 'right') pos = '85%';
+                else if (pos === 'left') pos = '20%';
+                else if (pos === 'right') pos = '80%';
 
-                if (window.innerWidth > 768) {
-                    if (pos === '15%') pos = '20%';
-                    if (pos === '85%') pos = '80%';
+                const duration = parseFloat(data.Value03 || 1);
+
+                // wrapper 이동
+                if (char.wrapper) {
+                    char.wrapper.style.transition = `left ${duration}s cubic-bezier(0.4, 0, 0.2, 1)`;
+                    char.wrapper.style.left = pos;
+                } else if (char.div) {
+                    // Fallback if wrapper property name differs (initially it was div)
+                    char.div.style.transition = `left ${duration}s cubic-bezier(0.4, 0, 0.2, 1)`;
+                    char.div.style.left = pos;
+                }
+            },
+
+            handleEditCharacter(data) {
+                const charId = data.Value01;
+                const newExpr = data.Value02; // Image path
+                const color = data.Value03; // Hex color for overlay
+                const duration = parseFloat(data.Value04 || 0);
+
+                if (!charId || !State.characters[charId]) return;
+
+                const charObj = State.characters[charId];
+                const imgEl = charObj.img;
+                const wrapperEl = charObj.wrapper || charObj.div;
+
+                // 1. Change Expression (Image)
+                if (newExpr) {
+                    if (duration > 0) {
+                        imgEl.style.transition = `opacity ${duration}s`;
+                        const tempImg = new Image();
+                        tempImg.src = newExpr;
+                        tempImg.onload = () => {
+                            imgEl.style.opacity = 0;
+                            setTimeout(() => {
+                                imgEl.src = newExpr;
+                                imgEl.style.opacity = 1;
+                            }, duration * 1000);
+                        };
+                    } else {
+                        imgEl.src = newExpr;
+                    }
                 }
 
-                const duration = data.Value03 || 1;
-                char.el.style.transition = `left ${duration}s cubic-bezier(0.4, 0, 0.2, 1)`;
-                char.el.style.left = pos;
+                // 2. Color Overlay
+                if (color) {
+                    let existingOverlay = wrapperEl.querySelector('.char-overlay');
+                    if (existingOverlay) existingOverlay.remove();
 
-                // 이동 후 트랜지션 복구 (0.8s는 기본값)
-                setTimeout(() => {
-                    char.el.style.transition = 'left 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-                }, duration * 1000);
+                    const overlay = document.createElement('div');
+                    overlay.className = 'char-overlay absolute inset-0 pointer-events-none';
+                    overlay.style.backgroundColor = color;
+                    overlay.style.transition = `opacity ${duration}s ease`;
+                    overlay.style.opacity = 0;
+
+                    overlay.style.webkitMaskImage = `url("${imgEl.src}")`;
+                    overlay.style.webkitMaskRepeat = 'no-repeat';
+                    overlay.style.webkitMaskPosition = 'bottom center';
+                    overlay.style.webkitMaskSize = 'contain';
+
+                    wrapperEl.appendChild(overlay);
+
+                    // Force reflow
+                    overlay.offsetHeight;
+                    overlay.style.opacity = 1;
+                }
+            },
+
+            handleTransform(data) {
+                const targetType = data.Value01;
+                const scaleVal = data.Value02;
+                const duration = parseFloat(data.Value04 || 0);
+
+                let targets = [];
+
+                if (targetType === 'all') {
+                    Object.values(State.characters).forEach(c => targets.push(c.wrapper || c.div));
+                    const title = document.getElementById('title-layer').firstChild;
+                    if (title) targets.push(title);
+                    const overlay = document.getElementById('overlay-layer').firstChild;
+                    if (overlay) targets.push(overlay);
+                    const dialogue = document.getElementById('dialogue-box');
+                    if (dialogue) targets.push(dialogue);
+                } else if (targetType === 'allcharacter') {
+                    Object.values(State.characters).forEach(c => targets.push(c.wrapper || c.div));
+                } else if (targetType === 'ontitle') {
+                    const title = document.getElementById('title-layer').firstChild;
+                    if (title) targets.push(title);
+                } else if (targetType === 'onimage') {
+                    const overlay = document.getElementById('overlay-layer').firstChild;
+                    if (overlay) targets.push(overlay);
+                } else {
+                    if (State.characters[targetType]) {
+                        targets.push(State.characters[targetType].wrapper || State.characters[targetType].div);
+                    }
+                }
+
+                let transformStr = '';
+                if (scaleVal.includes('%')) {
+                    const scale = parseFloat(scaleVal) / 100;
+                    transformStr = `scale(${scale})`;
+                } else if (scaleVal.includes('(') && scaleVal.includes(',')) {
+                    const parts = scaleVal.replace(/[()]/g, '').split(',');
+                    if (parts.length === 2) {
+                        transformStr = `scale(${parts[0].trim()}, ${parts[1].trim()})`;
+                    }
+                } else {
+                    const n = parseFloat(scaleVal);
+                    if (!isNaN(n)) transformStr = `scale(${n})`;
+                }
+
+                if (!transformStr) return;
+
+                targets.forEach(el => {
+                    if (el.classList.contains('char-container')) {
+                        const img = el.querySelector('.char-obj');
+                        if (img) {
+                            img.style.transition = `transform ${duration}s ease`;
+                            img.style.transform = `${transformStr} translateY(var(--char-y-offset, 0%))`;
+                        }
+                    } else {
+                        el.style.transition = `transform ${duration}s ease`;
+                        el.style.transform = transformStr;
+                    }
+                });
             },
 
             handleGifEffect(data) {
