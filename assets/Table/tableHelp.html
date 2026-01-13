@@ -174,11 +174,11 @@
             <div style="display: flex; flex-direction: column; gap: 8px; font-weight: bold;">
                 <div
                     style="background: rgba(255, 0, 0, 0.2); padding: 10px; border-radius: 8px; border: 1px solid rgba(255, 0, 0, 0.3);">
-                    [LV 8] UI / Modals (z-index: 2000)
+                    [LV 8] UI / Modals / Main Menu (z-index: 2000)
                 </div>
                 <div
                     style="background: rgba(255, 255, 255, 0.2); padding: 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.3);">
-                    [LV 7] interaction (Choice/Quiz) / onimage (z-index: 1000)
+                    [LV 7] interaction (Choice/Quiz) (z-index: 1000)
                 </div>
                 <div
                     style="background: rgba(255, 255, 255, 0.1); padding: 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2);">
@@ -186,7 +186,7 @@
                 </div>
                 <div
                     style="background: rgba(197, 160, 89, 0.4); padding: 10px; border-radius: 8px; border: 1px solid var(--accent-gold);">
-                    [LV 5] onovercolor (z-index: 450)
+                    [LV 5] onimage / onovercolor (z-index: 450~500)
                 </div>
                 <div
                     style="background: rgba(139, 0, 0, 0.2); padding: 10px; border-radius: 8px; border: 1px solid var(--primary-red);">
@@ -204,7 +204,8 @@
                     [LV 1] Background (onbgimage / bgcolor) (z-index: 0~10)
                 </div>
             </div>
-            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.7;">* 정렬 순서가 높을수록 화면의 더 앞쪽에 그려집니다.</p>
+            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.7;">* <code>onimage</code>는 이제 대사창(onspeak)보다 위에
+                그려집니다. 타이틀 메뉴와 모달은 최상단(LV 8)에 위치하여 항상 클릭 가능합니다.</p>
         </div>
 
         <h2>기능 정의표 (Functional Definition Table)</h2>
@@ -415,7 +416,7 @@
                     </tr>
                     <tr>
                         <td><span class="type-num">16</span>onimage</td>
-                        <td>이미지 오버레이</td>
+                        <td>이미지 오버레이 (대사창 위)</td>
                         <td>경로</td>
                         <td>크기(W,H)</td>
                         <td>-</td>
