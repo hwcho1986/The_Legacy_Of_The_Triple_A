@@ -31,7 +31,7 @@
     },
     {
         "Index": 140,
-        "type": "speak",
+        "type": "onspeak",
         "Value01": "none",
         "Value02": "시스템",
         "Value03": "[#ff0000][모작][-] 대괴도 AAA의 유산에 오신 것을 환영합니다. [#00ff00][테스트][-] 색상 코드가 작동합니다!",
@@ -39,7 +39,7 @@
     },
     {
         "Index": 150,
-        "type": "speak",
+        "type": "onspeak",
         "Value01": "jung",
         "Value02": "정성훈",
         "Value03": "드디어 이곳에 도착했군... AAA의 유산이 정말 이곳에 있는 걸까?",
@@ -105,7 +105,7 @@
     },
     {
         "Index": 1030,
-        "type": "speak",
+        "type": "onspeak",
         "Value01": "none",
         "Value02": "시스템",
         "Value03": "정답입니다! 당신은 진실에 한 걸음 더 다가갔습니다."
@@ -116,7 +116,7 @@
     },
     {
         "Index": 2000,
-        "type": "speak",
+        "type": "onspeak",
         "Value01": "jung",
         "Value02": "정성훈",
         "Value03": "아무래도 내 분수에 맞지 않는 일인 것 같아... 돌아가자."

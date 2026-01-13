@@ -169,6 +169,41 @@
     <div class="container">
         <h1>게임 엔진 타입 레퍼런스<br><span style="font-size: 1rem; color: #888;">JSON 스키마 & 기능 가이드 (v1.0.0)</span></h1>
 
+        <h2>레이어 계층 가이드 (Layer Hierarchy)</h2>
+        <div class="card">
+            <div style="display: flex; flex-direction: column; gap: 8px; font-weight: bold;">
+                <div
+                    style="background: rgba(255, 0, 0, 0.2); padding: 10px; border-radius: 8px; border: 1px solid rgba(255, 0, 0, 0.3);">
+                    [LV 7] UI / Modals (z-index: 2000)
+                </div>
+                <div
+                    style="background: rgba(197, 160, 89, 0.4); padding: 10px; border-radius: 8px; border: 1px solid var(--accent-gold);">
+                    [LV 6] onovercolor / offovercolor (z-index: 600)
+                </div>
+                <div
+                    style="background: rgba(255, 255, 255, 0.1); padding: 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2);">
+                    [LV 5] interaction (Choice/Quiz) (z-index: 450)
+                </div>
+                <div
+                    style="background: rgba(139, 0, 0, 0.2); padding: 10px; border-radius: 8px; border: 1px solid var(--primary-red);">
+                    [LV 4] onspeak (Dialogue Box) (z-index: 400)
+                </div>
+                <div
+                    style="background: rgba(255, 255, 255, 0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    [LV 3] title / ontitle (z-index: 70)
+                </div>
+                <div
+                    style="background: rgba(255, 255, 255, 0.02); padding: 10px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.05);">
+                    [LV 2] oncharacter / onimage (z-index: 20~50)
+                </div>
+                <div style="background: #000; padding: 10px; border-radius: 8px; border: 1px solid #333;">
+                    [LV 1] Background (onbgimage / bgcolor) (z-index: 0~10)
+                </div>
+            </div>
+            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.7;">* 정렬 순서가 높을수록 화면의 더 앞쪽에 그려집니다.
+                <code>onovercolor</code>는 대사창까지 덮는 최상위 오버레이입니다.</p>
+        </div>
+
         <h2>기능 정의표 (Functional Definition Table)</h2>
         <div class="card" style="overflow-x: auto;">
             <table>
@@ -288,13 +323,22 @@
                             대화 및 텍스트 (Dialogue & Text)</td>
                     </tr>
                     <tr>
-                        <td><span class="type-num">10</span>speak</td>
-                        <td>대화 출력</td>
+                        <td><span class="type-num">10</span>onspeak</td>
+                        <td>대화 시작/출력</td>
                         <td>ID (none=내레이션)</td>
                         <td>화자 이름</td>
                         <td>대사 내용</td>
                         <td>보이스 경로</td>
                         <td>이름 색상</td>
+                    </tr>
+                    <tr>
+                        <td><span class="type-num">10-1</span>offspeak</td>
+                        <td>대화창 제거</td>
+                        <td>페이드아웃(초)</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
                     </tr>
                     <tr>
                         <td><span class="type-num">11</span>title</td>
@@ -332,7 +376,16 @@
                     </tr>
                     <tr>
                         <td><span class="type-num">14</span>oncolor</td>
-                        <td>색상 오버레이</td>
+                        <td>색상 오버레이 (대사창 아래)</td>
+                        <td>Hex 코드</td>
+                        <td>시간(초)</td>
+                        <td>불투명도</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td><span class="type-num">14-1</span>onovercolor</td>
+                        <td>색상 오버레이 (대사창 위)</td>
                         <td>Hex 코드</td>
                         <td>시간(초)</td>
                         <td>불투명도</td>
@@ -341,7 +394,16 @@
                     </tr>
                     <tr>
                         <td><span class="type-num">15</span>offcolor</td>
-                        <td>색상 오버레이 제거</td>
+                        <td>색상 오버레이 제거 (아래)</td>
+                        <td>시간(초)</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td><span class="type-num">15-1</span>offovercolor</td>
+                        <td>색상 오버레이 제거 (위)</td>
                         <td>시간(초)</td>
                         <td>-</td>
                         <td>-</td>

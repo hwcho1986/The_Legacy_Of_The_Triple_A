@@ -483,8 +483,11 @@
             </div>
         </div>
 
-        <!-- choice / quiz -->
+        <!-- interaction layer -->
         <div id="interaction-layer" class="layer layer-interactive" style="z-index: 450;"></div>
+
+        <!-- onovercolor / offovercolor (highest overlay) -->
+        <div id="cover-overlay-layer" class="layer" style="z-index: 600;"></div>
 
         <!-- System UI (Always on top) -->
         <div id="system-ui" class="absolute top-0 w-full p-3 md:p-6 flex justify-between items-center hidden"
@@ -906,8 +909,13 @@
                         this.next(event.Index, 'Read');
                         break;
 
-                    case 'speak':
-                        this.handleSpeak(event);
+                    case 'onspeak':
+                        this.handleOnSpeak(event);
+                        break;
+
+                    case 'offspeak':
+                        this.handleOffSpeak(event);
+                        this.next(event.Index, 'Read');
                         break;
 
                     case 'oncolor':
@@ -927,6 +935,16 @@
 
                     case 'offimage':
                         this.handleOverlayImage(event, false);
+                        this.next(event.Index, 'Read');
+                        break;
+
+                    case 'onovercolor':
+                        this.handleCoverOverlayColor(event, true);
+                        this.next(event.Index, 'Read');
+                        break;
+
+                    case 'offovercolor':
+                        this.handleCoverOverlayColor(event, false);
                         this.next(event.Index, 'Read');
                         break;
 
@@ -1122,13 +1140,16 @@
                 }
             },
 
-            handleSpeak(data) {
+            handleOnSpeak(data) {
                 const layer = document.getElementById('dialogue-layer');
                 const speaker = document.getElementById('speaker-name');
                 const text = document.getElementById('dialogue-text');
                 const box = document.getElementById('dialogue-box');
 
                 layer.style.display = 'block';
+                layer.classList.remove('fade-out');
+                layer.style.opacity = '1';
+
                 const nameStr = this.t(data.Value02);
                 speaker.innerText = nameStr;
 
@@ -1165,6 +1186,17 @@
 
                 State.isInteractionWaiting = true;
                 State.currentEvent = data;
+            },
+
+            handleOffSpeak(data) {
+                const layer = document.getElementById('dialogue-layer');
+                const duration = data.Value01 || 0.5;
+                layer.style.setProperty('--duration', `${duration}s`);
+                layer.classList.add('fade-out');
+                setTimeout(() => {
+                    layer.style.display = 'none';
+                    layer.classList.remove('fade-out');
+                }, duration * 1000);
             },
 
             handleGlobalInteraction() {
@@ -1265,6 +1297,23 @@
                     layer.appendChild(el);
                 } else {
                     layer.innerHTML = '';
+                }
+            },
+
+            handleCoverOverlayColor(data, on) {
+                const layer = document.getElementById('cover-overlay-layer');
+                if (on) {
+                    layer.style.pointerEvents = 'auto';
+                    const el = document.createElement('div');
+                    el.className = 'layer fade-in';
+                    el.style.backgroundColor = data.Value01;
+                    const opacityStr = data.Value03 || '100%';
+                    el.style.opacity = opacityStr.includes('%') ? parseInt(opacityStr) / 100 : opacityStr;
+                    el.style.setProperty('--duration', `${data.Value02 || 0.5}s`);
+                    layer.appendChild(el);
+                } else {
+                    layer.innerHTML = '';
+                    layer.style.pointerEvents = 'none';
                 }
             },
 
