@@ -437,12 +437,15 @@
         <!-- onbgimage (multiple) -->
         <div id="bgimage-layer" class="layer" style="z-index: 10;"></div>
 
-        <!-- oncharacter -->
+        <!-- LV 2: oncharacter -->
         <div id="character-layer" class="layer"
             style="z-index: 20; display: flex; align-items: flex-end; justify-content: center;">
         </div>
 
-        <!-- dialogue / speak -->
+        <!-- LV 3: oncolor (below dialogue) -->
+        <div id="oncolor-layer" class="layer" style="z-index: 70;"></div>
+
+        <!-- LV 4: dialogue / onspeak -->
         <div id="dialogue-layer" class="layer layer-interactive" style="z-index: 400; display: none;">
             <div class="absolute bottom-10 left-1/2 -translate-x-1/2 w-[95%] max-w-[1200px] glass p-10 rounded-2xl border-l-[6px] border-primary-red shadow-2xl"
                 id="dialogue-box">
@@ -455,11 +458,11 @@
             </div>
         </div>
 
-        <!-- oncolor / onimage -->
-        <div id="overlay-layer" class="layer" style="z-index: 50;"></div>
+        <!-- LV 5: onovercolor / offovercolor -->
+        <div id="cover-overlay-layer" class="layer" style="z-index: 450;"></div>
 
-        <!-- title / ontitle -->
-        <div id="title-layer" class="layer" style="z-index: 70;"></div>
+        <!-- LV 6: title / ontitle -->
+        <div id="title-layer" class="layer" style="z-index: 600;"></div>
 
         <!-- Main Menu Layer -->
         <div id="menu-layer" class="layer layer-interactive" style="z-index: 600; background: #000; display: none;">
@@ -483,11 +486,9 @@
             </div>
         </div>
 
-        <!-- interaction layer -->
-        <div id="interaction-layer" class="layer layer-interactive" style="z-index: 450;"></div>
-
-        <!-- onovercolor / offovercolor (highest overlay) -->
-        <div id="cover-overlay-layer" class="layer" style="z-index: 600;"></div>
+        <!-- LV 7: interaction & onimage -->
+        <div id="interaction-layer" class="layer layer-interactive" style="z-index: 1000;"></div>
+        <div id="onimage-layer" class="layer" style="z-index: 1000;"></div>
 
         <!-- System UI (Always on top) -->
         <div id="system-ui" class="absolute top-0 w-full p-3 md:p-6 flex justify-between items-center hidden"
@@ -1265,7 +1266,7 @@
             },
 
             handleOverlayColor(data, on) {
-                const layer = document.getElementById('overlay-layer');
+                const layer = document.getElementById('oncolor-layer');
                 if (on) {
                     layer.style.pointerEvents = 'auto';
                     const el = document.createElement('div');
@@ -1282,7 +1283,7 @@
             },
 
             handleOverlayImage(data, on) {
-                const layer = document.getElementById('overlay-layer');
+                const layer = document.getElementById('onimage-layer');
                 if (on) {
                     const el = document.createElement('img');
                     el.src = data.Value01;
