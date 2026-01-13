@@ -202,7 +202,7 @@
             align-items: flex-end;
             justify-content: center;
             transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-origin: bottom center;
+            transform-origin: center center;
             pointer-events: none;
             z-index: 20;
             will-change: transform, left;
@@ -224,7 +224,7 @@
             display: block;
 
             transform: scale(var(--char-scale)) translateY(var(--char-y-offset));
-            transform-origin: bottom center;
+            transform-origin: center center;
             transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -873,6 +873,11 @@
 
                 console.log("Executing:", event.type, event);
 
+                // Auto-clear title layer when moving to a new non-title event
+                if (event.type !== 'title' && event.type !== 'ontitle') {
+                    document.getElementById('title-layer').innerHTML = '';
+                }
+
                 switch (event.type) {
                     case 'bgcolor':
                         const bgLayer = document.getElementById('bgcolor-layer');
@@ -1265,6 +1270,8 @@
 
             handleTitle(data, keep = false) {
                 const layer = document.getElementById('title-layer');
+                layer.innerHTML = ''; // Fix stacking
+
                 const el = document.createElement('div');
                 el.className = 'absolute inset-0 flex items-center justify-center text-center p-10 md:p-20 z-10';
                 el.style.whiteSpace = 'pre-wrap'; // Preserve spaces
@@ -1282,28 +1289,17 @@
 
                 this.typeText(el, titleText, () => {
                     if (!keep) {
-                        // Wait for user input instead of auto-advancing
                         State.isInteractionWaiting = true;
+                        State.currentEvent = data;
 
-                        const proceedHandler = () => {
-                            if (!State.isInteractionWaiting) return;
-                            State.isInteractionWaiting = false;
-
-                            el.classList.add('fade-out');
+                        if (State.settings.autoMode) {
+                            const autoWait = 2000;
                             setTimeout(() => {
-                                el.remove();
-                                this.next(data.Index, 'Read');
-                            }, 1000);
-                        };
-
-                        // Single-use click handler
-                        const clickHandler = (e) => {
-                            if (e.target.closest('#system-ui') || e.target.closest('.premium-btn')) return;
-                            proceedHandler();
-                            document.removeEventListener('click', clickHandler);
-                        };
-
-                        document.addEventListener('click', clickHandler);
+                                if (State.settings.autoMode && State.isInteractionWaiting && State.currentEvent === data) {
+                                    this.handleGlobalInteraction();
+                                }
+                            }, autoWait);
+                        }
                     }
                 });
             },
