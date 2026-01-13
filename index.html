@@ -233,11 +233,6 @@
                 /* Mobile: Height slightly smaller to avoid header conflict, but still huge enough to show chest */
                 height: 80vh;
             }
-
-            /* Allow significant overlap on mobile */
-            .char-obj {
-                /* Optimization for mobile GPU memory if needed, but modern phones are fine */
-            }
         }
 
         @keyframes float {
@@ -852,10 +847,16 @@
             formatText(str) {
                 if (!str) return '';
                 let formatted = str.replace(/\/n|\\n/g, '<br>');
-                // 색상 태그 처리: [#RRGGBB], [RRGGBB] 또는 [ColorName] 대응
+                // 색상 태그 처리: [#RRGGBB][텍스트][-] 또는 [RRGGBB][텍스트][-] 형식
                 formatted = formatted.replace(/\[(#?[A-Za-z0-9]+)\](.*?)\[-\]/g, (match, p1, p2) => {
-                    const isHex = /^[0-9A-Fa-f]{6}$/.test(p1);
-                    const color = isHex ? `#${p1}` : p1;
+                    // #이 이미 포함되어 있으면 그대로 사용, 6자리 hex면 # 추가
+                    let color = p1;
+                    if (p1.startsWith('#')) {
+                        color = p1; // #ff0000 형식
+                    } else if (/^[0-9A-Fa-f]{6}$/.test(p1)) {
+                        color = `#${p1}`; // ff0000 형식 -> #ff0000
+                    }
+                    // 그 외는 색상 이름으로 간주 (red, blue 등)
                     return `<span style="color: ${color}">${p2}</span>`;
                 });
                 return formatted;
