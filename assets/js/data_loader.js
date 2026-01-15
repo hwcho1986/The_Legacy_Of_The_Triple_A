@@ -169,15 +169,14 @@ const DataLoader = {
                     if (header === 'Index') {
                         value = parseInt(value, 10);
                     } else if (header.startsWith('Value')) {
-                        // Try parsing numbers
-                        if (!isNaN(value) && value.trim() !== '') {
-                            // Check if it's really a number (not a string like "001" if that matters, but JSON usually treats them as numbers if they look like it)
-                            // However, let's simplistic check: JSON.parse might be safer for types if user inputs valid JSON
+                        const trimmedVal = value.trim();
+                        // Try parsing if it looks like a number, array, or object
+                        if (trimmedVal !== '' && (!isNaN(trimmedVal) || trimmedVal.startsWith('[') || trimmedVal.startsWith('{'))) {
                             try {
-                                const parsed = JSON.parse(value);
+                                const parsed = JSON.parse(trimmedVal);
                                 value = parsed;
                             } catch (e) {
-                                // Keep as string
+                                // Keep as original string
                             }
                         }
                     }

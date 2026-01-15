@@ -453,8 +453,6 @@
                     class="text-2xl font-bold text-accent-gold mb-3 tracking-widest uppercase border-b border-accent-gold/20 pb-2 inline-block">
                 </div>
                 <div id="dialogue-text" class="text-xl leading-relaxed font-serif min-h-[100px] text-white/90"></div>
-                <div class="absolute bottom-4 right-6 text-accent-gold/30 text-xs tracking-widest font-sans uppercase">
-                    A.A.A. Legacy System</div>
             </div>
         </div>
 
@@ -1325,10 +1323,20 @@
                 layer.innerHTML = ''; // Fix stacking
 
                 const el = document.createElement('div');
-                el.className = 'absolute inset-0 flex items-center justify-center text-center p-10 md:p-20 z-10';
-                el.style.whiteSpace = 'pre-wrap'; // Preserve spaces
+                el.className = 'absolute inset-0 flex items-center justify-center text-center p-6 md:p-20 z-10';
+                el.style.whiteSpace = 'pre-wrap';
+                el.style.wordBreak = 'keep-all';
+                el.style.overflowWrap = 'anywhere';
                 el.style.fontFamily = data.Value01 || 'Cinzel, serif';
-                el.style.fontSize = `clamp(1.5rem, ${(data.Value02 || 48) / 19.2}vw, 8rem)`;
+
+                // Responsive font sizing: scales with width, but clamped for usability
+                const baseSize = data.Value02 || 48;
+                if (window.innerWidth < 1080) {
+                    el.style.fontSize = `clamp(1.25rem, ${(baseSize * 0.7) / 10.8}vw, 4rem)`;
+                } else {
+                    el.style.fontSize = `clamp(1.5rem, ${baseSize / 19.2}vw, 8rem)`;
+                }
+
                 el.style.color = data.Value03 || '#fff';
                 el.innerText = '';
 
