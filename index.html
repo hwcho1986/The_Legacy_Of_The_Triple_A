@@ -633,7 +633,8 @@
                 totalTime: 0
             },
             menuIndex: 0,
-            isNoteVisible: false
+            isNoteVisible: false,
+            activeTimers: [] // DEBUG: Track timers for safe jumping
         };
 
         const Engine = {
@@ -1005,7 +1006,7 @@
                         break;
 
                     case 'Wait':
-                        setTimeout(() => this.next(event.Index, 'Read'), parseFloat(event.Value01 || 0) * 1000);
+                        this.setSafeTimeout(() => this.next(event.Index, 'Read'), parseFloat(event.Value01 || 0) * 1000);
                         break;
 
                     case 'anieffect':
@@ -1181,7 +1182,7 @@
                 this.typeText(text, content, () => {
                     if (State.settings.autoMode) {
                         const autoWait = 1000 + (content.length * 50);
-                        setTimeout(() => {
+                        this.setSafeTimeout(() => {
                             if (State.settings.autoMode && !State.isTextAnimating) this.next(data.Index, 'Read');
                         }, autoWait);
                     }
@@ -1400,7 +1401,7 @@
 
                         if (State.settings.autoMode) {
                             const autoWait = 2000;
-                            setTimeout(() => {
+                            this.setSafeTimeout(() => {
                                 if (State.settings.autoMode && State.isInteractionWaiting && State.currentEvent === data) {
                                     this.handleGlobalInteraction();
                                 }
@@ -1787,8 +1788,7 @@
                     if (jumpInput && jumpInput.value.trim() !== '') {
                         const targetIndex = parseInt(jumpInput.value);
                         if (!isNaN(targetIndex)) {
-                            this.debug(`Jumping to index: ${targetIndex}`);
-                            this.executeEvent(targetIndex);
+                            this.jumpToIndex(targetIndex);
                         }
                     }
                 }
@@ -1985,6 +1985,42 @@
 
             debug(msg) {
                 console.log("[DEBUG]", msg);
+            },
+
+            // --- 타이머 관리 (인덱스 점프용) ---
+            setSafeTimeout(cb, ms) {
+                const id = setTimeout(() => {
+                    State.activeTimers = State.activeTimers.filter(t => t !== id);
+                    cb();
+                }, ms);
+                State.activeTimers.push(id);
+                return id;
+            },
+
+            clearAllTimers() {
+                if (State.activeTimers) {
+                    State.activeTimers.forEach(id => clearTimeout(id));
+                    State.activeTimers = [];
+                }
+            },
+
+            jumpToIndex(index) {
+                // 1. 진행 중인 효과 및 상태 중단
+                State.isTextAnimating = false;
+                State.isInteractionWaiting = false;
+                State.isChoiceActive = false;
+                State.isQuizActive = false;
+
+                // 2. 타이머 소거 (안정적인 점프를 위해 필수)
+                this.clearAllTimers();
+
+                // 3. UI 정리 (퀴즈, 선택지 레이어)
+                const layer = document.getElementById('interaction-layer');
+                if (layer) layer.innerHTML = '';
+
+                // 4. 인덱스 이동 후 실행
+                this.debug(`Jump to target index: ${index}`);
+                this.executeEvent(index);
             }
         }
 
