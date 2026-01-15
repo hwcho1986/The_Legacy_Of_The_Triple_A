@@ -1742,7 +1742,9 @@
                 const modal = document.getElementById('backlog-modal');
                 const content = document.getElementById('backlog-content');
                 if (modal.classList.contains('hidden')) {
-                    content.innerHTML = State.backlog.map(item => {
+                    // Copy and reverse for display
+                    const reversedLog = [...State.backlog].reverse();
+                    content.innerHTML = reversedLog.map(item => {
                         if (item.type === 'choice') {
                             const choiceHtml = item.choices.map((c, idx) => `
                                 <div class="${idx === item.selectedIndex ? 'backlog-choice-selected' : 'backlog-choice-unselected'}">
@@ -1779,6 +1781,18 @@
             },
 
             closeModal(id) {
+                // DEBUG: INDEX JUMP START
+                if (id === 'options-modal') {
+                    const jumpInput = document.getElementById('debug-index-jump');
+                    if (jumpInput && jumpInput.value.trim() !== '') {
+                        const targetIndex = parseInt(jumpInput.value);
+                        if (!isNaN(targetIndex)) {
+                            this.debug(`Jumping to index: ${targetIndex}`);
+                            this.executeEvent(targetIndex);
+                        }
+                    }
+                }
+                // DEBUG: INDEX JUMP END
                 document.getElementById(id).classList.add('hidden');
             },
 
@@ -1807,6 +1821,17 @@
                                 <div class="flex justify-between"><span>${this.t('VOICE_VOL')}</span><span>${Math.round(State.settings.voiceVol * 100)}%</span></div>
                                 <input type="range" class="w-full h-2 bg-white/20 rounded-lg accent-gold" oninput="Engine.updateSetting('voiceVol', this.value/100)" value="${State.settings.voiceVol * 100}">
                             </div>
+                            <!-- DEBUG: INDEX JUMP START -->
+                            <div class="mt-10 pt-6 border-t border-white/10 space-y-4">
+                                <div class="text-xs text-accent-gold opacity-50 tracking-widest font-bold">DEVELOPER TOOLS</div>
+                                <div class="flex gap-4 items-center">
+                                    <span class="flex-1 text-sm opacity-70">INDEX JUMP</span>
+                                    <input type="number" id="debug-index-jump" placeholder="Index..." 
+                                        class="w-32 bg-white/5 border border-white/20 p-2 rounded-lg text-sm text-center outline-none focus:border-accent-gold text-white"
+                                        onkeypress="if(event.key === 'Enter') Engine.closeModal('options-modal')">
+                                </div>
+                            </div>
+                            <!-- DEBUG: INDEX JUMP END -->
                         </div>
                     `;
                 } else {
