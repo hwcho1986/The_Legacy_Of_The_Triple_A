@@ -767,8 +767,8 @@
 
             updateTitleMenu() {
                 const items = document.querySelectorAll('.menu-item');
-                const keys = ['START_GAME', 'OPTIONS', 'SCORE', 'CREDITS', 'EXIT'];
-                const actions = ['startGame', 'showOptions', 'showScore', 'showCredits', 'showExit'];
+                const keys = ['START_GAME', 'CONTINUE_GAME', 'OPTIONS_MENU', 'CREDITS_MENU', 'EXIT_GAME'];
+                const actions = ['startGame', 'loadGame', 'showOptions', 'showCredits', 'showExit'];
 
                 items.forEach((item, i) => {
                     item.innerText = this.t(keys[i]);
@@ -1136,11 +1136,14 @@
             handleOffCharacter(data) {
                 const char = State.characters[data.Value01];
                 if (char) {
+                    const duration = parseFloat(data.Value05 || 0.5);
+                    char.el.style.setProperty('--duration', `${duration}s`);
+                    char.el.classList.remove('fade-in');
                     char.el.classList.add('fade-out');
                     setTimeout(() => {
                         char.el.remove();
                         delete State.characters[data.Value01];
-                    }, (data.Value05 || 0.5) * 1000);
+                    }, duration * 1000);
                 }
             },
 
@@ -1280,8 +1283,22 @@
                     el.style.setProperty('--duration', `${data.Value02 || 0.5}s`);
                     layer.appendChild(el);
                 } else {
-                    layer.innerHTML = '';
-                    layer.style.pointerEvents = 'none';
+                    const duration = parseFloat(data.Value01 || 0.5); // Use Value01 for fade-out duration
+                    const children = Array.from(layer.children);
+                    if (children.length > 0) {
+                        children.forEach(el => {
+                            el.style.setProperty('--duration', `${duration}s`);
+                            el.classList.remove('fade-in');
+                            el.classList.add('fade-out');
+                        });
+                        setTimeout(() => {
+                            layer.innerHTML = '';
+                            layer.style.pointerEvents = 'none';
+                        }, duration * 1000);
+                    } else {
+                        layer.innerHTML = '';
+                        layer.style.pointerEvents = 'none';
+                    }
                 }
             },
 
@@ -1291,6 +1308,7 @@
                     const el = document.createElement('img');
                     el.src = data.Value01;
                     el.className = 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 fade-in';
+                    el.style.setProperty('--duration', '2s'); // Fixed 2s fade-in as requested
                     if (data.Value02) {
                         const parts = String(data.Value02).split(',');
                         if (parts.length === 2) {
@@ -1300,7 +1318,17 @@
                     }
                     layer.appendChild(el);
                 } else {
-                    layer.innerHTML = '';
+                    const children = Array.from(layer.children);
+                    if (children.length > 0) {
+                        children.forEach(el => {
+                            el.style.setProperty('--duration', '2s'); // Fixed 2s fade-out as requested
+                            el.classList.remove('fade-in');
+                            el.classList.add('fade-out');
+                        });
+                        setTimeout(() => layer.innerHTML = '', 2000);
+                    } else {
+                        layer.innerHTML = '';
+                    }
                 }
             },
 
@@ -1316,8 +1344,22 @@
                     el.style.setProperty('--duration', `${data.Value02 || 0.5}s`);
                     layer.appendChild(el);
                 } else {
-                    layer.innerHTML = '';
-                    layer.style.pointerEvents = 'none';
+                    const duration = parseFloat(data.Value01 || 0.5); // Use Value01 for fade-out duration
+                    const children = Array.from(layer.children);
+                    if (children.length > 0) {
+                        children.forEach(el => {
+                            el.style.setProperty('--duration', `${duration}s`);
+                            el.classList.remove('fade-in');
+                            el.classList.add('fade-out');
+                        });
+                        setTimeout(() => {
+                            layer.innerHTML = '';
+                            layer.style.pointerEvents = 'none';
+                        }, duration * 1000);
+                    } else {
+                        layer.innerHTML = '';
+                        layer.style.pointerEvents = 'none';
+                    }
                 }
             },
 
@@ -1668,15 +1710,18 @@
             stopAudio(type, fade = 0) {
                 const aud = State.audio[type];
                 if (!aud) return;
-                if (fade > 0) {
+                const duration = parseFloat(fade || 0);
+                if (duration > 0) {
                     let vol = aud.volume;
+                    const step = vol / (duration * 20); // 50ms intervals
                     const interval = setInterval(() => {
-                        vol -= 0.05;
+                        vol -= step;
                         if (vol <= 0) {
                             aud.pause();
+                            aud.volume = (State.settings[type + 'Vol'] || 0.5); // Reset vol for next play
                             clearInterval(interval);
                         } else aud.volume = vol;
-                    }, fade * 100);
+                    }, 50);
                 } else aud.pause();
             },
 
@@ -1729,7 +1774,7 @@
             showOptions() {
                 const modal = document.getElementById('options-modal');
                 modal.classList.remove('hidden');
-                document.getElementById('options-header').innerText = this.t('OPTIONS');
+                document.getElementById('options-header').innerText = this.t('OPTIONS_MENU');
                 this.switchTab('sound');
             },
 
@@ -1768,6 +1813,17 @@
                     content.innerHTML = `
                         <div class="space-y-6">
                             <div class="space-y-2">
+                                <div class="flex justify-between"><span>${this.t('LANGUAGE')}</span></div>
+                                <select onchange="Engine.updateSetting('lang', this.value)" class="w-full bg-white/5 border border-white/20 p-4 rounded-xl text-xl outline-none focus:border-accent-gold">
+                                    <option value="KO" ${State.lang === 'KO' ? 'selected' : ''} class="bg-bg-deep">한국어 (KO)</option>
+                                    <option value="EN" ${State.lang === 'EN' ? 'selected' : ''} class="bg-bg-deep">English (EN)</option>
+                                    <option value="JP" ${State.lang === 'JP' ? 'selected' : ''} class="bg-bg-deep">日本語 (JP)</option>
+                                    <option value="CN_S" ${State.lang === 'CN_S' ? 'selected' : ''} class="bg-bg-deep">简体中文 (CN_S)</option>
+                                    <option value="CN_T" ${State.lang === 'CN_T' ? 'selected' : ''} class="bg-bg-deep">繁體中文 (CN_T)</option>
+                                    <option value="ES" ${State.lang === 'ES' ? 'selected' : ''} class="bg-bg-deep">Español (ES)</option>
+                                </select>
+                            </div>
+                            <div class="space-y-2">
                                 <div class="flex justify-between"><span>${this.t('TEXT_SPEED')}</span></div>
                                 <input type="range" min="10" max="100" step="10" class="w-full h-2 bg-white/20 rounded-lg accent-gold" oninput="Engine.updateSetting('textSpeed', 110 - this.value)" value="${110 - State.settings.textSpeed}">
                             </div>
@@ -1787,6 +1843,12 @@
             updateSetting(key, val) {
                 if (key === 'masterMute') {
                     State.audio.masterMute = val;
+                } else if (key === 'lang') {
+                    State.lang = val;
+                    // Force refresh current chapter title/dialogue to update lang
+                    this.updateTitleMenu();
+                    const optionsHeader = document.getElementById('options-header');
+                    if (optionsHeader) optionsHeader.innerText = this.t('OPTIONS_MENU');
                 } else if (State.settings.hasOwnProperty(key)) {
                     State.settings[key] = val;
                     if (key === 'opacity') {
@@ -1799,7 +1861,7 @@
             showScore() {
                 const modal = document.getElementById('score-modal');
                 modal.classList.remove('hidden');
-                document.getElementById('score-header').innerText = this.t('SCORE');
+                document.getElementById('score-header').innerText = this.t('SCOREBOARD_TITLE');
 
                 const scores = JSON.parse(localStorage.getItem('aaa_scores') || '[]');
                 const totalPlayers = scores.length;
