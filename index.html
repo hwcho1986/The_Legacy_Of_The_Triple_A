@@ -767,8 +767,8 @@
 
             updateTitleMenu() {
                 const items = document.querySelectorAll('.menu-item');
-                const keys = ['START_GAME', 'CONTINUE_GAME', 'OPTIONS_MENU', 'CREDITS_MENU', 'EXIT_GAME'];
-                const actions = ['startGame', 'loadGame', 'showOptions', 'showCredits', 'showExit'];
+                const keys = ['START_GAME', 'OPTIONS', 'SCORE', 'CREDITS', 'EXIT'];
+                const actions = ['startGame', 'showOptions', 'showScore', 'showCredits', 'showExit'];
 
                 items.forEach((item, i) => {
                     item.innerText = this.t(keys[i]);
