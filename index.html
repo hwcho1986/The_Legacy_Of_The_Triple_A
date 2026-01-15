@@ -398,6 +398,25 @@
             }
         }
 
+        /* Modal Styles */
+        .modal-popup {
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), 0 0 20px rgba(197, 160, 89, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @media (max-width: 1000px) {
+            .modal-popup {
+                width: 95%;
+                max-width: 95%;
+            }
+        }
+
         /* Ambient Pattern */
         .ambient-pattern {
             position: absolute;
@@ -510,47 +529,56 @@
         </div>
 
         <!-- Modals -->
-        <div id="options-modal" class="absolute inset-0 glass z-[2000] hidden flex flex-col p-20">
-            <div class="flex justify-between items-center mb-10 border-b border-white/10 pb-4">
-                <h2 class="text-4xl font-cinzel tracking-widest" id="options-header">OPTIONS</h2>
-                <button onclick="Engine.closeModal('options-modal')" class="text-4xl">✕</button>
-            </div>
-            <div class="flex gap-10 mb-10">
-                <button onclick="Engine.switchTab('sound')" id="tab-sound"
-                    class="tab-btn text-2xl font-bold pb-2 active uppercase">Sound</button>
-                <button onclick="Engine.switchTab('display')" id="tab-display"
-                    class="tab-btn text-2xl font-bold pb-2 uppercase">Display</button>
-            </div>
-            <div id="tab-content" class="space-y-10 text-xl overflow-y-auto pr-4">
-                <!-- Content injection -->
+        <div id="options-modal"
+            class="absolute inset-0 bg-black/60 backdrop-blur-md z-[2000] hidden flex items-center justify-center p-4">
+            <div class="modal-popup glass rounded-[2rem] p-8 md:p-12">
+                <div class="flex justify-between items-center mb-10 border-b border-white/10 pb-4">
+                    <h2 class="text-3xl md:text-4xl font-cinzel tracking-widest" id="options-header">OPTIONS</h2>
+                    <button onclick="Engine.closeModal('options-modal')" class="text-3xl md:text-4xl">✕</button>
+                </div>
+                <div class="flex gap-6 md:gap-10 mb-10 border-b border-white/5 pb-2">
+                    <button onclick="Engine.switchTab('sound')" id="tab-sound"
+                        class="tab-btn text-xl md:text-2xl font-bold pb-2 active uppercase">Sound</button>
+                    <button onclick="Engine.switchTab('display')" id="tab-display"
+                        class="tab-btn text-xl md:text-2xl font-bold pb-2 uppercase">Display</button>
+                </div>
+                <div id="tab-content" class="flex-1 overflow-y-auto pr-4 custom-scrollbar">
+                    <!-- Content injection -->
+                </div>
             </div>
         </div>
 
-        <div id="score-modal" class="absolute inset-0 glass z-[2000] hidden flex flex-col p-20">
-            <div class="flex justify-between items-center mb-10 border-b border-white/10 pb-4">
-                <h2 class="text-4xl font-cinzel tracking-widest" id="score-header">SCOREBOARD</h2>
-                <button onclick="Engine.closeModal('score-modal')" class="text-4xl">✕</button>
-            </div>
-            <div id="score-summary" class="grid grid-cols-2 gap-10 mb-10 p-8 bg-white/5 rounded-3xl text-center">
-                <!-- Summary injection -->
-            </div>
-            <div id="score-list" class="flex-1 overflow-y-auto space-y-4 pr-4">
-                <!-- List injection -->
+        <div id="score-modal"
+            class="absolute inset-0 bg-black/60 backdrop-blur-md z-[2000] hidden flex items-center justify-center p-4">
+            <div class="modal-popup glass rounded-[2rem] p-8 md:p-12">
+                <div class="flex justify-between items-center mb-10 border-b border-white/10 pb-4">
+                    <h2 class="text-3xl md:text-4xl font-cinzel tracking-widest" id="score-header">SCOREBOARD</h2>
+                    <button onclick="Engine.closeModal('score-modal')" class="text-3xl md:text-4xl">✕</button>
+                </div>
+                <div id="score-summary"
+                    class="grid grid-cols-2 gap-4 md:gap-10 mb-10 p-6 md:p-8 bg-white/5 rounded-3xl text-center">
+                    <!-- Summary injection -->
+                </div>
+                <div id="score-list" class="flex-1 overflow-y-auto space-y-4 pr-4 custom-scrollbar">
+                    <!-- List injection -->
+                </div>
             </div>
         </div>
 
         <div id="credits-modal"
-            class="absolute inset-0 glass z-[2000] hidden flex flex-col items-center justify-center p-20">
-            <div class="w-full max-w-4xl text-center space-y-20">
-                <h2 class="text-6xl font-cinzel text-accent-gold" id="credits-header">CREDITS</h2>
-                <div class="space-y-8 text-2xl leading-loose" id="credits-body">
-                    <p><span class="opacity-50">Producer</span><br><b>Joe Choe</b></p>
-                    <p><span class="opacity-50">Engine Development</span><br><b>Joe Choe</b></p>
-                    <p><span class="opacity-50">Scenario & Design</span><br><b>Joe Choe</b></p>
-                    <p><span class="opacity-50">Globalization</span><br><b>Joe Choe</b></p>
+            class="absolute inset-0 bg-black/60 backdrop-blur-md z-[2000] hidden flex items-center justify-center p-4">
+            <div class="modal-popup glass rounded-[2rem] p-12 text-center">
+                <div class="w-full text-center space-y-8 md:space-y-12 overflow-y-auto custom-scrollbar">
+                    <h2 class="text-4xl md:text-6xl font-cinzel text-accent-gold" id="credits-header">CREDITS</h2>
+                    <div class="space-y-6 md:space-y-8 text-lg md:text-2xl leading-loose" id="credits-body">
+                        <p><span class="opacity-50">Producer</span><br><b>Joe Choe</b></p>
+                        <p><span class="opacity-50">Engine Development</span><br><b>Joe Choe</b></p>
+                        <p><span class="opacity-50">Scenario & Design</span><br><b>Joe Choe</b></p>
+                        <p><span class="opacity-50">Globalization</span><br><b>Joe Choe</b></p>
+                    </div>
+                    <button onclick="Engine.closeModal('credits-modal')"
+                        class="premium-btn px-12 md:px-20 py-4 rounded-xl text-xl mt-8">CLOSE</button>
                 </div>
-                <button onclick="Engine.closeModal('credits-modal')"
-                    class="premium-btn px-20 py-4 rounded-xl text-xl">CLOSE</button>
             </div>
         </div>
 
@@ -612,7 +640,13 @@
                 voice: new Audio(),
                 masterMute: false
             },
+            isChoiceActive: false,
+            isQuizActive: false,
+            isWaitActive: false, // Prevents skipping during Wait events
+            currentEvent: null,
+            currentVoice: null,
             settings: {
+                difficulty: 'very-hard', // default: very-hard
                 textSpeed: 30, // 10, 30, 100
                 autoMode: false,
                 opacity: 0.8,
@@ -620,11 +654,6 @@
                 sfxVol: 0.5,
                 voiceVol: 0.8
             },
-            isTextAnimating: false,
-            isInteractionWaiting: false,
-            isChoiceActive: false,
-            isQuizActive: false,
-            currentEvent: null,
             currentVoice: null,
             stats: {
                 hp: 100,
@@ -843,8 +872,21 @@
             t(key) {
                 if (!key) return '';
                 if (typeof key !== 'string') return JSON.stringify(key);
-                // Remove quote stripping to allow quoted text display as requested
-                // if (key.startsWith('"') && key.endsWith('"')) return key.slice(1, -1);
+
+                // --- 난이도 및 신규 기능 로컬라이제이션 폴백 ---
+                const localFallbacks = {
+                    'DIFFICULTY_LEVEL': { 'KO': '난이도', 'EN': 'Difficulty Level' },
+                    'DIFF_VERY_HARD': { 'KO': '매우 어려움 (힌트 불가)', 'EN': 'Very Hard (No Hints)' },
+                    'DIFF_HARD': { 'KO': '어려움 (힌트1 가능)', 'EN': 'Hard (Hint 1)' },
+                    'DIFF_NORMAL': { 'KO': '보통 (힌트1,2 가능)', 'EN': 'Normal (Hint 1,2)' },
+                    'DIFF_EASY': { 'KO': '쉬움 (모두 가능)', 'EN': 'Easy (All Hints)' },
+                    'HINT_NOT_AVAILABLE': { 'KO': '현재 난이도에서는 힌트를 볼 수 없습니다.', 'EN': 'Hints are not available at the current difficulty.' }
+                };
+
+                if (localFallbacks[key]) {
+                    return localFallbacks[key][State.lang] || localFallbacks[key]['KO'] || key;
+                }
+
                 if (State.localization[key]) {
                     const entry = State.localization[key];
                     return entry[State.lang] || entry['KO'] || entry['EN'] || key;
@@ -1006,7 +1048,11 @@
                         break;
 
                     case 'Wait':
-                        this.setSafeTimeout(() => this.next(event.Index, 'Read'), parseFloat(event.Value01 || 0) * 1000);
+                        State.isWaitActive = true;
+                        this.setSafeTimeout(() => {
+                            State.isWaitActive = false;
+                            this.next(event.Index, 'Read');
+                        }, parseFloat(event.Value01 || 0) * 1000);
                         break;
 
                     case 'anieffect':
@@ -1208,6 +1254,7 @@
             },
 
             handleGlobalInteraction() {
+                if (State.isWaitActive) return; // Block skip during Wait
                 if (State.isTextAnimating) {
                     State.isTextAnimating = false;
                 } else if (State.isInteractionWaiting) {
@@ -1502,6 +1549,19 @@
                 input.onkeydown = (e) => { if (e.key === 'Enter') check(); };
 
                 const showHint = (hintKey) => {
+                    // Difficulty Check
+                    const diff = State.settings.difficulty;
+                    let isAllowed = false;
+
+                    if (diff === 'easy') isAllowed = true;
+                    else if (diff === 'normal' && (hintKey === 'Value03' || hintKey === 'Value04')) isAllowed = true;
+                    else if (diff === 'hard' && hintKey === 'Value03') isAllowed = true;
+
+                    if (!isAllowed) {
+                        this.showAlert(this.t('HINT_NOT_AVAILABLE'));
+                        return;
+                    }
+
                     const hintTxt = this.t(data[hintKey]);
                     if (!hintTxt) return;
 
@@ -1849,6 +1909,15 @@
                                 </select>
                             </div>
                             <div class="space-y-2">
+                                <div class="flex justify-between"><span>${this.t('DIFFICULTY_LEVEL')}</span></div>
+                                <select onchange="Engine.updateSetting('difficulty', this.value)" class="w-full bg-white/5 border border-white/20 p-4 rounded-xl text-xl outline-none focus:border-accent-gold">
+                                    <option value="very-hard" ${State.settings.difficulty === 'very-hard' ? 'selected' : ''} class="bg-bg-deep">${this.t('DIFF_VERY_HARD')}</option>
+                                    <option value="hard" ${State.settings.difficulty === 'hard' ? 'selected' : ''} class="bg-bg-deep">${this.t('DIFF_HARD')}</option>
+                                    <option value="normal" ${State.settings.difficulty === 'normal' ? 'selected' : ''} class="bg-bg-deep">${this.t('DIFF_NORMAL')}</option>
+                                    <option value="easy" ${State.settings.difficulty === 'easy' ? 'selected' : ''} class="bg-bg-deep">${this.t('DIFF_EASY')}</option>
+                                </select>
+                            </div>
+                            <div class="space-y-2">
                                 <div class="flex justify-between"><span>${this.t('TEXT_SPEED')}</span></div>
                                 <input type="range" min="10" max="100" step="10" class="w-full h-2 bg-white/20 rounded-lg accent-gold" oninput="Engine.updateSetting('textSpeed', 110 - this.value)" value="${110 - State.settings.textSpeed}">
                             </div>
@@ -1874,6 +1943,8 @@
                     this.updateTitleMenu();
                     const optionsHeader = document.getElementById('options-header');
                     if (optionsHeader) optionsHeader.innerText = this.t('OPTIONS_MENU');
+                } else if (key === 'difficulty') {
+                    State.settings.difficulty = val;
                 } else if (State.settings.hasOwnProperty(key)) {
                     State.settings[key] = val;
                     if (key === 'opacity') {
