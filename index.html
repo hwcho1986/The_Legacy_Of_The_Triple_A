@@ -1129,7 +1129,8 @@
 
             handleCharacter(data) {
                 const layer = document.getElementById('character-layer');
-                let char = State.characters[data.Value01];
+                const charId = String(data.Value01).toLowerCase();
+                let char = State.characters[charId];
                 if (!char) {
                     const container = document.createElement('div');
                     container.className = 'char-container';
@@ -1150,9 +1151,9 @@
                     container.appendChild(wrapper);
                     layer.appendChild(container);
 
-                    char = { el: container, wrapper: wrapper, img: el, id: data.Value01 };
-                    State.characters[data.Value01] = char;
+                    State.characters[charId] = { el: container, wrapper: wrapper, img: el, id: charId };
                 }
+                char = State.characters[charId];
 
                 const imgPath = data.Value02 && data.Value02 !== 'normal' ?
                     `assets/images/character/${data.Value01}_${data.Value02}.png` :
@@ -1181,16 +1182,20 @@
                 }
             },
             handleOffCharacter(data) {
-                const char = State.characters[data.Value01];
+                const charId = String(data.Value01).toLowerCase();
+                const char = State.characters[charId];
                 if (char) {
+                    this.debug(`Off-Character: ${charId}`);
                     const duration = parseFloat(data.Value05 || 0.5);
                     char.el.style.setProperty('--duration', `${duration}s`);
                     char.el.classList.remove('fade-in');
                     char.el.classList.add('fade-out');
-                    setTimeout(() => {
-                        char.el.remove();
-                        delete State.characters[data.Value01];
+                    this.setSafeTimeout(() => {
+                        if (char.el.parentNode) char.el.remove();
+                        delete State.characters[charId];
                     }, duration * 1000);
+                } else {
+                    this.debug(`Off-Character failed: ${charId} not found.`);
                 }
             },
 
@@ -1322,16 +1327,18 @@
             handleOverlayColor(data, on) {
                 const layer = document.getElementById('oncolor-layer');
                 if (on) {
+                    this.debug(`On-Color: ${data.Value01}`);
                     layer.style.pointerEvents = 'auto';
                     const el = document.createElement('div');
                     el.className = 'layer fade-in';
                     el.style.backgroundColor = data.Value01;
-                    const opacityStr = data.Value03 || '100%';
+                    const opacityStr = String(data.Value03 || '100%');
                     el.style.opacity = opacityStr.includes('%') ? parseInt(opacityStr) / 100 : opacityStr;
                     el.style.setProperty('--duration', `${data.Value02 || 0.5}s`);
                     layer.appendChild(el);
                 } else {
-                    const duration = parseFloat(data.Value01 || 0.5); // Use Value01 for fade-out duration
+                    this.debug(`Off-Color`);
+                    const duration = parseFloat(data.Value01 || 0.5);
                     const children = Array.from(layer.children);
                     if (children.length > 0) {
                         children.forEach(el => {
@@ -1339,7 +1346,7 @@
                             el.classList.remove('fade-in');
                             el.classList.add('fade-out');
                         });
-                        setTimeout(() => {
+                        this.setSafeTimeout(() => {
                             layer.innerHTML = '';
                             layer.style.pointerEvents = 'none';
                         }, duration * 1000);
@@ -1383,16 +1390,18 @@
             handleCoverOverlayColor(data, on) {
                 const layer = document.getElementById('cover-overlay-layer');
                 if (on) {
+                    this.debug(`On-CoverColor: ${data.Value01}`);
                     layer.style.pointerEvents = 'auto';
                     const el = document.createElement('div');
                     el.className = 'layer fade-in';
                     el.style.backgroundColor = data.Value01;
-                    const opacityStr = data.Value03 || '100%';
+                    const opacityStr = String(data.Value03 || '100%');
                     el.style.opacity = opacityStr.includes('%') ? parseInt(opacityStr) / 100 : opacityStr;
                     el.style.setProperty('--duration', `${data.Value02 || 0.5}s`);
                     layer.appendChild(el);
                 } else {
-                    const duration = parseFloat(data.Value01 || 0.5); // Use Value01 for fade-out duration
+                    this.debug(`Off-CoverColor`);
+                    const duration = parseFloat(data.Value01 || 0.5);
                     const children = Array.from(layer.children);
                     if (children.length > 0) {
                         children.forEach(el => {
@@ -1400,7 +1409,7 @@
                             el.classList.remove('fade-in');
                             el.classList.add('fade-out');
                         });
-                        setTimeout(() => {
+                        this.setSafeTimeout(() => {
                             layer.innerHTML = '';
                             layer.style.pointerEvents = 'none';
                         }, duration * 1000);
@@ -2085,9 +2094,15 @@
                 // 2. 타이머 소거 (안정적인 점프를 위해 필수)
                 this.clearAllTimers();
 
-                // 3. UI 정리 (퀴즈, 선택지 레이어)
+                // 3. UI 정리 (퀴즈, 선택지, 오버레이 레이어)
                 const layer = document.getElementById('interaction-layer');
                 if (layer) layer.innerHTML = '';
+
+                document.getElementById('oncolor-layer').innerHTML = '';
+                document.getElementById('cover-overlay-layer').innerHTML = '';
+                document.getElementById('onimage-layer').innerHTML = '';
+                document.getElementById('oncolor-layer').style.pointerEvents = 'none';
+                document.getElementById('cover-overlay-layer').style.pointerEvents = 'none';
 
                 // 4. 인덱스 이동 후 실행
                 this.debug(`Jump to target index: ${index}`);
