@@ -921,14 +921,10 @@
                 const currentRelIdx = State.events.indexOf(event);
                 State.currentIndex = currentRelIdx;
 
-                console.log("Executing:", event.type, event);
+                const type = (event.type || '').toLowerCase();
+                this.debug(`Execute Event [${index}]: ${type}`);
 
-                // Auto-clear title layer when moving to a new non-title event
-                if (event.type !== 'title' && event.type !== 'ontitle') {
-                    document.getElementById('title-layer').innerHTML = '';
-                }
-
-                switch (event.type) {
+                switch (type) {
                     case 'bgcolor':
                         const bgLayer = document.getElementById('bgcolor-layer');
                         bgLayer.style.transition = `background-color ${event.Value02 || 0}s`;
@@ -1032,7 +1028,7 @@
                         break;
 
                     case 'onamb':
-                        this.playAudio('amb', event.Value01, true, event.Value03); // Loop default for AMB
+                        this.playAudio('amb', event.Value01, true, event.Value03); // AMB는 기본적으로 반복
                         this.next(event.Index, 'Read');
                         break;
 
@@ -1042,17 +1038,20 @@
                         break;
 
                     case 'onsfx':
-                    case 'sdx': // Fallback for typo in user request
+                    case 'sfx': // 'sfx'는 'onsfx'의 별칭으로 사용
                         this.playAudio('sfx', event.Value01, false, event.Value03);
                         this.next(event.Index, 'Read');
                         break;
 
-                    case 'Wait':
+                    case 'wait':
                         State.isWaitActive = true;
+                        const waitSec = parseFloat(event.Value01 || 0);
+                        this.debug(`Wait Start: ${waitSec}s`);
                         this.setSafeTimeout(() => {
                             State.isWaitActive = false;
+                            this.debug(`Wait End: Proceeding to next.`);
                             this.next(event.Index, 'Read');
-                        }, parseFloat(event.Value01 || 0) * 1000);
+                        }, waitSec * 1000);
                         break;
 
                     case 'anieffect':
