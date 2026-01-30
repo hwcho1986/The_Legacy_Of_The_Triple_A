@@ -435,6 +435,45 @@
             pointer-events: none;
             mix-blend-mode: screen;
         }
+
+        /* Title Logo Animation */
+        @keyframes logoSwing {
+            0% {
+                transform: scale(1) rotate(-1deg) translateY(0);
+            }
+
+            50% {
+                transform: scale(1.02) rotate(1deg) translateY(-5px);
+            }
+
+            100% {
+                transform: scale(1) rotate(-1deg) translateY(0);
+            }
+        }
+
+        .logo-anim {
+            animation: logoSwing 4s ease-in-out infinite;
+        }
+
+        /* Ending Credits */
+        #credits-rolling-container {
+            position: absolute;
+            inset: 0;
+            background: black;
+            z-index: 3000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #credits-rolling-content {
+            position: absolute;
+            top: 100%;
+            width: 100%;
+            text-align: center;
+            will-change: transform;
+        }
     </style>
 </head>
 
@@ -489,23 +528,29 @@
 
         <!-- LV 8: Main Menu Layer & UI -->
         <div id="menu-layer" class="layer layer-interactive" style="z-index: 2000; background: #000; display: none;">
-            <div class="flex flex-col items-center justify-center h-full space-y-12">
-                <h1 id="title-logo"
-                    class="text-6xl md:text-8xl font-cinzel text-accent-gold tracking-tighter fade-in text-center px-4"
-                    style="--duration: 2s">THE
-                    LEGACY OF<br><span class="text-white">THE TRIPLE A</span></h1>
+            <div class="absolute inset-0 bg-cover bg-center"
+                style="background-image: url('assets/images/title/title.png');"></div>
+            <div class="flex flex-col items-center justify-center h-full space-y-8 relative z-10">
+                <img src="assets/images/title/Triple_A_Logo.png" class="w-[80%] max-w-[800px] logo-anim mb-4"
+                    alt="Triple A Logo">
                 <div id="main-menu-list" class="flex flex-col space-y-4 w-full max-w-sm px-6">
                     <button data-menu="start"
-                        class="menu-item premium-btn py-6 rounded-xl text-2xl font-bold tracking-widest text-white uppercase"></button>
+                        class="menu-item premium-btn py-5 rounded-xl text-2xl font-bold tracking-widest text-white uppercase"></button>
                     <button data-menu="options"
-                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/80 uppercase"></button>
+                        class="menu-item premium-btn py-3 rounded-xl text-lg text-white/80 uppercase"></button>
                     <button data-menu="score"
-                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/80 uppercase"></button>
+                        class="menu-item premium-btn py-3 rounded-xl text-lg text-white/80 uppercase"></button>
                     <button data-menu="credits"
-                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/80 uppercase"></button>
+                        class="menu-item premium-btn py-3 rounded-xl text-lg text-white/80 uppercase"></button>
                     <button data-menu="exit"
-                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/80 uppercase"></button>
+                        class="menu-item premium-btn py-3 rounded-xl text-lg text-white/80 uppercase"></button>
                 </div>
+            </div>
+        </div>
+
+        <div id="credits-rolling-container">
+            <div id="credits-rolling-content" class="font-serif space-y-40 py-[50vh]">
+                <!-- Credits go here -->
             </div>
         </div>
 
@@ -640,6 +685,7 @@
                 voice: new Audio(),
                 masterMute: false
             },
+            audioIntervals: {}, // Tracks fade-out intervals
             isChoiceActive: false,
             isQuizActive: false,
             isWaitActive: false, // Prevents skipping during Wait events
@@ -793,6 +839,9 @@
                 layer.classList.remove('fade-out');
                 layer.classList.add('fade-in');
                 this.updateTitleMenu();
+
+                // KR: 타이틀 전용 BGM 재생 (23. 다음 이야기로(Next Step).mp3)
+                this.playAudio('bgm', 'assets/audio/bgm/23. 다음 이야기로(Next Step).mp3', true);
             },
 
             updateTitleMenu() {
@@ -862,6 +911,10 @@
                 const menu = document.getElementById('menu-layer');
                 menu.classList.add('fade-out');
                 State.stats.startTime = Date.now();
+
+                // KR: 게임 시작 시 타이틀 BGM 정지
+                this.stopAudio('bgm', 0.5);
+
                 setTimeout(() => {
                     menu.style.display = 'none';
                     document.getElementById('system-ui').classList.remove('hidden');
@@ -1083,6 +1136,10 @@
                         this.initNextChapter(event.Value01);
                         break;
 
+                    case 'goodend':
+                        this.handleGoodEnd(event);
+                        break;
+
                     case 'end':
                         this.showAlert(this.t('END_OF_CHAPTER'), () => location.reload());
                         break;
@@ -1240,6 +1297,13 @@
 
                 if (data.Value04) {
                     this.playAudio('voice', data.Value04);
+                }
+
+                // Apply dialogue color from Value05 if present
+                if (data.Value05) {
+                    text.style.color = data.Value05;
+                } else {
+                    text.style.color = ''; // Reset to default
                 }
 
                 State.isInteractionWaiting = true;
@@ -1777,6 +1841,13 @@
                 setTimeout(() => {
                     let aud = State.audio[type];
                     if (!aud) aud = new Audio();
+
+                    // KR: 이전 페이드 인터벌이 있다면 즉시 중단하여 볼륨 간섭 방지
+                    if (State.audioIntervals[type]) {
+                        clearInterval(State.audioIntervals[type]);
+                        delete State.audioIntervals[type];
+                    }
+
                     aud.src = path;
                     aud.loop = loop;
                     aud.volume = (State.settings[type + 'Vol'] || 0.5);
@@ -1787,6 +1858,13 @@
             stopAudio(type, fade = 0) {
                 const aud = State.audio[type];
                 if (!aud) return;
+
+                // 이전 인터벌 제거
+                if (State.audioIntervals[type]) {
+                    clearInterval(State.audioIntervals[type]);
+                    delete State.audioIntervals[type];
+                }
+
                 const duration = parseFloat(fade || 0);
                 if (duration > 0) {
                     let vol = aud.volume;
@@ -1797,9 +1875,13 @@
                             aud.pause();
                             aud.volume = (State.settings[type + 'Vol'] || 0.5); // Reset vol for next play
                             clearInterval(interval);
-                        } else aud.volume = vol;
+                            delete State.audioIntervals[type];
+                        } else aud.volume = Math.max(0, vol);
                     }, 50);
-                } else aud.pause();
+                    State.audioIntervals[type] = interval;
+                } else {
+                    aud.pause();
+                }
             },
 
             // --- UI ---
@@ -1838,7 +1920,7 @@
                             return `
                                 <div class="border-b border-white/5 pb-4">
                                     <span class="text-accent-gold font-bold mr-4">[${item.name || 'SYSTEM'}]</span>
-                                    <span>${item.text}</span>
+                                    <span>${this.formatText(item.text)}</span>
                                 </div>
                             `;
                         }
