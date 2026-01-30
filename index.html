@@ -91,6 +91,23 @@
             }
         }
 
+        .logo-anim {
+            animation: logoSwing 6s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(197, 160, 89, 0.3));
+        }
+
+        @keyframes logoSwing {
+
+            0%,
+            100% {
+                transform: rotate(-2deg) translateY(0);
+            }
+
+            50% {
+                transform: rotate(2deg) translateY(-10px);
+            }
+        }
+
         .shake {
             animation: shake 0.5s infinite;
         }
@@ -103,15 +120,11 @@
             }
 
             25% {
-                transform: translate(-5px, 5px);
-            }
-
-            50% {
-                transform: translate(5px, -5px);
+                transform: translate(-5px, 0);
             }
 
             75% {
-                transform: translate(-5px, -5px);
+                transform: translate(5px, 0);
             }
         }
 
@@ -132,6 +145,30 @@
             backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Characters */
+        .char-container {
+            position: absolute;
+            bottom: 0;
+            width: fit-content;
+            height: clamp(60%, 80dvh, 100%);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            transform: translateX(-50%);
+            transition: all var(--duration, 0.5s) ease;
+            z-index: 20;
+            will-change: transform, left, filter;
+        }
+
+        .char-obj {
+            height: 100%;
+            width: auto;
+            object-fit: contain;
+            display: block;
+            transition: transform 0.3s ease, filter 0.3s ease;
+            transform: scale(var(--char-scale, 1)) translateY(var(--char-y-offset, 0%));
         }
 
         .premium-btn {
@@ -190,12 +227,12 @@
 
         /* Character Transitions & Framing */
         /* Character Transitions & Framing - Optimized for V-Rule */
+        /*
         .char-container {
             position: absolute;
             bottom: 0;
             left: 50%;
             width: auto;
-            /* Height based ensures consistent "upper body" visibility on all aspect ratios */
             height: 85vh;
             max-height: 90vh;
             display: flex;
@@ -207,7 +244,6 @@
             z-index: 20;
             will-change: transform, left;
 
-            /* Center-based generic positioning system */
             transform: translateX(-50%);
 
             --char-scale: 1;
@@ -227,6 +263,7 @@
             transform-origin: center center;
             transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        */
 
         @media (max-width: 768px) {
             .char-container {
@@ -435,45 +472,6 @@
             pointer-events: none;
             mix-blend-mode: screen;
         }
-
-        /* Title Logo Animation */
-        @keyframes logoSwing {
-            0% {
-                transform: scale(1) rotate(-1deg) translateY(0);
-            }
-
-            50% {
-                transform: scale(1.02) rotate(1deg) translateY(-5px);
-            }
-
-            100% {
-                transform: scale(1) rotate(-1deg) translateY(0);
-            }
-        }
-
-        .logo-anim {
-            animation: logoSwing 4s ease-in-out infinite;
-        }
-
-        /* Ending Credits */
-        #credits-rolling-container {
-            position: absolute;
-            inset: 0;
-            background: black;
-            z-index: 3000;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            overflow: hidden;
-        }
-
-        #credits-rolling-content {
-            position: absolute;
-            top: 100%;
-            width: 100%;
-            text-align: center;
-            will-change: transform;
-        }
     </style>
 </head>
 
@@ -526,31 +524,39 @@
         <!-- LV 6: title / ontitle -->
         <div id="title-layer" class="layer" style="z-index: 600;"></div>
 
-        <!-- LV 8: Main Menu Layer & UI -->
+        <!-- LV 8: Main Menu Layer -->
         <div id="menu-layer" class="layer layer-interactive" style="z-index: 2000; background: #000; display: none;">
-            <div class="absolute inset-0 bg-cover bg-center"
+            <!-- Background Image -->
+            <div class="absolute inset-0 bg-cover bg-center z-0 opacity-60"
                 style="background-image: url('assets/images/title/title.png');"></div>
-            <div class="flex flex-col items-center justify-center h-full space-y-8 relative z-10">
-                <img src="assets/images/title/Triple_A_Logo.png" class="w-[80%] max-w-[800px] logo-anim mb-4"
-                    alt="Triple A Logo">
-                <div id="main-menu-list" class="flex flex-col space-y-4 w-full max-w-sm px-6">
-                    <button data-menu="start"
-                        class="menu-item premium-btn py-5 rounded-xl text-2xl font-bold tracking-widest text-white uppercase"></button>
-                    <button data-menu="options"
-                        class="menu-item premium-btn py-3 rounded-xl text-lg text-white/80 uppercase"></button>
-                    <button data-menu="score"
-                        class="menu-item premium-btn py-3 rounded-xl text-lg text-white/80 uppercase"></button>
-                    <button data-menu="credits"
-                        class="menu-item premium-btn py-3 rounded-xl text-lg text-white/80 uppercase"></button>
-                    <button data-menu="exit"
-                        class="menu-item premium-btn py-3 rounded-xl text-lg text-white/80 uppercase"></button>
-                </div>
-            </div>
-        </div>
 
-        <div id="credits-rolling-container">
-            <div id="credits-rolling-content" class="font-serif space-y-40 py-[50vh]">
-                <!-- Credits go here -->
+            <div class="relative z-10 flex flex-col items-center justify-center h-full pt-12">
+                <!-- Logo & Title Header Container -->
+                <div class="relative flex flex-col items-center justify-center mb-12">
+                    <!-- Logo image behind text -->
+                    <img src="assets/images/title/Triple_A_Logo.png"
+                        class="absolute -top-20 z-0 w-[450px] max-w-[80%] logo-anim pointer-events-none opacity-80"
+                        alt="Logo Background">
+
+                    <h1 id="title-logo"
+                        class="relative z-10 text-6xl md:text-8xl font-cinzel text-accent-gold tracking-tight fade-in text-center px-4 drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)]"
+                        style="--duration: 2s">THE
+                        LEGACY OF<br><span class="text-white">THE TRIPLE A</span></h1>
+                </div>
+
+                <!-- Menu Buttons -->
+                <div id="main-menu-list" class="flex flex-col space-y-4 w-full max-w-[340px] px-6">
+                    <button data-menu="start"
+                        class="menu-item premium-btn py-6 rounded-xl text-2xl font-bold tracking-widest text-white uppercase"></button>
+                    <button data-menu="options"
+                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/80 uppercase"></button>
+                    <button data-menu="score"
+                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/80 uppercase"></button>
+                    <button data-menu="credits"
+                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/80 uppercase"></button>
+                    <button data-menu="exit"
+                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/80 uppercase"></button>
+                </div>
             </div>
         </div>
 
@@ -673,19 +679,17 @@
             lang: 'KO',
             currentIndex: 0,
             eventHistory: [],
+            audio: { bgm: null, amb: null, voice: null, sfx: null, masterMute: false },
+            audioIntervals: {}, // KR: 타입별 페이드 인터벌 관리
             events: [],
             localization: {},
             backlog: [],
             characters: {},
             backgrounds: {},
-            audio: {
-                bgm: new Audio(),
-                amb: new Audio(),
-                sfx: new Audio(),
-                voice: new Audio(),
-                masterMute: false
-            },
-            audioIntervals: {}, // Tracks fade-out intervals
+            sfx: new Audio(),
+            voice: new Audio(),
+            masterMute: false
+        },
             isChoiceActive: false,
             isQuizActive: false,
             isWaitActive: false, // Prevents skipping during Wait events
@@ -839,23 +843,19 @@
                 layer.classList.remove('fade-out');
                 layer.classList.add('fade-in');
                 this.updateTitleMenu();
-
-                // KR: 타이틀 전용 BGM 재생 (23. 다음 이야기로(Next Step).mp3)
-                this.playAudio('bgm', 'assets/audio/bgm/23. 다음 이야기로(Next Step).mp3', true);
             },
 
             updateTitleMenu() {
                 const items = document.querySelectorAll('.menu-item');
                 const keys = ['START_GAME', 'OPTIONS', 'SCORE', 'CREDITS', 'EXIT'];
-                const actions = ['startGame', 'showOptions', 'showScore', 'showCredits', 'showExit'];
 
                 items.forEach((item, i) => {
                     item.innerText = this.t(keys[i]);
                     item.classList.toggle('active', i === State.menuIndex);
 
-                    // Mouse events
                     item.onclick = (e) => {
                         e.stopPropagation();
+                        this.playAudio('sfx', 'assets/audio/sfx/click.mp3'); // KR: 메뉴 클릭 효과음
                         State.menuIndex = i;
                         this.executeMenuAction();
                     };
@@ -864,6 +864,16 @@
                         this.updateTitleMenu();
                     };
                 });
+            },
+
+            showTitle() {
+                const menu = document.getElementById('menu-layer');
+                menu.style.display = 'block';
+                menu.classList.remove('fade-out');
+                State.isInteractionWaiting = false;
+                this.updateTitleMenu();
+                // KR: 타이틀 진입 시 BGM 반복 재생
+                this.playAudio('bgm', 'assets/audio/bgm/23. 다음 이야기로(Next Step).mp3', true);
             },
 
             handleKeyDown(e) {
@@ -903,6 +913,7 @@
             },
 
             executeMenuAction() {
+                this.playAudio('sfx', 'assets/audio/sfx/click.mp3');
                 const actions = ['startGame', 'showOptions', 'showScore', 'showCredits', 'showExit'];
                 this[actions[State.menuIndex]]();
             },
@@ -911,10 +922,8 @@
                 const menu = document.getElementById('menu-layer');
                 menu.classList.add('fade-out');
                 State.stats.startTime = Date.now();
-
                 // KR: 게임 시작 시 타이틀 BGM 정지
                 this.stopAudio('bgm', 0.5);
-
                 setTimeout(() => {
                     menu.style.display = 'none';
                     document.getElementById('system-ui').classList.remove('hidden');
@@ -1136,12 +1145,12 @@
                         this.initNextChapter(event.Value01);
                         break;
 
-                    case 'goodend':
-                        this.handleGoodEnd(event);
-                        break;
-
                     case 'end':
                         this.showAlert(this.t('END_OF_CHAPTER'), () => location.reload());
+                        break;
+
+                    case 'goodend':
+                        this.handleGoodEnd(event);
                         break;
 
                     default:
@@ -1286,6 +1295,13 @@
                 const content = this.t(data.Value03);
                 State.backlog.push({ name: nameStr, text: content });
 
+                const dialogueTextEl = document.getElementById('dialogue-text');
+                if (data.Value05) {
+                    dialogueTextEl.style.color = data.Value05; // KR: 텍스트 본문 색상 적용
+                } else {
+                    dialogueTextEl.style.color = '#fff';
+                }
+
                 this.typeText(text, content, () => {
                     if (State.settings.autoMode) {
                         const autoWait = 1000 + (content.length * 50);
@@ -1297,13 +1313,6 @@
 
                 if (data.Value04) {
                     this.playAudio('voice', data.Value04);
-                }
-
-                // Apply dialogue color from Value05 if present
-                if (data.Value05) {
-                    text.style.color = data.Value05;
-                } else {
-                    text.style.color = ''; // Reset to default
                 }
 
                 State.isInteractionWaiting = true;
@@ -1323,7 +1332,6 @@
 
             handleGlobalInteraction() {
                 if (State.isWaitActive) return; // Block skip during Wait
-                if (State.isQuizActive || State.isChoiceActive) return; // Block skip during Quiz/Choice
                 if (State.isTextAnimating) {
                     State.isTextAnimating = false;
                 } else if (State.isInteractionWaiting) {
@@ -1535,7 +1543,6 @@
                 // Force Auto-off and block it
                 State.settings.autoMode = false;
                 State.isChoiceActive = true;
-                State.isInteractionWaiting = false;
                 document.getElementById('auto-btn').innerText = `AUTO: OFF`;
 
                 const layer = document.getElementById('interaction-layer');
@@ -1574,7 +1581,6 @@
                 // Force Auto-off and block it
                 State.settings.autoMode = false;
                 State.isQuizActive = true;
-                State.isInteractionWaiting = false;
 
                 // Log Quiz
                 const qText = this.t(data.Value01);
@@ -1621,12 +1627,7 @@
                 };
 
                 quizBox.querySelector('#quiz-submit').onclick = check;
-                input.onkeydown = (e) => {
-                    if (e.key === 'Enter') {
-                        e.stopPropagation();
-                        check();
-                    }
-                };
+                input.onkeydown = (e) => { if (e.key === 'Enter') check(); };
 
                 const showHint = (hintKey) => {
                     // Difficulty Check
@@ -1838,16 +1839,17 @@
             },
 
             playAudio(type, path, loop = false, delay = 0) {
+                if (State.audioIntervals[type]) {
+                    clearInterval(State.audioIntervals[type]);
+                    delete State.audioIntervals[type];
+                }
+
                 setTimeout(() => {
                     let aud = State.audio[type];
-                    if (!aud) aud = new Audio();
-
-                    // KR: 이전 페이드 인터벌이 있다면 즉시 중단하여 볼륨 간섭 방지
-                    if (State.audioIntervals[type]) {
-                        clearInterval(State.audioIntervals[type]);
-                        delete State.audioIntervals[type];
+                    if (!aud) {
+                        aud = new Audio();
+                        State.audio[type] = aud;
                     }
-
                     aud.src = path;
                     aud.loop = loop;
                     aud.volume = (State.settings[type + 'Vol'] || 0.5);
@@ -1859,29 +1861,59 @@
                 const aud = State.audio[type];
                 if (!aud) return;
 
-                // 이전 인터벌 제거
                 if (State.audioIntervals[type]) {
                     clearInterval(State.audioIntervals[type]);
-                    delete State.audioIntervals[type];
                 }
 
                 const duration = parseFloat(fade || 0);
                 if (duration > 0) {
                     let vol = aud.volume;
-                    const step = vol / (duration * 20); // 50ms intervals
-                    const interval = setInterval(() => {
+                    const step = vol / (duration * 20);
+                    State.audioIntervals[type] = setInterval(() => {
                         vol -= step;
                         if (vol <= 0) {
                             aud.pause();
-                            aud.volume = (State.settings[type + 'Vol'] || 0.5); // Reset vol for next play
-                            clearInterval(interval);
+                            aud.volume = (State.settings[type + 'Vol'] || 0.5);
+                            clearInterval(State.audioIntervals[type]);
                             delete State.audioIntervals[type];
-                        } else aud.volume = Math.max(0, vol);
+                        } else aud.volume = vol;
                     }, 50);
-                    State.audioIntervals[type] = interval;
                 } else {
                     aud.pause();
                 }
+            },
+
+            handleGoodEnd(event) {
+                // 1. Black Fade In
+                this.handleCoverOverlayColor({ Value01: '#000', Value02: 2, Value03: 1 }, true);
+
+                // 2. Play Ending BGM
+                this.playAudio('bgm', 'assets/audio/bgm/24. 다음 이야기로(Next Step)_Ver.2.mp3', false);
+
+                // 3. Credits Rolling
+                setTimeout(() => {
+                    const creditsModal = document.getElementById('credits-modal');
+                    const creditsBody = document.getElementById('credits-body');
+                    creditsModal.classList.remove('hidden');
+                    creditsModal.style.background = 'transparent';
+                    creditsModal.style.zIndex = '3000';
+
+                    creditsBody.style.transform = 'translateY(100%)';
+                    creditsBody.style.transition = 'transform 180s linear'; // Long duration for slow roll
+
+                    // Force reflow
+                    creditsBody.offsetHeight;
+                    creditsBody.style.transform = 'translateY(-150%)';
+
+                    // Ending sequence: 180s total (bgm length assumed around 3-4 min)
+                    // If song ends, return to title.
+                    const bgm = State.audio['bgm'];
+                    if (bgm) {
+                        bgm.onended = () => {
+                            this.toMenu(true); // Forced return
+                        };
+                    }
+                }, 2000);
             },
 
             // --- UI ---
@@ -2085,9 +2117,13 @@
                 });
             },
 
-            toMenu() {
-                this.showConfirm(this.t('QUIT_CONFIRM'), () => {
+            toMenu(force = false) {
+                const exitAction = () => {
                     this.closeAllModals();
+
+                    // KR: 타이틀 복귀 시 모든 오디오 중지 및 타이틀 BGM 재생
+                    Object.keys(State.audio).forEach(type => this.stopAudio(type));
+
                     document.getElementById('menu-layer').style.display = 'block';
                     document.getElementById('menu-layer').classList.remove('fade-out');
                     document.getElementById('system-ui').classList.add('hidden');
@@ -2097,10 +2133,8 @@
                     document.getElementById('bgimage-layer').innerHTML = '';
                     document.getElementById('bgcolor-layer').style.backgroundColor = '#000';
                     document.getElementById('title-layer').innerHTML = '';
-
-                    this.stopAudio('bgm');
-                    this.stopAudio('amb');
-                    this.stopAudio('voice');
+                    document.getElementById('oncolor-layer').innerHTML = '';
+                    document.getElementById('cover-overlay-layer').innerHTML = '';
 
                     State.currentIndex = 0;
                     State.characters = {};
@@ -2109,8 +2143,15 @@
                     State.isChoiceActive = false;
                     State.isQuizActive = false;
                     document.getElementById('auto-btn').innerText = `AUTO: OFF`;
-                    this.updateTitleMenu();
-                });
+
+                    this.showTitle(); // KR: 타이틀 BGM 시작 포함
+                };
+
+                if (force) {
+                    exitAction();
+                } else {
+                    this.showConfirm(this.t('QUIT_CONFIRM'), exitAction);
+                }
             },
 
             closeAllModals() {
