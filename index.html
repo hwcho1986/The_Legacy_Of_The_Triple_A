@@ -7,7 +7,7 @@
     <title>The Legacy Of The Triple A - 대괴도 AAA의 유산 v0.8.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Cinzel:wght@400;700&family=Outfit:wght@300;400;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Cinzel:wght@400;700&family=Outfit:wght@300;400;600&family=Nanum+Pen+Script&display=swap"
         rel="stylesheet">
     <script src="assets/js/data_loader.js"></script>
     <style>
@@ -100,12 +100,34 @@
 
             0%,
             100% {
-                transform: rotate(-2deg) translateY(0);
+                transform: rotate(-3deg) translateY(0);
             }
 
             50% {
-                transform: rotate(2deg) translateY(-10px);
+                transform: rotate(3deg) translateY(-5px);
             }
+        }
+
+        .premium-btn-highlight {
+            background: linear-gradient(135deg, rgba(197, 160, 89, 0.25), rgba(197, 160, 89, 0.1));
+            border: 2px solid var(--accent-gold) !important;
+            box-shadow: 0 0 20px rgba(197, 160, 89, 0.4);
+            transform: scale(1.05);
+            transition: all 0.3s ease;
+        }
+
+        .premium-btn-highlight:hover,
+        .premium-btn-highlight.active {
+            box-shadow: 0 0 35px rgba(197, 160, 89, 0.7);
+            transform: scale(1.08);
+            background: linear-gradient(135deg, rgba(197, 160, 89, 0.4), rgba(197, 160, 89, 0.2));
+        }
+
+        .menu-item.active:not(.premium-btn-highlight) {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.5);
+            color: #fff;
+            transform: scale(1.02);
         }
 
         .shake {
@@ -527,35 +549,42 @@
         <!-- LV 8: Main Menu Layer -->
         <div id="menu-layer" class="layer layer-interactive" style="z-index: 2000; background: #000; display: none;">
             <!-- Background Image -->
-            <div class="absolute inset-0 bg-cover bg-center z-0 opacity-60"
+            <div class="absolute inset-0 bg-cover bg-center z-0 opacity-40 select-none pointer-events-none"
                 style="background-image: url('assets/images/title/title.png');"></div>
 
-            <div class="relative z-10 flex flex-col items-center justify-center h-full pt-12">
-                <!-- Logo & Title Header Container -->
-                <div class="relative flex flex-col items-center justify-center mb-12">
-                    <!-- Logo image behind text -->
-                    <img src="assets/images/title/Triple_A_Logo.png"
-                        class="absolute -top-20 z-0 w-[450px] max-w-[80%] logo-anim pointer-events-none opacity-80"
-                        alt="Logo Background">
+            <div class="relative z-10 flex flex-col items-center justify-center h-full pt-8">
+                <!-- Title Group -->
+                <div class="flex flex-col items-center mb-10 select-none">
+                    <!-- English Title -->
+                    <h1
+                        class="text-5xl md:text-7xl font-cinzel text-accent-gold tracking-widest drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)] mb-2">
+                        The Legacy Of The Triple A
+                    </h1>
 
-                    <h1 id="title-logo"
-                        class="relative z-10 text-6xl md:text-8xl font-cinzel text-accent-gold tracking-tight fade-in text-center px-4 drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)]"
-                        style="--duration: 2s">THE
-                        LEGACY OF<br><span class="text-white">THE TRIPLE A</span></h1>
+                    <!-- Subtitle Group (Logo + Korean) -->
+                    <div class="flex items-center justify-center space-x-4 -mt-2">
+                        <img src="assets/images/title/Triple_A_Logo.png" class="w-24 md:w-32 logo-anim drop-shadow-lg"
+                            alt="Logo">
+                        <h2
+                            class="text-4xl md:text-5xl font-['Nanum_Pen_Script'] text-white tracking-widest drop-shadow-md pt-4">
+                            괴도 트리플 A의 유산
+                        </h2>
+                    </div>
                 </div>
 
                 <!-- Menu Buttons -->
-                <div id="main-menu-list" class="flex flex-col space-y-4 w-full max-w-[340px] px-6">
+                <div id="main-menu-list" class="flex flex-col space-y-3 w-full max-w-[400px] px-6">
                     <button data-menu="start"
-                        class="menu-item premium-btn py-6 rounded-xl text-2xl font-bold tracking-widest text-white uppercase"></button>
+                        class="menu-item premium-btn premium-btn-highlight py-6 rounded-2xl text-2xl font-bold tracking-[0.2em] text-white uppercase mb-2">게임
+                        시작</button>
                     <button data-menu="options"
-                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/80 uppercase"></button>
+                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/90 font-medium">옵션</button>
                     <button data-menu="score"
-                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/80 uppercase"></button>
+                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/90 font-medium">스코어</button>
                     <button data-menu="credits"
-                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/80 uppercase"></button>
+                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/90 font-medium">제작진</button>
                     <button data-menu="exit"
-                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/80 uppercase"></button>
+                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/90 font-medium border-white/10">종료</button>
                 </div>
             </div>
         </div>
