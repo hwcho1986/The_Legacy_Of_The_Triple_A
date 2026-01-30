@@ -1259,6 +1259,7 @@
 
             handleGlobalInteraction() {
                 if (State.isWaitActive) return; // Block skip during Wait
+                if (State.isQuizActive || State.isChoiceActive) return; // Block skip during Quiz/Choice
                 if (State.isTextAnimating) {
                     State.isTextAnimating = false;
                 } else if (State.isInteractionWaiting) {
@@ -1470,6 +1471,7 @@
                 // Force Auto-off and block it
                 State.settings.autoMode = false;
                 State.isChoiceActive = true;
+                State.isInteractionWaiting = false;
                 document.getElementById('auto-btn').innerText = `AUTO: OFF`;
 
                 const layer = document.getElementById('interaction-layer');
@@ -1508,6 +1510,7 @@
                 // Force Auto-off and block it
                 State.settings.autoMode = false;
                 State.isQuizActive = true;
+                State.isInteractionWaiting = false;
 
                 // Log Quiz
                 const qText = this.t(data.Value01);
@@ -1554,7 +1557,12 @@
                 };
 
                 quizBox.querySelector('#quiz-submit').onclick = check;
-                input.onkeydown = (e) => { if (e.key === 'Enter') check(); };
+                input.onkeydown = (e) => {
+                    if (e.key === 'Enter') {
+                        e.stopPropagation();
+                        check();
+                    }
+                };
 
                 const showHint = (hintKey) => {
                     // Difficulty Check
