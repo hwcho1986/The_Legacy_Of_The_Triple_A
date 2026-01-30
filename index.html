@@ -548,9 +548,7 @@
 
         <!-- LV 8: Main Menu Layer -->
         <div id="menu-layer" class="layer layer-interactive" style="z-index: 2000; background: #000; display: none;">
-            <!-- Background Image -->
-            <div class="absolute inset-0 bg-cover bg-center z-0 opacity-40 select-none pointer-events-none"
-                style="background-image: url('assets/images/title/title.png');"></div>
+            <!-- Background Image Removed as requested -->
 
             <div class="relative z-10 flex flex-col items-center justify-center h-full pt-8">
                 <!-- Title Group -->
@@ -923,7 +921,10 @@
             },
 
             handleMouseDown(e) {
-                // Clicking center to advance
+                // KR: 타이틀 메뉴가 활성화된 상태에서는 게임 내 클릭 상호작용(오디오 전환 등) 차단
+                if (document.getElementById('menu-layer').style.display !== 'none') return;
+
+                // Interaction Layer (Choices, Quiz) takes priority
                 if (State.isInteractionWaiting) {
                     const cx = window.innerWidth / 2;
                     const cy = window.innerHeight / 2;
@@ -1245,8 +1246,9 @@
                 }
                 char = State.characters[charId];
 
-                const imgPath = data.Value02 && data.Value02 !== 'normal' ?
-                    `assets/images/character/${data.Value01}_${data.Value02}.png` :
+                // KR: Value02가 파일명인 경우 해당 파일을 직접 매칭
+                const imgPath = data.Value02 ?
+                    `assets/images/character/${data.Value02}.png` :
                     `assets/images/character/${data.Value01}.png`;
 
                 char.img.src = imgPath;
@@ -1725,8 +1727,10 @@
             },
 
             handleEditCharacter(data) {
-                const charId = data.Value01;
-                const newExpr = data.Value02; // Image path
+                const charId = String(data.Value01).toLowerCase();
+                // KR: Value02가 이미지 파일명인 경우 경로 및 확장자 조합
+                const exprName = data.Value02;
+                const newExpr = exprName ? `assets/images/character/${exprName}.png` : null;
                 const color = data.Value03; // Hex color for overlay
                 const duration = parseFloat(data.Value04 || 0);
 
