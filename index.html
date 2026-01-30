@@ -686,15 +686,11 @@
             backlog: [],
             characters: {},
             backgrounds: {},
-            sfx: new Audio(),
-            voice: new Audio(),
-            masterMute: false
-        },
             isChoiceActive: false,
             isQuizActive: false,
             isWaitActive: false, // Prevents skipping during Wait events
+            isInteractionWaiting: false,
             currentEvent: null,
-            currentVoice: null,
             settings: {
                 difficulty: 'very-hard', // default: very-hard
                 textSpeed: 30, // 10, 30, 100
