@@ -799,8 +799,8 @@
             menuIndex: 0,
             isNoteVisible: false,
             activeTimers: [],
-            audioPlayTimeouts: {}, // KR: 예약된 오디오 재생 관리
-            pendingTitleBGM: false // KR: Autoplay 차단 대비 플래그
+            audioPlayTimeouts: {},
+            pendingTitleBGM: true // KR: 기본적으로 타이틀 BGM 재생 대기 상태로 시작
         };
 
         const Engine = {
@@ -831,8 +831,10 @@
 
                     // KR: 최초 오디오 재생을 위한 전역 리스너 (브라우저 정책 대응)
                     const unlockAudio = () => {
+                        // KR: 대기 중인 BGM이 있거나 타이틀 화면일 경우 재생 시도
                         if (State.pendingTitleBGM) {
-                            this.playAudio('bgm', 'assets/audio/bgm/23. 다음 이야기로(Next Step).mp3', true);
+                            const bgmPath = 'assets/audio/bgm/23. 다음 이야기로(Next Step).mp3';
+                            this.playAudio('bgm', bgmPath, true);
                             State.pendingTitleBGM = false;
                         }
                         document.removeEventListener('mousedown', unlockAudio);
@@ -940,8 +942,36 @@
                 menu.classList.remove('fade-out');
                 State.isInteractionWaiting = false;
                 this.updateTitleMenu();
-                // KR: 타이틀 진입 시 BGM 반복 재생 시도
-                this.playAudio('bgm', 'assets/audio/bgm/23. 다음 이야기로(Next Step).mp3', true);
+
+                // KR: 타이틀 진입 시 BGM 반복 재생 시도 (실패 시 unlockAudio 대기)
+                const bgmPath = 'assets/audio/bgm/23. 다음 이야기로(Next Step).mp3';
+                this.playAudio('bgm', bgmPath, true);
+
+                // KR: 이미 시도했으므로 interaction 레이어 클릭 시 재생될 수 있게 보류 플래그 유지
+                State.pendingTitleBGM = true;
+            },
+
+            updateTitleMenu() {
+                const items = document.querySelectorAll('.menu-item');
+                const keys = ['START_GAME', 'OPTIONS', 'SCORE', 'CREDITS', 'EXIT'];
+
+                items.forEach((item, i) => {
+                    if (item) {
+                        item.innerText = this.t(keys[i]);
+                        item.classList.toggle('active', i === State.menuIndex);
+
+                        item.onclick = (e) => {
+                            e.stopPropagation();
+                            this.playAudio('sfx', 'assets/audio/sfx/click.mp3');
+                            State.menuIndex = i;
+                            this.executeMenuAction();
+                        };
+                        item.onmouseenter = () => {
+                            State.menuIndex = i;
+                            this.updateTitleMenu();
+                        };
+                    }
+                });
             },
 
             handleKeyDown(e) {
