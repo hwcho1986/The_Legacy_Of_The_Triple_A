@@ -20,11 +20,19 @@
             --text-main: #e0e0e0;
             --font-serif: 'Cinzel', 'Noto Serif KR', serif;
             --font-sans: 'Outfit', sans-serif;
+
+            /* Responsive Scale Base */
+            --fluid-8-32: clamp(0.5rem, 1vw, 2rem);
+            --fluid-16-48: clamp(1rem, 2vw, 3rem);
+            --fluid-24-64: clamp(1.5rem, 3vw, 4rem);
         }
 
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+            word-break: keep-all;
+            /* KR: 어절 단위 줄바꿈 유지 */
+            overflow-wrap: break-word;
         }
 
         body {
@@ -34,6 +42,9 @@
             background-color: var(--bg-deep);
             font-family: var(--font-sans);
             color: var(--text-main);
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
             user-select: none;
             height: 100vh;
             /* Fallback for older browsers */
@@ -174,12 +185,13 @@
             position: absolute;
             bottom: 0;
             width: fit-content;
-            height: clamp(60%, 80dvh, 100%);
+            height: clamp(65%, 85dvh, 95%);
+            /* 4K 대응을 위한 유동적 높이 */
             display: flex;
             align-items: flex-end;
             justify-content: center;
             transform: translateX(-50%);
-            transition: all var(--duration, 0.5s) ease;
+            transition: all var(--duration, 0.5s) cubic-bezier(0.2, 1, 0.3, 1);
             z-index: 20;
             will-change: transform, left, filter;
         }
@@ -187,6 +199,7 @@
         .char-obj {
             height: 100%;
             width: auto;
+            max-width: none;
             object-fit: contain;
             display: block;
             transition: transform 0.3s ease, filter 0.3s ease;
@@ -394,66 +407,115 @@
             color: var(--accent-gold);
         }
 
-        /* Mobile Responsive Overrides */
-        @media (max-width: 768px) {
+        /* Mobile Responsive Overrides - Optimized for 832px (6.2") */
+        @media (max-width: 832px) {
             .text-8xl {
-                font-size: 3.5rem !important;
+                font-size: clamp(3rem, 10vw, 5rem) !important;
+            }
+
+            .text-7xl {
+                font-size: clamp(2.5rem, 8vw, 4rem) !important;
             }
 
             .text-6xl {
-                font-size: 2.25rem !important;
+                font-size: clamp(2rem, 6vw, 3rem) !important;
+            }
+
+            .text-5xl {
+                font-size: clamp(1.75rem, 5vw, 2.5rem) !important;
+            }
+
+            .text-4xl {
+                font-size: clamp(1.5rem, 4vw, 2rem) !important;
             }
 
             .text-3xl {
-                font-size: 1.25rem !important;
+                font-size: clamp(1.25rem, 3.5vw, 1.75rem) !important;
             }
 
             .text-2xl {
-                font-size: 1.1rem !important;
+                font-size: clamp(1.1rem, 3vw, 1.4rem) !important;
+            }
+
+            .text-xl {
+                font-size: clamp(1rem, 2.5vw, 1.25rem) !important;
             }
 
             .p-20 {
-                padding: 1.5rem !important;
+                padding: 5vw !important;
             }
 
             .p-12 {
-                padding: 1.25rem !important;
+                padding: 4vw !important;
+            }
+
+            .p-10 {
+                padding: 3vw !important;
             }
 
             #main-menu-list {
-                width: 90%;
+                width: 85%;
             }
 
             #dialogue-box {
-                padding: 1.5rem;
-                bottom: 2rem;
-                width: 95% !important;
-                max-width: none !important;
+                padding: 1.25rem;
+                bottom: clamp(1rem, 4dvh, 2.5rem);
+                width: 94% !important;
+                border-left-width: 4px;
             }
 
             #speaker-name {
-                font-size: 1.2rem;
+                font-size: 1.1rem;
+                margin-bottom: 0.5rem;
             }
 
             #dialogue-text {
-                font-size: 1.1rem;
-                min-height: 70px;
-                word-break: keep-all;
-                overflow-wrap: break-word;
+                font-size: clamp(1rem, 4.5vw, 1.25rem);
+                min-height: 60px;
+                line-height: 1.6;
             }
 
             .modal-content {
                 width: 95% !important;
-                padding: 1.5rem !important;
+                padding: 1.25rem !important;
             }
 
             .premium-btn {
-                padding: 0.75rem !important;
+                padding: 0.8rem 1rem !important;
             }
 
             .menu-item {
-                font-size: 1.25rem !important;
-                padding: 0.5rem 0 !important;
+                font-size: clamp(1.1rem, 5vw, 1.4rem) !important;
+                padding: 0.6rem 0 !important;
+            }
+
+            .char-container {
+                height: 85%;
+                /* Ensure character visible on taller mobile screens */
+            }
+        }
+
+        /* ultra-wide / 4K optimization */
+        @media (min-width: 2560px) {
+            body {
+                font-size: 24px;
+            }
+
+            #main-menu-list {
+                max-width: 600px;
+            }
+
+            #dialogue-box {
+                max-width: 1800px;
+                padding: 3rem;
+            }
+
+            #dialogue-text {
+                font-size: 2.5rem;
+            }
+
+            #speaker-name {
+                font-size: 2rem;
             }
         }
 
@@ -1582,7 +1644,7 @@
 
                 const addBtn = (choice, idx) => {
                     const btn = document.createElement('button');
-                    btn.className = 'premium-btn glass px-20 py-8 rounded-2xl text-2xl w-[600px] text-white';
+                    btn.className = 'premium-btn glass px-12 py-6 md:px-20 md:py-8 rounded-2xl text-xl md:text-2xl w-[90%] max-w-[600px] text-white transition-all';
                     btn.innerText = choice.text;
                     btn.onclick = () => {
                         State.isChoiceActive = false; // Reset flag
@@ -1618,12 +1680,12 @@
                 const layer = document.getElementById('interaction-layer');
                 layer.innerHTML = '';
                 const quizBox = document.createElement('div');
-                quizBox.className = 'absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm';
+                quizBox.className = 'absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4';
                 quizBox.innerHTML = `
-                    <div class="glass p-6 md:p-12 rounded-[2rem] md:rounded-[3rem] w-[95%] md:w-[800px] text-center">
-                        <div class="text-sm md:text-xl opacity-60 mb-4 md:mb-8 border-b border-white/10 pb-2 md:pb-4 tracking-[0.3em] md:tracking-[0.5em]">QUERY NODE</div>
-                        <div class="text-xl md:text-3xl mb-8 md:mb-12 font-serif">${this.t(data.Value01)}</div>
-                        <input id="quiz-input" autocomplete="off" class="w-full bg-white/5 border border-white/20 p-4 md:p-6 rounded-xl text-xl md:text-3xl mb-6 md:mb-8 focus:border-accent-gold outline-none text-center" placeholder="...">
+                    <div class="glass p-8 md:p-12 rounded-[2rem] md:rounded-[3rem] w-full max-w-[800px] text-center">
+                        <div class="text-xs md:text-xl opacity-60 mb-6 border-b border-white/10 pb-4 tracking-[0.3em] md:tracking-[0.5em]">QUERY NODE</div>
+                        <div class="text-xl md:text-3xl mb-8 md:mb-12 font-serif px-2">${this.t(data.Value01)}</div>
+                        <input id="quiz-input" autocomplete="off" class="w-full bg-white/5 border border-white/20 p-5 md:p-6 rounded-xl text-xl md:text-3xl mb-6 focus:border-accent-gold outline-none text-center" placeholder="...">
                         <div class="flex gap-2 md:gap-4 mb-6 md:mb-8">
                             <button id="hint-1" class="premium-btn p-3 md:p-4 rounded-xl flex-1 text-[10px] md:text-xs text-white">HINT 1</button>
                             ${data.Value04 ? `<button id="hint-2" class="premium-btn p-3 md:p-4 rounded-xl flex-1 text-[10px] md:text-xs text-white">HINT 2</button>` : ''}
@@ -1769,10 +1831,9 @@
                     overlay.style.transition = `opacity ${duration}s ease`;
                     overlay.style.opacity = 0;
 
-                    overlay.style.webkitMaskImage = `url("${imgEl.src}")`;
-                    overlay.style.webkitMaskRepeat = 'no-repeat';
-                    overlay.style.webkitMaskPosition = 'bottom center';
-                    overlay.style.webkitMaskSize = 'contain';
+                    const maskRule = `url("${imgEl.src}") no-repeat bottom center / contain`;
+                    overlay.style.webkitMask = maskRule;
+                    overlay.style.mask = maskRule; // Standard property
 
                     wrapperEl.appendChild(overlay);
 
