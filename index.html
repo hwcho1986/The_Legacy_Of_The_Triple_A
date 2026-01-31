@@ -1547,7 +1547,7 @@
                     const children = Array.from(layer.children);
                     if (children.length > 0) {
                         children.forEach(el => {
-                            el.style.setProperty('--duration', '2s'); // Fixed 2s fade-out as requested
+                            el.style.setProperty('--duration', '2s');
                             el.classList.remove('fade-in');
                             el.classList.add('fade-out');
                         });
@@ -1560,25 +1560,42 @@
 
                 const el = document.createElement('img');
                 el.src = data.Value01;
-                el.className = 'absolute inset-0 w-full h-full object-contain pointer-events-none fade-in';
-                el.style.setProperty('--duration', `${data.Value03 || 1}s`);
+                // KR: Value03은 좌표로 변경됨에 따라 지속 시간은 Value04로 상속
+                const duration = data.Value04 || 1;
+                el.style.setProperty('--duration', `${duration}s`);
+                el.className = 'absolute pointer-events-none fade-in';
 
-                // KR: 다양한 해상도 구분자 지원 (x, X, *, ,) 및 단위 유연성 부여
+                // 1. Size (Value02)
                 if (data.Value02) {
-                    const sizeInput = String(data.Value02);
-                    const parts = sizeInput.split(/[,xX*]/).map(p => p.trim());
-                    if (parts.length >= 1) {
-                        const w = parts[0];
-                        el.style.width = isNaN(w) ? w : w + 'px';
-                        if (parts.length >= 2) {
-                            const h = parts[1];
-                            el.style.height = isNaN(h) ? h : h + 'px';
-                        } else {
-                            el.style.height = 'auto'; // 너비만 있을 경우
-                        }
+                    const sizeParts = String(data.Value02).split(/[,xX*]/).map(p => p.trim());
+                    if (sizeParts.length >= 1) {
+                        el.style.width = isNaN(sizeParts[0]) ? sizeParts[0] : sizeParts[0] + 'px';
+                        if (sizeParts.length >= 2) el.style.height = isNaN(sizeParts[1]) ? sizeParts[1] : sizeParts[1] + 'px';
+                        else el.style.height = 'auto';
                     }
                     el.classList.remove('w-full', 'h-full', 'object-contain');
-                    el.classList.add('left-1/2', 'top-1/2', '-translate-x-1/2', '-translate-y-1/2');
+                } else {
+                    el.classList.add('inset-0', 'w-full', 'h-full', 'object-contain');
+                }
+
+                // 2. Position (Value03)
+                const posStr = String(data.Value03 || '');
+                if (posStr.includes(',')) {
+                    const posParts = posStr.replace(/[() ]/g, '').split(',').map(p => p.trim());
+                    if (posParts.length === 2 && posParts[0] !== '' && posParts[1] !== '') {
+                        el.style.left = isNaN(posParts[0]) ? posParts[0] : posParts[0] + 'px';
+                        el.style.top = isNaN(posParts[1]) ? posParts[1] : posParts[1] + 'px';
+                    } else {
+                        applyCenter();
+                    }
+                } else {
+                    applyCenter();
+                }
+
+                function applyCenter() {
+                    if (data.Value02) {
+                        el.classList.add('left-1/2', 'top-1/2', '-translate-x-1/2', '-translate-y-1/2');
+                    }
                 }
 
                 layer.appendChild(el);

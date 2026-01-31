@@ -417,10 +417,10 @@
                     <tr>
                         <td><span class="type-num">16</span>onimage</td>
                         <td>이미지 오버레이 (대사창 위)</td>
-                        <td>경로</td>
+                        <td>이미지 경로</td>
                         <td>크기(W,H)</td>
-                        <td>-</td>
-                        <td>-</td>
+                        <td>좌표(X,Y)</td>
+                        <td>전환 시간(초)</td>
                         <td>-</td>
                     </tr>
                     <tr>
@@ -618,6 +618,16 @@
     "Value02": "shake",
     "Value03": 0.5  // 0.5초 동안 흔들림
 }</code></pre>
+
+            <h4 style="color: var(--accent-gold); margin-top: 2rem;">onimage (고급 설정)</h4>
+            <p><strong>설명:</strong> 이미지의 크기와 위치를 정밀하게 제어합니다. 좌표 미입력 시 중앙에 배치됩니다.</p>
+            <pre><code>{
+    "type": "onimage",
+    "Value01": "assets/images/item/map.png",
+    "Value02": "400,300",  // 가로 400px, 세로 300px
+    "Value03": "(100, 200)", // X=100, Y=200 위치에 표시
+    "Value04": 0.5         // 0.5초 동안 페이드인
+}</code></pre>
         </div>
 
         <div class="card">
@@ -683,7 +693,8 @@
             <p>테스트를 위해 게임 도중 특정 인덱스로 즉시 이동할 수 있는 기능입니다.</p>
             <ul class="list-disc pl-6 space-y-2 mt-4">
                 <li><strong>사용법:</strong> <code>SETTING (Option)</code> 클릭 -> <code>Sound</code> 탭 하단의
-                    <code>INDEX JUMP</code> 칸에 이동할 인덱스 입력 -> 설정창 닫기 (또는 Enter)</li>
+                    <code>INDEX JUMP</code> 칸에 이동할 인덱스 입력 -> 설정창 닫기 (또는 Enter)
+                </li>
                 <li><strong>주의사항:</strong> 이 기능은 개발 및 테스트 전용이며, 배포 시에는 제거되거나 주석 처리되어야 합니다.</li>
             </ul>
         </div>
