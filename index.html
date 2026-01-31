@@ -798,7 +798,9 @@
             },
             menuIndex: 0,
             isNoteVisible: false,
-            activeTimers: [] // DEBUG: Track timers for safe jumping
+            activeTimers: [],
+            audioPlayTimeouts: {}, // KR: 예약된 오디오 재생 관리
+            pendingTitleBGM: false // KR: Autoplay 차단 대비 플래그
         };
 
         const Engine = {
@@ -808,10 +810,6 @@
                     const browserLang = navigator.language.slice(0, 2).toUpperCase();
                     const supported = ['KO', 'EN', 'JP', 'ES'];
                     const fullSupported = { 'zh-CN': 'CN_S', 'zh-TW': 'CN_T', 'zh-HK': 'CN_T' };
-
-                    if (fullSupported[navigator.language]) State.lang = fullSupported[navigator.language];
-                    else if (supported.includes(browserLang)) State.lang = browserLang;
-                    else State.lang = 'KO';
 
                     if (fullSupported[navigator.language]) State.lang = fullSupported[navigator.language];
                     else if (supported.includes(browserLang)) State.lang = browserLang;
@@ -830,6 +828,19 @@
                     });
 
                     this.initAmbient();
+
+                    // KR: 최초 오디오 재생을 위한 전역 리스너 (브라우저 정책 대응)
+                    const unlockAudio = () => {
+                        if (State.pendingTitleBGM) {
+                            this.playAudio('bgm', 'assets/audio/bgm/23. 다음 이야기로(Next Step).mp3', true);
+                            State.pendingTitleBGM = false;
+                        }
+                        document.removeEventListener('mousedown', unlockAudio);
+                        document.removeEventListener('keydown', unlockAudio);
+                    };
+                    document.addEventListener('mousedown', unlockAudio);
+                    document.addEventListener('keydown', unlockAudio);
+
                     this.showDisclaimer();
 
                 } catch (e) {
@@ -923,41 +934,13 @@
             },
 
             showTitle() {
-                const layer = document.getElementById('menu-layer');
-                layer.style.display = 'block';
-                layer.classList.remove('fade-out');
-                layer.classList.add('fade-in');
-                this.updateTitleMenu();
-            },
-
-            updateTitleMenu() {
-                const items = document.querySelectorAll('.menu-item');
-                const keys = ['START_GAME', 'OPTIONS', 'SCORE', 'CREDITS', 'EXIT'];
-
-                items.forEach((item, i) => {
-                    item.innerText = this.t(keys[i]);
-                    item.classList.toggle('active', i === State.menuIndex);
-
-                    item.onclick = (e) => {
-                        e.stopPropagation();
-                        this.playAudio('sfx', 'assets/audio/sfx/click.mp3'); // KR: 메뉴 클릭 효과음
-                        State.menuIndex = i;
-                        this.executeMenuAction();
-                    };
-                    item.onmouseenter = () => {
-                        State.menuIndex = i;
-                        this.updateTitleMenu();
-                    };
-                });
-            },
-
-            showTitle() {
                 const menu = document.getElementById('menu-layer');
+                if (!menu) return;
                 menu.style.display = 'block';
                 menu.classList.remove('fade-out');
                 State.isInteractionWaiting = false;
                 this.updateTitleMenu();
-                // KR: 타이틀 진입 시 BGM 반복 재생
+                // KR: 타이틀 진입 시 BGM 반복 재생 시도
                 this.playAudio('bgm', 'assets/audio/bgm/23. 다음 이야기로(Next Step).mp3', true);
             },
 
@@ -1007,6 +990,8 @@
             },
 
             startGame() {
+                this.playAudio('sfx', 'assets/audio/sfx/click.mp3');
+                this.clearAllTimers(); // KR: 시작 시 모든 예약된 오디오/타이머 정리
                 const menu = document.getElementById('menu-layer');
                 menu.classList.add('fade-out');
                 State.stats.startTime = Date.now();
@@ -1299,14 +1284,22 @@
 
                     const el = document.createElement('img');
                     el.className = 'char-obj';
+                    el.style.opacity = 0;
 
                     wrapper.appendChild(el);
                     container.appendChild(wrapper);
                     layer.appendChild(container);
 
-                    State.characters[charId] = { el: container, wrapper: wrapper, img: el, id: charId };
+                    State.characters[charId] = {
+                        el: container,
+                        wrapper: wrapper,
+                        img: el,
+                        id: charId,
+                        name: data.Value01 // KR: Value01을 캐릭터 이름으로 선언
+                    };
                 }
                 char = State.characters[charId];
+                char.name = data.Value01; // KR: 상시 업데이트
 
                 // KR: Value02가 파일명인 경우 해당 파일을 직접 매칭
                 const imgPath = data.Value02 ?
@@ -1520,20 +1513,7 @@
 
             handleOverlayImage(data, on) {
                 const layer = document.getElementById('onimage-layer');
-                if (on) {
-                    const el = document.createElement('img');
-                    el.src = data.Value01;
-                    el.className = 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 fade-in';
-                    el.style.setProperty('--duration', '2s'); // Fixed 2s fade-in as requested
-                    if (data.Value02) {
-                        const parts = String(data.Value02).split(',');
-                        if (parts.length === 2) {
-                            el.style.width = parts[0] + 'px';
-                            el.style.height = parts[1] + 'px';
-                        }
-                    }
-                    layer.appendChild(el);
-                } else {
+                if (!on) {
                     const children = Array.from(layer.children);
                     if (children.length > 0) {
                         children.forEach(el => {
@@ -1545,7 +1525,33 @@
                     } else {
                         layer.innerHTML = '';
                     }
+                    return;
                 }
+
+                const el = document.createElement('img');
+                el.src = data.Value01;
+                el.className = 'absolute inset-0 w-full h-full object-contain pointer-events-none fade-in';
+                el.style.setProperty('--duration', `${data.Value03 || 1}s`);
+
+                // KR: 다양한 해상도 구분자 지원 (x, X, *, ,) 및 단위 유연성 부여
+                if (data.Value02) {
+                    const sizeInput = String(data.Value02);
+                    const parts = sizeInput.split(/[,xX*]/).map(p => p.trim());
+                    if (parts.length >= 1) {
+                        const w = parts[0];
+                        el.style.width = isNaN(w) ? w : w + 'px';
+                        if (parts.length >= 2) {
+                            const h = parts[1];
+                            el.style.height = isNaN(h) ? h : h + 'px';
+                        } else {
+                            el.style.height = 'auto'; // 너비만 있을 경우
+                        }
+                    }
+                    el.classList.remove('w-full', 'h-full', 'object-contain');
+                    el.classList.add('left-1/2', 'top-1/2', '-translate-x-1/2', '-translate-y-1/2');
+                }
+
+                layer.appendChild(el);
             },
 
             handleCoverOverlayColor(data, on) {
@@ -1929,12 +1935,12 @@
             },
 
             playAudio(type, path, loop = false, delay = 0) {
-                if (State.audioIntervals[type]) {
-                    clearInterval(State.audioIntervals[type]);
-                    delete State.audioIntervals[type];
+                // KR: 이전 예약된 재생이 있다면 취소
+                if (State.audioPlayTimeouts[type]) {
+                    clearTimeout(State.audioPlayTimeouts[type]);
                 }
 
-                setTimeout(() => {
+                State.audioPlayTimeouts[type] = setTimeout(() => {
                     let aud = State.audio[type];
                     if (!aud) {
                         aud = new Audio();
@@ -1942,18 +1948,32 @@
                     }
                     aud.src = path;
                     aud.loop = loop;
-                    aud.volume = (State.settings[type + 'Vol'] || 0.5);
-                    aud.play().catch(e => console.log("Audio play blocked", e));
+
+                    // KR: 음소거 체크 및 슬라이더 설정값 적용
+                    const isMuted = State.audio.masterMute;
+                    aud.volume = isMuted ? 0 : (State.settings[type + 'Vol'] || 0.5);
+
+                    aud.play().catch(e => {
+                        console.log("Audio play blocked", e);
+                        if (type === 'bgm') State.pendingTitleBGM = true;
+                    });
                 }, delay * 1000);
             },
 
             stopAudio(type, fade = 0) {
-                const aud = State.audio[type];
-                if (!aud) return;
-
+                // KR: 페이드아웃 중인 인터벌 정지
                 if (State.audioIntervals[type]) {
                     clearInterval(State.audioIntervals[type]);
+                    delete State.audioIntervals[type];
                 }
+                // KR: 예약된 재생 취소
+                if (State.audioPlayTimeouts[type]) {
+                    clearTimeout(State.audioPlayTimeouts[type]);
+                    delete State.audioPlayTimeouts[type];
+                }
+
+                const aud = State.audio[type];
+                if (!aud) return;
 
                 const duration = parseFloat(fade || 0);
                 if (duration > 0) {
@@ -1963,7 +1983,8 @@
                         vol -= step;
                         if (vol <= 0) {
                             aud.pause();
-                            aud.volume = (State.settings[type + 'Vol'] || 0.5);
+                            // KR: 정지 후 볼륨 복구 (옵션 값 기준)
+                            aud.volume = State.audio.masterMute ? 0 : (State.settings[type + 'Vol'] || 0.5);
                             clearInterval(State.audioIntervals[type]);
                             delete State.audioIntervals[type];
                         } else aud.volume = vol;
@@ -2157,9 +2178,22 @@
             updateSetting(key, val) {
                 if (key === 'masterMute') {
                     State.audio.masterMute = val;
+                    // KR: 모든 재생 중인 오디오에 즉시 반영
+                    Object.keys(State.audio).forEach(type => {
+                        const aud = State.audio[type];
+                        if (aud instanceof Audio) {
+                            aud.volume = val ? 0 : (State.settings[type + 'Vol'] || 0.5);
+                        }
+                    });
+                } else if (key.endsWith('Vol')) {
+                    State.settings[key] = val;
+                    const type = key.replace('Vol', ''); // bgm, sfx, voice
+                    const aud = State.audio[type];
+                    if (aud instanceof Audio && !State.audio.masterMute) {
+                        aud.volume = val;
+                    }
                 } else if (key === 'lang') {
                     State.lang = val;
-                    // Force refresh current chapter title/dialogue to update lang
                     this.updateTitleMenu();
                     const optionsHeader = document.getElementById('options-header');
                     if (optionsHeader) optionsHeader.innerText = this.t('OPTIONS_MENU');
@@ -2210,12 +2244,16 @@
             toMenu(force = false) {
                 const exitAction = () => {
                     this.closeAllModals();
+                    this.clearAllTimers(); // KR: 메뉴 복귀 시 모든 예약된 이벤트 및 오디오 정리
 
-                    // KR: 타이틀 복귀 시 모든 오디오 중지 및 타이틀 BGM 재생
-                    Object.keys(State.audio).forEach(type => this.stopAudio(type));
+                    // KR: 모든 현재 오디오 중지
+                    Object.keys(State.audio).forEach(type => {
+                        if (type !== 'masterMute') this.stopAudio(type);
+                    });
 
                     document.getElementById('menu-layer').style.display = 'block';
                     document.getElementById('menu-layer').classList.remove('fade-out');
+
                     document.getElementById('system-ui').classList.add('hidden');
                     document.getElementById('dialogue-layer').style.display = 'none';
                     document.getElementById('interaction-layer').innerHTML = '';
@@ -2232,6 +2270,7 @@
                     State.isInteractionWaiting = false;
                     State.isChoiceActive = false;
                     State.isQuizActive = false;
+                    State.isGameStarted = false;
                     document.getElementById('auto-btn').innerText = `AUTO: OFF`;
 
                     this.showTitle(); // KR: 타이틀 BGM 시작 포함
@@ -2298,10 +2337,21 @@
             },
 
             clearAllTimers() {
-                if (State.activeTimers) {
-                    State.activeTimers.forEach(id => clearTimeout(id));
-                    State.activeTimers = [];
-                }
+                // 1. Scene Timers
+                State.activeTimers.forEach(t => clearTimeout(t));
+                State.activeTimers = [];
+
+                // 2. Audio Play Timeouts (Pending plays)
+                Object.keys(State.audioPlayTimeouts).forEach(type => {
+                    clearTimeout(State.audioPlayTimeouts[type]);
+                    delete State.audioPlayTimeouts[type];
+                });
+
+                // 3. Audio Intervals (Fading)
+                Object.keys(State.audioIntervals).forEach(type => {
+                    clearInterval(State.audioIntervals[type]);
+                    delete State.audioIntervals[type];
+                });
             },
 
             jumpToIndex(index) {
