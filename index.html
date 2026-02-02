@@ -800,7 +800,7 @@
             isNoteVisible: false,
             activeTimers: [],
             audioPlayTimeouts: {},
-            pendingTitleBGM: true // KR: 기본적으로 타이틀 BGM 재생 대기 상태로 시작
+            pendingTitleBGM: false // KR: 기본적으로 타이틀 BGM 재생 대기 상태로 시작 (DISCLAIMER 종료 후 활성화)
         };
 
         const Engine = {
@@ -1314,7 +1314,7 @@
 
                     const el = document.createElement('img');
                     el.className = 'char-obj';
-                    el.style.opacity = 0;
+                    // el.style.opacity = 0; // KR: opacity 0 제거 (container의 fade-in 클래스가 처리)
 
                     wrapper.appendChild(el);
                     container.appendChild(wrapper);
@@ -1982,9 +1982,13 @@
             },
 
             playAudio(type, path, loop = false, delay = 0) {
-                // KR: 이전 예약된 재생이 있다면 취소
+                // KR: 이전 예약된 재생이 있다면 취소 및 페이드 인터벌 정리
                 if (State.audioPlayTimeouts[type]) {
                     clearTimeout(State.audioPlayTimeouts[type]);
+                }
+                if (State.audioIntervals[type]) {
+                    clearInterval(State.audioIntervals[type]);
+                    delete State.audioIntervals[type];
                 }
 
                 State.audioPlayTimeouts[type] = setTimeout(() => {
