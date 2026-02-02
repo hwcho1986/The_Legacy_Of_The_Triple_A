@@ -718,8 +718,6 @@
                         감상</button>
                     <button data-menu="credits"
                         class="menu-item premium-btn py-3 md:py-4 rounded-xl text-lg md:text-xl text-white/90 font-medium">제작진</button>
-                    <button data-menu="exit"
-                        class="menu-item premium-btn py-3 md:py-4 rounded-xl text-lg md:text-xl text-white/90 font-medium border-white/10">종료</button>
                 </div>
 
                 <!-- Press Any Key -->
@@ -1155,7 +1153,7 @@
 
             updateTitleMenu() {
                 const items = document.querySelectorAll('.menu-item');
-                const keys = ['START_GAME', 'OPTIONS', 'SCORE', 'MUSIC_PLAYER', 'CREDITS', 'EXIT'];
+                const keys = ['START_GAME', 'OPTIONS', 'SCORE', 'MUSIC_PLAYER', 'CREDITS'];
 
                 items.forEach((item, i) => {
                     if (item) {
@@ -1186,13 +1184,13 @@
                     return;
                 }
 
-                // Menu Navigation (6 items now)
+                // Menu Navigation (5 items now)
                 if (document.getElementById('menu-layer').style.display !== 'none' && !State.isInteractionWaiting) {
                     if (e.code === 'ArrowDown' || e.code === 'KeyS') {
-                        State.menuIndex = (State.menuIndex + 1) % 6;
+                        State.menuIndex = (State.menuIndex + 1) % 5;
                         this.updateTitleMenu();
                     } else if (e.code === 'ArrowUp' || e.code === 'KeyW') {
-                        State.menuIndex = (State.menuIndex - 1 + 6) % 6;
+                        State.menuIndex = (State.menuIndex - 1 + 5) % 5;
                         this.updateTitleMenu();
                     } else if (e.code === 'Enter' || e.code === 'Space') {
                         this.executeMenuAction();
@@ -1226,7 +1224,7 @@
 
             executeMenuAction() {
                 this.playAudio('sfx', 'assets/audio/sfx/click.mp3');
-                const actions = ['startGame', 'showOptions', 'showScore', 'showMusicPlayer', 'showCredits', 'showExit'];
+                const actions = ['startGame', 'showOptions', 'showScore', 'showMusicPlayer', 'showCredits'];
                 const action = actions[State.menuIndex];
                 if (action && this[action]) this[action]();
             },
@@ -1396,7 +1394,8 @@
                     'DIFF_HARD': { 'KO': '어려움 (힌트1 가능)', 'EN': 'Hard (Hint 1)' },
                     'DIFF_NORMAL': { 'KO': '보통 (힌트1,2 가능)', 'EN': 'Normal (Hint 1,2)' },
                     'DIFF_EASY': { 'KO': '쉬움 (모두 가능)', 'EN': 'Easy (All Hints)' },
-                    'HINT_NOT_AVAILABLE': { 'KO': '현재 난이도에서는 힌트를 볼 수 없습니다.', 'EN': 'Hints are not available at the current difficulty.' }
+                    'HINT_NOT_AVAILABLE': { 'KO': '현재 난이도에서는 힌트를 볼 수 없습니다.', 'EN': 'Hints are not available at the current difficulty.' },
+                    'MUSIC_PLAYER': { 'KO': '음악 감상', 'EN': 'Music Player' }
                 };
 
                 if (localFallbacks[key]) {
