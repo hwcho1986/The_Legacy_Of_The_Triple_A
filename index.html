@@ -765,7 +765,8 @@
                     class="mt-8 bg-gradient-to-r from-black/60 to-black/30 p-6 rounded-2xl border border-white/5 shadow-inner">
                     <div class="flex items-center justify-between mb-4 text-[10px] font-mono text-accent-gold/70 group">
                         <span id="music-time-current">00:00</span>
-                        <div class="flex-1 mx-6 progress-bar-container group-hover:h-2" id="music-progress-container">
+                        <div class="flex-1 mx-6 progress-bar-container group-hover:h-2" id="music-progress-container"
+                            onclick="Engine.seekMusic(event)">
                             <div class="progress-bar-fill shadow-[0_0_10px_rgba(197,160,89,0.5)]"
                                 id="music-progress-fill"></div>
                         </div>
@@ -1348,6 +1349,20 @@
                 btn.classList.toggle('text-accent-gold', State.musicLoopMode !== 'none');
             },
 
+            seekMusic(e) {
+                const aud = State.audio.bgm;
+                if (!aud || isNaN(aud.duration)) return;
+                const container = document.getElementById('music-progress-container');
+                const rect = container.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const pct = Math.max(0, Math.min(1, x / rect.width));
+                aud.currentTime = pct * aud.duration;
+                this.updateMusicProgress();
+                if (!State.isMusicPlaying) {
+                    this.toggleMusicPlay();
+                }
+            },
+
             updateMusicProgress() {
                 const aud = State.audio.bgm;
                 if (!aud || !State.isMusicPlaying) return;
@@ -1369,7 +1384,7 @@
 
             updateMusicPlayerUI() {
                 const playBtn = document.getElementById('music-play-btn');
-                playBtn.innerText = State.isMusicPlaying ? 'Ⅱ' : '▶'; // 폰트 아이콘 대신 텍스트
+                if (playBtn) playBtn.innerText = State.isMusicPlaying ? 'Ⅱ' : '▶'; // 폰트 아이콘 대신 텍스트
 
                 const title = document.getElementById('current-music-title');
                 const currentFile = State.musicList[State.currentMusicIndex];
@@ -2341,7 +2356,7 @@
                     delete State.audioIntervals[type];
                 }
 
-                State.audioPlayTimeouts[type] = setTimeout(() => {
+                const run = () => {
                     let aud = State.audio[type];
                     if (!aud) {
                         aud = new Audio();
@@ -2355,10 +2370,16 @@
                     aud.volume = isMuted ? 0 : (State.settings[type + 'Vol'] || 0.5);
 
                     aud.play().catch(e => {
-                        console.log("Audio play blocked", e);
+                        this.debug(`Audio play blocked for ${type}: ${e.message}`);
                         if (type === 'bgm') State.pendingTitleBGM = true;
                     });
-                }, delay * 1000);
+                };
+
+                if (delay > 0) {
+                    State.audioPlayTimeouts[type] = setTimeout(run, delay * 1000);
+                } else {
+                    run();
+                }
             },
 
             stopAudio(type, fade = 0) {
