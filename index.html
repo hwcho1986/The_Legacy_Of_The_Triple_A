@@ -1274,7 +1274,7 @@
 
                 // 플레이어가 켜져있을 때 메인 메뉴 BGM이 꺼졌다면 다시 켜주기
                 if (!State.isMusicPlaying && State.isTitleStarted) {
-                    const bgmPath = 'assets/audio/bgm/23. 다음 이야기로(Next Step).mp3';
+                    const bgmPath = 'assets/audio/bgm/24. 다음 이야기로(Next Step).mp3';
                     this.playAudio('bgm', bgmPath, true);
                 }
             },
@@ -1536,10 +1536,12 @@
                         break;
 
                     case 'choice':
+                        this.forceAutoOff();
                         this.handleChoice(event);
                         break;
 
                     case 'quiz01':
+                        this.forceAutoOff();
                         this.handleQuiz(event);
                         break;
 
@@ -1773,8 +1775,8 @@
                 State.backlog.push({ name: nameStr, text: content });
 
                 const dialogueTextEl = document.getElementById('dialogue-text');
-                if (data.Value05) {
-                    dialogueTextEl.style.color = data.Value05; // KR: 텍스트 본문 색상 적용
+                if (data.Value04) {
+                    dialogueTextEl.style.color = data.Value04; // Value04: 대사 본문 색상
                 } else {
                     dialogueTextEl.style.color = '#fff';
                 }
@@ -1788,8 +1790,8 @@
                     }
                 });
 
-                if (data.Value04) {
-                    this.playAudio('voice', data.Value04);
+                if (data.Value05) {
+                    this.playAudio('voice', data.Value05); // Value05: 보이스 경로
                 }
 
                 State.isInteractionWaiting = true;
@@ -2456,13 +2458,25 @@
                     return;
                 }
                 State.settings.autoMode = !State.settings.autoMode;
-                document.getElementById('auto-btn').innerText = `AUTO: ${State.settings.autoMode ? 'ON' : 'OFF'}`;
+                this.updateAutoBtnUI();
                 if (State.settings.autoMode && !State.isTextAnimating) {
                     const nextRelIdx = State.currentIndex + 1;
                     if (nextRelIdx < State.events.length) this.executeEvent(State.events[nextRelIdx].Index);
                 }
             },
+
+            forceAutoOff() {
+                State.settings.autoMode = false;
+                this.updateAutoBtnUI();
+            },
+
+            updateAutoBtnUI() {
+                const btn = document.getElementById('auto-btn');
+                if (btn) btn.innerText = `AUTO: ${State.settings.autoMode ? 'ON' : 'OFF'}`;
+            },
+
             toggleBacklog() {
+                this.forceAutoOff();
                 const modal = document.getElementById('backlog-modal');
                 const content = document.getElementById('backlog-content');
                 if (modal.classList.contains('hidden')) {
@@ -2498,6 +2512,7 @@
             showSettings() { this.showOptions(); },
 
             showOptions() {
+                this.forceAutoOff();
                 const modal = document.getElementById('options-modal');
                 modal.classList.remove('hidden');
                 document.getElementById('options-header').innerText = this.t('OPTIONS_MENU');
