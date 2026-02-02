@@ -95,6 +95,22 @@
         "CN_T": "退出",
         "ES": "SALIR"
     },
+    "MUSIC_PLAYER": {
+        "KO": "음악 감상",
+        "EN": "MUSIC PLAYER",
+        "JP": "音楽鑑賞",
+        "CN_S": "音乐欣赏",
+        "CN_T": "音樂欣賞",
+        "ES": "MÚSICA"
+    },
+    "PRESS_ANY_KEY": {
+        "KO": "- Press Any Key -",
+        "EN": "- Press Any Key -",
+        "JP": "- Press Any Key -",
+        "CN_S": "- 按任意键 -",
+        "CN_T": "- 按任意鍵 -",
+        "ES": "- Presiona cualquier tecla -"
+    },
     "QUIT_CONFIRM": {
         "KO": "현재 창을 닫고 게임을 종료하시겠습니까?",
         "EN": "Quit and close window?",

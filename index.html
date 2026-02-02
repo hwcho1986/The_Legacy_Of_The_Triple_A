@@ -556,6 +556,78 @@
             pointer-events: none;
             mix-blend-mode: screen;
         }
+
+        /* Press Any Key Animation */
+        #press-any-key {
+            animation: pulse 1.5s infinite ease-in-out;
+            text-shadow: 0 0 15px rgba(197, 160, 89, 0.5);
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(0.98);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Menu Stagger Animation */
+        .menu-stagger {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.6s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Music Player Modal */
+        #music-player-modal .modal-popup {
+            background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+            border-color: var(--accent-gold);
+        }
+
+        .music-item {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .music-item:hover,
+        .music-item.active {
+            background: rgba(197, 160, 89, 0.1);
+            color: var(--accent-gold);
+        }
+
+        .music-item.active::before {
+            content: '♬';
+            margin-right: 10px;
+        }
+
+        .progress-bar-container {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--accent-gold);
+            border-radius: 3px;
+            width: 0%;
+        }
     </style>
 </head>
 
@@ -633,18 +705,95 @@
                 </div>
 
                 <!-- Menu Buttons -->
-                <div id="main-menu-list" class="flex flex-col space-y-3 w-full max-w-[400px] px-6">
+                <div id="main-menu-list" class="flex flex-col space-y-2 w-full max-w-[420px] px-6 hidden">
                     <button data-menu="start"
-                        class="menu-item premium-btn premium-btn-highlight py-6 rounded-2xl text-2xl font-bold tracking-[0.2em] text-white uppercase mb-2">게임
+                        class="menu-item premium-btn premium-btn-highlight py-4 md:py-5 rounded-2xl text-xl md:text-2xl font-bold tracking-[0.2em] text-white uppercase mb-1">게임
                         시작</button>
                     <button data-menu="options"
-                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/90 font-medium">옵션</button>
+                        class="menu-item premium-btn py-3 md:py-4 rounded-xl text-lg md:text-xl text-white/90 font-medium">옵션</button>
                     <button data-menu="score"
-                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/90 font-medium">스코어</button>
+                        class="menu-item premium-btn py-3 md:py-4 rounded-xl text-lg md:text-xl text-white/90 font-medium">스코어</button>
+                    <button data-menu="music"
+                        class="menu-item premium-btn py-3 md:py-4 rounded-xl text-lg md:text-xl text-white/90 font-medium">음악
+                        감상</button>
                     <button data-menu="credits"
-                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/90 font-medium">제작진</button>
+                        class="menu-item premium-btn py-3 md:py-4 rounded-xl text-lg md:text-xl text-white/90 font-medium">제작진</button>
                     <button data-menu="exit"
-                        class="menu-item premium-btn py-4 rounded-xl text-xl text-white/90 font-medium border-white/10">종료</button>
+                        class="menu-item premium-btn py-3 md:py-4 rounded-xl text-lg md:text-xl text-white/90 font-medium border-white/10">종료</button>
+                </div>
+
+                <!-- Press Any Key -->
+                <div id="press-any-key"
+                    class="text-xl md:text-2xl text-accent-gold/80 tracking-[0.4em] uppercase font-cinzel mt-10 hidden">
+                    - Press Any Key -
+                </div>
+            </div>
+        </div>
+
+        <!-- Music Player Modal -->
+        <div id="music-player-modal"
+            class="layer layer-interactive items-center justify-center bg-black/80 backdrop-blur-md hidden"
+            style="z-index: 3000;">
+            <div
+                class="modal-popup glass rounded-3xl p-8 max-w-2xl w-full translate-y-0 opacity-100 transition-all duration-500">
+                <div class="flex justify-between items-center mb-6 border-b border-accent-gold/20 pb-4">
+                    <h2 class="text-3xl font-cinzel text-accent-gold tracking-widest">MUSIC PLAYER</h2>
+                    <button onclick="Engine.closeMusicPlayer()"
+                        class="text-white/50 hover:text-white transition-colors text-3xl font-light">&times;</button>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-8 min-h-[40vh] max-h-[55vh]">
+                    <!-- Playlist -->
+                    <div id="music-playlist"
+                        class="flex-1 overflow-y-auto space-y-1 pr-2 custom-scrollbar bg-black/20 rounded-xl p-2">
+                        <!-- Items injected by JS -->
+                    </div>
+
+                    <!-- Album Art & Info -->
+                    <div class="w-full md:w-60 flex flex-col items-center justify-center space-y-6">
+                        <div
+                            class="w-44 h-44 rounded-3xl bg-gradient-to-br from-accent-gold/20 via-black to-accent-gold/5 border border-accent-gold/30 flex items-center justify-center shadow-[0_0_30px_rgba(197,160,89,0.15)] music-visualizer">
+                            <span class="text-6xl text-accent-gold/40 drop-shadow-lg">♬</span>
+                        </div>
+                        <div class="text-center w-full">
+                            <h3 id="current-music-title" class="text-xl font-bold text-white truncate px-2">-</h3>
+                            <p class="text-sm text-white/50 tracking-widest uppercase mt-1">AAA Original Soundtrack</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div
+                    class="mt-8 bg-gradient-to-r from-black/60 to-black/30 p-6 rounded-2xl border border-white/5 shadow-inner">
+                    <div class="flex items-center justify-between mb-4 text-[10px] font-mono text-accent-gold/70 group">
+                        <span id="music-time-current">00:00</span>
+                        <div class="flex-1 mx-6 progress-bar-container group-hover:h-2" id="music-progress-container">
+                            <div class="progress-bar-fill shadow-[0_0_10px_rgba(197,160,89,0.5)]"
+                                id="music-progress-fill"></div>
+                        </div>
+                        <span id="music-time-total">00:00</span>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div class="w-24">
+                            <button onclick="Engine.setMusicLoop()" id="music-loop-btn"
+                                class="text-[10px] text-white/40 hover:text-accent-gold transition-all font-bold border border-white/10 px-3 py-1 rounded-full uppercase tracking-tighter">LOOP:
+                                OFF</button>
+                        </div>
+                        <div class="flex items-center gap-6">
+                            <button onclick="Engine.prevMusic()"
+                                class="text-xl text-white/60 hover:text-accent-gold hover:scale-125 transition-all">⏮</button>
+                            <button onclick="Engine.toggleMusicPlay()" id="music-play-btn"
+                                class="w-14 h-14 rounded-full bg-accent-gold text-black text-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-[0_0_20px_rgba(197,160,89,0.4)]">▶</button>
+                            <button onclick="Engine.nextMusic()"
+                                class="text-xl text-white/60 hover:text-accent-gold hover:scale-125 transition-all">⏭</button>
+                        </div>
+                        <div class="w-24 flex justify-end">
+                            <button onclick="Engine.stopMusicPlayerAudio()"
+                                class="text-white/30 hover:text-primary-red transition-colors text-lg"
+                                title="Stop">⏹</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -800,7 +949,39 @@
             isNoteVisible: false,
             activeTimers: [],
             audioPlayTimeouts: {},
-            pendingTitleBGM: false // KR: 기본적으로 타이틀 BGM 재생 대기 상태로 시작 (DISCLAIMER 종료 후 활성화)
+            pendingTitleBGM: false, // KR: 기본적으로 타이틀 BGM 재생 대기 상태로 시작 (DISCLAIMER 종료 후 활성화)
+            isTitleStarted: false,
+            musicList: [
+                "01. 트리플 A(AAA).mp3",
+                "02. 피곤한 오후(A tired afternoon).mp3",
+                "03. 기이한 티 파티(Odd Tea Party).mp3",
+                "04. 질문(question).mp3",
+                "05. 진실을 찾아서(Seeking the truth).mp3",
+                "06. 여정의 시작(The beginning of the journey).mp3",
+                "07. 성의 주변길(Around the castle).mp3",
+                "08. 계속되는 탐색(Continued exploration).mp3",
+                "09. 가벼운 발걸음(light footsteps).mp3",
+                "10. 가벼운 발걸음(light footsteps)_Ver.2.mp3",
+                "11. 즐거운 스릴(A fun thrill).mp3",
+                "12. 험난한 여정(A rough journey).mp3",
+                "13. 방랑자(The wandering one).mp3",
+                "13. 퀴즈(Quiz).mp3",
+                "14. 긴장 속에서(In the midst of tension).mp3",
+                "14. 긴장 속에서(In the midst of tension)_Ver.2.mp3",
+                "15. 미궁(Dungeon).mp3",
+                "16. 계단 아래로(under the stairs).mp3",
+                "17. 계단 아래로(under the stairs)_Ver.2.mp3",
+                "18. 질문을 품은 질의(The question begs the question).mp3",
+                "19. 모험 속으로(Into the adventure).mp3",
+                "20. 스릴러(thriller).mp3",
+                "21. 거대한 의지(Great Will).mp3",
+                "22. 모나리자(Mona Lisa).mp3",
+                "23. 다음 이야기로(Next Step).mp3",
+                "24. 다음 이야기로(Next Step)_Ver.2.mp3"
+            ],
+            currentMusicIndex: 0,
+            musicLoopMode: 'none', // none, one, all
+            isMusicPlaying: false
         };
 
         const Engine = {
@@ -829,19 +1010,14 @@
 
                     this.initAmbient();
 
-                    // KR: 최초 오디오 재생을 위한 전역 리스너 (브라우저 정책 대응)
-                    const unlockAudio = () => {
-                        // KR: 대기 중인 BGM이 있거나 타이틀 화면일 경우 재생 시도
-                        if (State.pendingTitleBGM) {
-                            const bgmPath = 'assets/audio/bgm/23. 다음 이야기로(Next Step).mp3';
-                            this.playAudio('bgm', bgmPath, true);
-                            State.pendingTitleBGM = false;
+                    // KR: 타이틀 화면 상호작용 리스너 (Press Any Key 단계 처리)
+                    const onTitleInput = (e) => {
+                        if (document.getElementById('menu-layer').style.display !== 'none' && !State.isTitleStarted) {
+                            this.handleTitleInteraction();
                         }
-                        document.removeEventListener('mousedown', unlockAudio);
-                        document.removeEventListener('keydown', unlockAudio);
                     };
-                    document.addEventListener('mousedown', unlockAudio);
-                    document.addEventListener('keydown', unlockAudio);
+                    document.addEventListener('mousedown', onTitleInput);
+                    document.addEventListener('keydown', onTitleInput);
 
                     this.showDisclaimer();
 
@@ -940,25 +1116,52 @@
                 if (!menu) return;
                 menu.style.display = 'block';
                 menu.classList.remove('fade-out');
-                State.isInteractionWaiting = false;
-                this.updateTitleMenu();
 
-                // KR: 타이틀 진입 시 BGM 반복 재생 시도 (실패 시 unlockAudio 대기)
+                // KR: 초기 상태 - Press Any Key만 표시
+                State.isTitleStarted = false;
+                State.isInteractionWaiting = false;
+                document.getElementById('main-menu-list').classList.add('hidden');
+
+                const pak = document.getElementById('press-any-key');
+                pak.innerText = this.t('PRESS_ANY_KEY');
+                pak.classList.remove('hidden');
+
+                State.pendingTitleBGM = true;
+            },
+
+            handleTitleInteraction() {
+                if (State.isTitleStarted) return;
+                State.isTitleStarted = true;
+
+                // 1. 소리 재생
+                this.playAudio('sfx', 'assets/audio/sfx/click.mp3');
                 const bgmPath = 'assets/audio/bgm/23. 다음 이야기로(Next Step).mp3';
                 this.playAudio('bgm', bgmPath, true);
 
-                // KR: 이미 시도했으므로 interaction 레이어 클릭 시 재생될 수 있게 보류 플래그 유지
-                State.pendingTitleBGM = true;
+                // 2. UI 전환
+                document.getElementById('press-any-key').classList.add('hidden');
+                const menuList = document.getElementById('main-menu-list');
+                menuList.classList.remove('hidden');
+
+                // 3. 버튼 순차 등장 애니메이션
+                const buttons = menuList.querySelectorAll('.menu-item');
+                buttons.forEach((btn, i) => {
+                    btn.style.animationDelay = `${i * 0.1}s`;
+                    btn.classList.add('menu-stagger');
+                });
+
+                this.updateTitleMenu();
             },
 
             updateTitleMenu() {
                 const items = document.querySelectorAll('.menu-item');
-                const keys = ['START_GAME', 'OPTIONS', 'SCORE', 'CREDITS', 'EXIT'];
+                const keys = ['START_GAME', 'OPTIONS', 'SCORE', 'MUSIC_PLAYER', 'CREDITS', 'EXIT'];
 
                 items.forEach((item, i) => {
                     if (item) {
                         item.innerText = this.t(keys[i]);
                         item.classList.toggle('active', i === State.menuIndex);
+                        item.classList.toggle('premium-btn-highlight', i === State.menuIndex && i === 0);
 
                         item.onclick = (e) => {
                             e.stopPropagation();
@@ -967,21 +1170,29 @@
                             this.executeMenuAction();
                         };
                         item.onmouseenter = () => {
-                            State.menuIndex = i;
-                            this.updateTitleMenu();
+                            if (State.isTitleStarted) {
+                                State.menuIndex = i;
+                                this.updateTitleMenu();
+                            }
                         };
                     }
                 });
             },
 
             handleKeyDown(e) {
-                // Menu Navigation
+                // Title Interaction (Press Any Key)
+                if (document.getElementById('menu-layer').style.display !== 'none' && !State.isTitleStarted) {
+                    this.handleTitleInteraction();
+                    return;
+                }
+
+                // Menu Navigation (6 items now)
                 if (document.getElementById('menu-layer').style.display !== 'none' && !State.isInteractionWaiting) {
                     if (e.code === 'ArrowDown' || e.code === 'KeyS') {
-                        State.menuIndex = (State.menuIndex + 1) % 5;
+                        State.menuIndex = (State.menuIndex + 1) % 6;
                         this.updateTitleMenu();
                     } else if (e.code === 'ArrowUp' || e.code === 'KeyW') {
-                        State.menuIndex = (State.menuIndex - 1 + 5) % 5;
+                        State.menuIndex = (State.menuIndex - 1 + 6) % 6;
                         this.updateTitleMenu();
                     } else if (e.code === 'Enter' || e.code === 'Space') {
                         this.executeMenuAction();
@@ -1015,8 +1226,9 @@
 
             executeMenuAction() {
                 this.playAudio('sfx', 'assets/audio/sfx/click.mp3');
-                const actions = ['startGame', 'showOptions', 'showScore', 'showCredits', 'showExit'];
-                this[actions[State.menuIndex]]();
+                const actions = ['startGame', 'showOptions', 'showScore', 'showMusicPlayer', 'showCredits', 'showExit'];
+                const action = actions[State.menuIndex];
+                if (action && this[action]) this[action]();
             },
 
             startGame() {
@@ -1032,6 +1244,145 @@
                     document.getElementById('system-ui').classList.remove('hidden');
                     this.executeEvent(State.events[0].Index);
                 }, 1000);
+            },
+
+            // --- Music Player Logic ---
+            showMusicPlayer() {
+                const modal = document.getElementById('music-player-modal');
+                modal.style.display = 'flex';
+                modal.classList.remove('hidden');
+
+                // 리스트 렌더링
+                const playlist = document.getElementById('music-playlist');
+                playlist.innerHTML = '';
+                State.musicList.forEach((file, i) => {
+                    const item = document.createElement('div');
+                    item.className = `music-item p-3 rounded-lg flex items-center justify-between text-sm ${State.currentMusicIndex === i ? 'active' : ''}`;
+                    // 파일명에서 확장자 및 번호 제거하여 깔끔하게 표시
+                    const displayName = file.replace(/^\d+\.\s*/, '').replace(/\.mp3$/, '');
+                    item.innerHTML = `<span>${displayName}</span><span class="opacity-30 text-[10px] uppercase font-mono">BGM</span>`;
+                    item.onclick = () => this.playMusicItem(i);
+                    playlist.appendChild(item);
+                });
+
+                this.updateMusicPlayerUI();
+            },
+
+            closeMusicPlayer() {
+                const modal = document.getElementById('music-player-modal');
+                modal.classList.add('hidden');
+                modal.style.display = 'none';
+
+                // 플레이어가 켜져있을 때 메인 메뉴 BGM이 꺼졌다면 다시 켜주기
+                if (!State.isMusicPlaying && State.isTitleStarted) {
+                    const bgmPath = 'assets/audio/bgm/23. 다음 이야기로(Next Step).mp3';
+                    this.playAudio('bgm', bgmPath, true);
+                }
+            },
+
+            playMusicItem(index) {
+                State.currentMusicIndex = index;
+                const file = State.musicList[index];
+                const bgmPath = `assets/audio/bgm/${file}`;
+
+                // 기존 BGM 중단
+                this.stopAudio('bgm', 0);
+
+                // 새 곡 재생
+                this.playAudio('bgm', bgmPath, false); // 루프는 setMusicLoop에서 관리
+                State.isMusicPlaying = true;
+
+                // 폰 인터페이스 등 대응을 위한 전역 오디오 객체 이벤트 리스너 추가
+                const aud = State.audio.bgm;
+                if (aud) {
+                    aud.onended = () => this.handleMusicEnded();
+                    aud.ontimeupdate = () => this.updateMusicProgress();
+                }
+
+                this.showMusicPlayer(); // 리스트 갱신
+            },
+
+            handleMusicEnded() {
+                if (State.musicLoopMode === 'one') {
+                    this.playMusicItem(State.currentMusicIndex);
+                } else if (State.musicLoopMode === 'all') {
+                    this.nextMusic();
+                } else {
+                    State.isMusicPlaying = false;
+                    this.updateMusicPlayerUI();
+                }
+            },
+
+            toggleMusicPlay() {
+                const aud = State.audio.bgm;
+                if (!aud) {
+                    this.playMusicItem(State.currentMusicIndex);
+                    return;
+                }
+
+                if (aud.paused) {
+                    aud.play();
+                    State.isMusicPlaying = true;
+                } else {
+                    aud.pause();
+                    State.isMusicPlaying = false;
+                }
+                this.updateMusicPlayerUI();
+            },
+
+            nextMusic() {
+                let next = (State.currentMusicIndex + 1) % State.musicList.length;
+                this.playMusicItem(next);
+            },
+
+            prevMusic() {
+                let prev = (State.currentMusicIndex - 1 + State.musicList.length) % State.musicList.length;
+                this.playMusicItem(prev);
+            },
+
+            setMusicLoop() {
+                const modes = ['none', 'one', 'all'];
+                let idx = (modes.indexOf(State.musicLoopMode) + 1) % modes.length;
+                State.musicLoopMode = modes[idx];
+
+                const btn = document.getElementById('music-loop-btn');
+                btn.innerText = `LOOP: ${State.musicLoopMode.toUpperCase()}`;
+                btn.classList.toggle('text-accent-gold', State.musicLoopMode !== 'none');
+            },
+
+            updateMusicProgress() {
+                const aud = State.audio.bgm;
+                if (!aud || !State.isMusicPlaying) return;
+
+                const progress = (aud.currentTime / aud.duration) * 100;
+                document.getElementById('music-progress-fill').style.width = `${progress}%`;
+
+                const format = (s) => {
+                    const m = Math.floor(s / 60);
+                    const sec = Math.floor(s % 60);
+                    return `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+                };
+
+                document.getElementById('music-time-current').innerText = format(aud.currentTime);
+                if (!isNaN(aud.duration)) {
+                    document.getElementById('music-time-total').innerText = format(aud.duration);
+                }
+            },
+
+            updateMusicPlayerUI() {
+                const playBtn = document.getElementById('music-play-btn');
+                playBtn.innerText = State.isMusicPlaying ? 'Ⅱ' : '▶'; // 폰트 아이콘 대신 텍스트
+
+                const title = document.getElementById('current-music-title');
+                const currentFile = State.musicList[State.currentMusicIndex];
+                title.innerText = currentFile ? currentFile.replace(/^\d+\.\s*/, '').replace(/\.mp3$/, '') : '-';
+            },
+
+            stopMusicPlayerAudio() {
+                this.stopAudio('bgm', 0.5);
+                State.isMusicPlaying = false;
+                this.updateMusicPlayerUI();
+                document.getElementById('music-progress-fill').style.width = '0%';
             },
 
             t(key) {
