@@ -984,19 +984,19 @@
                 "11. 즐거운 스릴(A fun thrill).mp3",
                 "12. 험난한 여정(A rough journey).mp3",
                 "13. 방랑자(The wandering one).mp3",
-                "13. 퀴즈(Quiz).mp3",
-                "14. 긴장 속에서(In the midst of tension).mp3",
-                "15. 긴장 속에서(In the midst of tension)_Ver.2.mp3",
-                "16. 미궁(Dungeon).mp3",
-                "17. 계단 아래로(under the stairs).mp3",
-                "18. 계단 아래로(under the stairs)_Ver.2.mp3",
-                "19. 질문을 품은 질의(The question begs the question).mp3",
-                "20. 모험 속으로(Into the adventure).mp3",
-                "21. 스릴러(thriller).mp3",
-                "22. 거대한 의지(Great Will).mp3",
-                "23. 모나리자(Mona Lisa).mp3",
-                "24. 다음 이야기로(Next Step).mp3",
-                "25. 다음 이야기로(Next Step)_Ver.2.mp3"
+                "14. 퀴즈(Quiz).mp3",
+                "15. 긴장 속에서(In the midst of tension).mp3",
+                "16. 긴장 속에서(In the midst of tension)_Ver.2.mp3",
+                "17. 미궁(Dungeon).mp3",
+                "18. 계단 아래로(under the stairs).mp3",
+                "19. 계단 아래로(under the stairs)_Ver.2.mp3",
+                "20. 질문을 품은 질의(The question begs the question).mp3",
+                "21. 모험 속으로(Into the adventure).mp3",
+                "22. 스릴러(thriller).mp3",
+                "23. 거대한 의지(Great Will).mp3",
+                "24. 모나리자(Mona Lisa).mp3",
+                "25. 다음 이야기로(Next Step).mp3",
+                "26. 다음 이야기로(Next Step)_Ver.2.mp3"
             ],
             currentMusicIndex: 0,
             musicLoopMode: 'none', // none, one, all
@@ -1154,7 +1154,7 @@
 
                 // 1. 소리 재생
                 this.playAudio('sfx', 'assets/audio/sfx/click.mp3');
-                const bgmPath = 'assets/audio/bgm/24. 다음 이야기로(Next Step).mp3';
+                const bgmPath = 'assets/audio/bgm/25. 다음 이야기로(Next Step).mp3';
                 this.playAudio('bgm', bgmPath, true);
 
                 // 2. UI 전환
@@ -1294,7 +1294,7 @@
 
                 // 플레이어가 켜져있을 때 메인 메뉴 BGM이 꺼졌다면 다시 켜주기
                 if (!State.isMusicPlaying && State.isTitleStarted) {
-                    const bgmPath = 'assets/audio/bgm/24. 다음 이야기로(Next Step).mp3';
+                    const bgmPath = 'assets/audio/bgm/25. 다음 이야기로(Next Step).mp3';
                     this.playAudio('bgm', bgmPath, true);
                 }
             },
@@ -2453,7 +2453,7 @@
                 this.handleCoverOverlayColor({ Value01: '#000', Value02: 2, Value03: 1 }, true);
 
                 // 2. Play Ending BGM
-                this.playAudio('bgm', 'assets/audio/bgm/24. 다음 이야기로(Next Step)_Ver.2.mp3', false);
+                this.playAudio('bgm', 'assets/audio/bgm/25. 다음 이야기로(Next Step)_Ver.2.mp3', false);
 
                 // 3. Credits Rolling
                 setTimeout(() => {
@@ -2516,7 +2516,7 @@
                         if (item.type === 'choice') {
                             const choiceHtml = item.choices.map((c, idx) => `
                                 <div class="${idx === item.selectedIndex ? 'backlog-choice-selected' : 'backlog-choice-unselected'}">
-                                    ${idx === item.selectedIndex ? '▶ ' : '　 '}${c}
+                                    ${idx === item.selectedIndex ? '▶ ' : '　 '}${this.formatText(c)}
                                 </div>
                             `).join('');
                             return `
@@ -2528,7 +2528,7 @@
                         } else {
                             return `
                                 <div class="border-b border-white/5 pb-4">
-                                    <span class="text-accent-gold font-bold mr-4">[${item.name || 'SYSTEM'}]</span>
+                                    <span class="text-accent-gold font-bold mr-4">[${this.formatText(item.name || 'SYSTEM')}]</span>
                                     <span>${this.formatText(item.text)}</span>
                                 </div>
                             `;
