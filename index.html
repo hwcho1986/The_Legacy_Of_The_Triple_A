@@ -2029,31 +2029,32 @@
                 layer.innerHTML = ''; // Fix stacking
 
                 const el = document.createElement('div');
-                el.className = 'absolute inset-0 flex items-center justify-center text-center p-6 md:p-20 z-10';
-                el.style.whiteSpace = 'pre-wrap';
-                el.style.wordBreak = 'keep-all';
-                el.style.overflowWrap = 'break-word';
-                el.style.fontFamily = data.Value01 || 'Cinzel, serif';
+                el.className = 'absolute inset-0 flex items-center justify-center text-center p-6 md:p-20 z-10 pointer-events-none';
 
-                // Responsive font sizing: scales with width, but clamped for usability
+                const inner = document.createElement('div');
+                inner.className = 'w-full max-w-[90vw]';
+                inner.style.whiteSpace = 'pre-wrap';
+                inner.style.wordBreak = 'keep-all';
+                inner.style.overflowWrap = 'break-word';
+                inner.style.fontFamily = data.Value01 || 'Cinzel, serif';
+                inner.style.color = data.Value03 || '#fff';
+
+                // Responsive font sizing
                 const baseSize = data.Value02 || 48;
                 if (window.innerWidth < 1080) {
-                    // Mobile: More aggressive scaling for narrow screens to prevent overflow
-                    el.style.fontSize = `clamp(1.1rem, ${(baseSize * 0.6) / 10.8}vw, 3.5rem)`;
+                    inner.style.fontSize = `clamp(1.1rem, ${(baseSize * 0.6) / 10.8}vw, 3.5rem)`;
                 } else {
-                    el.style.fontSize = `clamp(1.5rem, ${baseSize / 19.2}vw, 8rem)`;
+                    inner.style.fontSize = `clamp(1.5rem, ${baseSize / 19.2}vw, 8rem)`;
                 }
 
-                el.style.color = data.Value03 || '#fff';
-                el.innerHTML = '';
-
+                el.appendChild(inner);
                 layer.appendChild(el);
 
                 const titleText = this.formatText(this.t(data.Value04));
                 // Log title
                 State.backlog.push({ name: 'TITLE', text: titleText });
 
-                this.typeText(el, titleText, () => {
+                this.typeText(inner, titleText, () => {
                     if (!keep) {
                         State.isInteractionWaiting = true;
                         State.currentEvent = data;
