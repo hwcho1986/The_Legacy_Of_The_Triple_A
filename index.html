@@ -876,10 +876,13 @@
                 <div class="w-full text-center space-y-8 md:space-y-12 overflow-y-auto custom-scrollbar">
                     <h2 class="text-4xl md:text-6xl font-cinzel text-accent-gold" id="credits-header">CREDITS</h2>
                     <div class="space-y-6 md:space-y-8 text-lg md:text-2xl leading-loose" id="credits-body">
-                        <p><span class="opacity-50">Producer</span><br><b>Joe Choe</b></p>
-                        <p><span class="opacity-50">Engine Development</span><br><b>Joe Choe</b></p>
-                        <p><span class="opacity-50">Scenario & Design</span><br><b>Joe Choe</b></p>
-                        <p><span class="opacity-50">Globalization</span><br><b>Joe Choe</b></p>
+                        <p><span class="opacity-50">Director</span><br><b>Joe</b></p>
+                        <p><span class="opacity-50">Engine Development</span><br><b>Joe(With. Gemini)</b></p>
+                        <p><span class="opacity-50">Scenario</span><br><b>Joe</b></p>
+                        <p><span class="opacity-50">Design</span><br><b>Joe(With. Nano Banana)</b></p>
+                        <p><span class="opacity-50">Sound</span><br><b>Joe(With. Suno)</b></p>
+                        <p><span class="opacity-50">Globalization</span><br><b>Joe(With. Chat GPT)</b></p>
+                        <p><span class="opacity-50">Donation</span><br><b>(기업) 040-086067-01-014</b></p>
                     </div>
                     <button onclick="Engine.closeModal('credits-modal')"
                         class="premium-btn px-12 md:px-20 py-4 rounded-xl text-xl mt-8">CLOSE</button>
@@ -1433,7 +1436,8 @@
                 if (localFallbacks[key]) {
                     let text = localFallbacks[key][State.lang] || localFallbacks[key]['KO'] || key;
                     if (key === 'HINT_NOT_AVAILABLE') {
-                        const diffKey = `DIFF_${State.settings.difficulty.toUpperCase()}`;
+                        // KR: Diff key mismatch fix (very-hard -> VERY_HARD)
+                        const diffKey = `DIFF_${State.settings.difficulty.toUpperCase().replace('-', '_')}`;
                         const diffName = this.t(diffKey).split('(')[0].trim(); // "매우 어려움 (힌트 불가)" -> "매우 어려움"
                         text = text.replace('현재 난이도', diffName);
                     }
