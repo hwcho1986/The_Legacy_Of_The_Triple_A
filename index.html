@@ -1431,7 +1431,13 @@
                 };
 
                 if (localFallbacks[key]) {
-                    return localFallbacks[key][State.lang] || localFallbacks[key]['KO'] || key;
+                    let text = localFallbacks[key][State.lang] || localFallbacks[key]['KO'] || key;
+                    if (key === 'HINT_NOT_AVAILABLE') {
+                        const diffKey = `DIFF_${State.settings.difficulty.toUpperCase()}`;
+                        const diffName = this.t(diffKey).split('(')[0].trim(); // "매우 어려움 (힌트 불가)" -> "매우 어려움"
+                        text = text.replace('현재 난이도', diffName);
+                    }
+                    return text;
                 }
 
                 if (State.localization[key]) {
@@ -2039,12 +2045,11 @@
                 }
 
                 el.style.color = data.Value03 || '#fff';
-                el.innerText = '';
+                el.innerHTML = '';
 
                 layer.appendChild(el);
 
-                const titleText = this.t(data.Value04);
-
+                const titleText = this.formatText(this.t(data.Value04));
                 // Log title
                 State.backlog.push({ name: 'TITLE', text: titleText });
 
@@ -2121,7 +2126,7 @@
                 quizBox.innerHTML = `
                     <div class="glass p-8 md:p-12 rounded-[2rem] md:rounded-[3rem] w-full max-w-[800px] text-center">
                         <div class="text-xs md:text-xl opacity-60 mb-6 border-b border-white/10 pb-4 tracking-[0.3em] md:tracking-[0.5em]">QUERY NODE</div>
-                        <div class="text-xl md:text-3xl mb-8 md:mb-12 font-serif px-2">${this.t(data.Value01)}</div>
+                        <div class="text-xl md:text-3xl mb-8 md:mb-12 font-serif px-2">${this.formatText(this.t(data.Value01))}</div>
                         <input id="quiz-input" autocomplete="off" class="w-full bg-white/5 border border-white/20 p-5 md:p-6 rounded-xl text-xl md:text-3xl mb-6 focus:border-accent-gold outline-none text-center" placeholder="...">
                         <div class="flex gap-2 md:gap-4 mb-6 md:mb-8">
                             <button id="hint-1" class="premium-btn p-3 md:p-4 rounded-xl flex-1 text-[10px] md:text-xs text-white">HINT 1</button>
@@ -2716,6 +2721,7 @@
                     document.getElementById('bgcolor-layer').style.backgroundColor = '#000';
                     document.getElementById('title-layer').innerHTML = '';
                     document.getElementById('oncolor-layer').innerHTML = '';
+                    document.getElementById('onimage-layer').innerHTML = '';
                     document.getElementById('cover-overlay-layer').innerHTML = '';
 
                     State.currentIndex = 0;
